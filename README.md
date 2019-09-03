@@ -4,6 +4,8 @@
 
 Since hospitals do not release their pricing data in a standardized format (but at least release it now in the US by law), this repo seeks to provide universal conversion functions, as well as raw data of hospital pricing spreadsheets/Word Docs/other formats that contain medical pricing records. The reason this repo contains the data is because pricing data changes (URL locations, content, format, as well as availability).
 
+`This is starting with US data; however, we plan to incorporate pricing for all countries eventually, and as soon as possible. America just happens to have one of the worst systems, so we're starting there.`
+
 If we do a good job, it will be easier to hold the medical industry accountable and introduce interesting new tools like swaps for consumers that could VASTLY lower healthcare costs. This is the first step.
 
 The format we are using at MedHack for procedures, medications, and devices look like this:
