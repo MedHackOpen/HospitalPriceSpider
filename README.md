@@ -58,7 +58,7 @@ For Hospitals/Health Care institutions, example:
 	"managedBy": "HCABC Example Corp",
 	"keyShareholdersAndPeople":[{"name": "John Doe", "title":"CEO"}],
 	"grossRevenueFiscal": 93000039300,
-	"annualReportDocs": ['url1', 'url2'],
+	"annualReportDocs": ["url1", "url2"],
 	"website":"https://msgexampleweb.org/",
 	"currentPricingUrl": "https://msgexampleweb.org/somelocation/xyz.xsl",
 	"itemColumnName": "Description",
