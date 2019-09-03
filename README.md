@@ -2,7 +2,7 @@
 
 ### Making public hospital pricing data *actually* machine-readable and uniform, because the hospitals are developing all kinds of tricks to complicate, evade and mislead around the topic of pricing.
 
-Since hospitals do now release their pricing data in a standardized format, this repo seeks to provide javascript universal conversion functions, as well as raw data of hospital pricing spreadsheets/Word Docs/other formats that contain medical records. The reason this repo contains the data is because pricing data changes, as well as the format that hospitals release the data.
+Since hospitals do not release their pricing data in a standardized format, this repo seeks to provide universal conversion functions, as well as raw data of hospital pricing spreadsheets/Word Docs/other formats that contain medical pricing records. The reason this repo contains the data is because pricing data changes (location, content, as well as availability).
 
 If we do a good job, it will be easier to hold the medical industry accountable and introduce interesting new tools like swaps for consumers that could VASTLY lower healthcare costs. This is the first step.
 
