@@ -1,5 +1,52 @@
 # MedHack Hospital Price Spider
 
-## Making public hospital pricing data *actually* machine-readable and uniform, because the hospitals are developing all kinds of tricks to complicate, evade and mislead around the topic of pricing.
+### Making public hospital pricing data *actually* machine-readable and uniform, because the hospitals are developing all kinds of tricks to complicate, evade and mislead around the topic of pricing.
 
-coming soon.
+Since hospitals do now release their pricing data in a standardized format, this repo seeks to provide javascript universal conversion functions, as well as raw data of hospital pricing spreadsheets/Word Docs/other formats that contain medical records. The reason this repo contains the data is because pricing data changes, as well as the format that hospitals release the data.
+
+If we do a good job, it will be easier to hold the medical industry accountable and introduce interesting new tools like swaps for consumers that could VASTLY lower healthcare costs. This is the first step.
+
+The format we are using at MedHack look like this:
+
+```json
+
+{
+	rId:1,
+	itemName: "Whole Body MRI Scan",
+	hospitalId: 2,
+	price: 8229.00,
+	avgPrice: 8229.00,
+	medianPrice: 9000,
+	sampleSize:80,
+	outpatientAvgPrice: 9200.00,
+	inpatientAvgPrice:9200.00,
+	latestPriceDate: "2019-01-31",
+	firstPriceDate: "2019-01-01",
+	changeSinceLastUpdate: .23,
+	description: "...",
+	relatedItemsFromOthers: [10,15],
+	relatedItemsFromThisLocation: [3,4],
+	itemsRequiredForThis: [45, 72]
+	"keywords": ["mri, scan", "niobium"],
+	"country":"US",
+	"currency":"USD"
+
+}
+
+
+
+```
+
+Required feilds for all are itemName, hospitalId, currency and price.
+
+The others are "nice-to-haves" that will make applications built on top of this much easier and will expose inconsistencies that make the medical industry what it is. The in surance companies have this data; however, they will never release it, so it's up to us. Also, this README should probably be rewritten to sound less angry at the medical industry.... Which leads us to contributions.
+
+
+## Contributions 
+
+We welcome pull requests, issues, and other contributions. This README could use a lot of work, as well as the converter code to get to our shared goal of making the world a better place. Please send pull requests to the `develop` repo.
+
+## Contact
+
+hello@medhack.info
+
