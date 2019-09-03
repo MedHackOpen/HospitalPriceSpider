@@ -23,7 +23,7 @@ The format we are using at MedHack for procedures, medications, and devices look
 	"inpatientAvgPrice":9200.00,
 	"latestPriceDate": "2019-01-31",
 	"firstPriceDate": "2019-01-01",
-	"changeSinceLastUpdate": .23,
+	"changeSinceLastUpdate": 0.23,
 	"description": "...",
 	"relatedItemsFromOthers": [10,15],
 	"relatedItemsFromThisLocation": [3,4],
