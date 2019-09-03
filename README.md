@@ -47,8 +47,8 @@ For Hospitals/Health Care institutions, example:
 
 
 {
-	rId: 2,
-	hospitalName: "Massachusetts General Hospital",
+	"rId": 2,
+	"hospitalName": "Massachusetts General Hospital",
 	"city":"Boston",
 	"region":"MA",
 	"country":"US",
@@ -68,7 +68,7 @@ For Hospitals/Health Care institutions, example:
 	"outPatientPriceColumnName": "Outpatient Pricing",
 	"inpatientPriceColumnName":"Inpatient Pricing",
 	"removedHeaderRowsForCSV":3,
-	"longitude": -70.3323
+	"longitude": -70.3323,
 	"latitude": 45.0003,
 	"founded": 1930,
 	"type":"hospital",
