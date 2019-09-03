@@ -6,7 +6,7 @@ Since hospitals do now release their pricing data in a standardized format, this
 
 If we do a good job, it will be easier to hold the medical industry accountable and introduce interesting new tools like swaps for consumers that could VASTLY lower healthcare costs. This is the first step.
 
-The format we are using at MedHack look like this:
+The format we are using at MedHack for procedures, medications, and devices look like this:
 
 ```json
 
@@ -16,6 +16,7 @@ The format we are using at MedHack look like this:
 	hospitalId: 2,
 	price: 8229.00,
 	avgPrice: 8229.00,
+	type: "procedure",
 	medianPrice: 9000,
 	sampleSize:80,
 	outpatientAvgPrice: 9200.00,
@@ -27,9 +28,9 @@ The format we are using at MedHack look like this:
 	relatedItemsFromOthers: [10,15],
 	relatedItemsFromThisLocation: [3,4],
 	itemsRequiredForThis: [45, 72],
-	"keywords": ["mri, "scan", "niobium"],
-	"country":"US",
-	"currency":"USD"
+	keywords: ["mri, "scan", "niobium"],
+	country:"US",
+	currency:"USD"
 
 }
 
@@ -37,7 +38,52 @@ The format we are using at MedHack look like this:
 
 ```
 
-Required feilds for all are itemName, hospitalId, currency and price.
+`Required feilds for all are itemName, hospitalId, currency and price.`
+
+
+For Hospitals/Health Care institutions, example:
+
+```json
+
+
+{
+	rId: 2,
+	hospitalName: "Massachusetts General Hospital",
+	"city":"Boston",
+	"region":"MA",
+	"country":"US",
+	"streetAddress":"",
+	"numberLocations":2,
+	"ownedBy":"HCABC Example Corp",
+	"managedBy": "HCABC Example Corp",
+	"keyShareholdersAndPeople":[{"name": "John Doe", "title":"CEO"}],
+	"grossRevenueFiscal": 93000039300,
+	"annualReportDocs": ['url1', 'url2'],
+	"website":"https://msgexampleweb.org/",
+	"currentPricingUrl": "https://msgexampleweb.org/somelocation/xyz.xsl",
+	"itemColumnName": "Description",
+	"avgPriceColumnName":"Avg Price",
+	"priceSampleSizeColumnName":"Sample Size",
+	"medianPricingColumnName":"Median Price",
+	"outPatientPriceColumnName": "Outpatient Pricing",
+	"inpatientPriceColumnName":"Inpatient Pricing",
+	"removedHeaderRowsForCSV":3,
+	"longitude": -70.3323
+	"latitude": 45.0003,
+	"founded": 1930,
+	"type":"hospital",
+	"nonProfit":true,
+	"communityHospital":false,
+	"savedRepoTableName":"hospital_mgh"
+
+}
+
+```
+
+
+
+
+
 
 The others are "nice-to-haves" that will make applications built on top of this much easier and will expose inconsistencies that make the medical industry what it is. The in surance companies have this data; however, they will never release it, so it's up to us. Also, this README should probably be rewritten to sound less angry at the medical industry.... Which leads us to contributions.
 
