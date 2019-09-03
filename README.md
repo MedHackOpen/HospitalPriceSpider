@@ -27,7 +27,7 @@ The format we are using at MedHack look like this:
 	relatedItemsFromOthers: [10,15],
 	relatedItemsFromThisLocation: [3,4],
 	itemsRequiredForThis: [45, 72],
-	"keywords": ["mri, scan", "niobium"],
+	"keywords": ["mri, "scan", "niobium"],
 	"country":"US",
 	"currency":"USD"
 
