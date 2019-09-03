@@ -11,26 +11,26 @@ The format we are using at MedHack for procedures, medications, and devices look
 ```json
 
 {
-	rId:1,
-	itemName: "Whole Body MRI Scan",
-	hospitalId: 2,
-	price: 8229.00,
-	avgPrice: 8229.00,
-	type: "procedure",
-	medianPrice: 9000,
-	sampleSize:80,
-	outpatientAvgPrice: 9200.00,
-	inpatientAvgPrice:9200.00,
-	latestPriceDate: "2019-01-31",
-	firstPriceDate: "2019-01-01",
-	changeSinceLastUpdate: .23,
-	description: "...",
-	relatedItemsFromOthers: [10,15],
-	relatedItemsFromThisLocation: [3,4],
-	itemsRequiredForThis: [45, 72],
-	keywords: ["mri, "scan", "niobium"],
-	country:"US",
-	currency:"USD"
+	"rId":1,
+	"itemName": "Whole Body MRI Scan",
+	"hospitalId": 2,
+	"price": 8229.00,
+	"avgPrice": 8229.00,
+	"type": "procedure",
+	"medianPrice": 9000,
+	"sampleSize":80,
+	"outpatientAvgPrice": 9200.00,
+	"inpatientAvgPrice":9200.00,
+	"latestPriceDate": "2019-01-31",
+	"firstPriceDate": "2019-01-01",
+	"changeSinceLastUpdate": .23,
+	"description": "...",
+	"relatedItemsFromOthers": [10,15],
+	"relatedItemsFromThisLocation": [3,4],
+	"itemsRequiredForThis": [45, 72],
+	"keywords": ["mri, "scan", "niobium"],
+	"country":"US",
+	"currency":"USD"
 
 }
 
