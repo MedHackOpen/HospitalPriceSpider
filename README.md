@@ -103,6 +103,7 @@ The others are "nice-to-haves" that will make applications built on top of this 
 
 To test please view the readme.md in ./nodejsModule folder
 
+or refer to documentation [here](https://github.com/MedHackOpen/HospitalPriceSpider/wiki)
 ## Contributions 
 
 We welcome pull requests, issues, and other contributions. This README could use a lot of work, as well as the converter code to get to our shared goal of making the world a better place. Please send pull requests to the `develop` branch.

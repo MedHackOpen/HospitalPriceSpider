@@ -40,6 +40,6 @@ it will return json data of the given file
  services if spreadsheet and id and credentials are well configured (check 
  app dir client_secret.json, client_email: 'Value to share'). 
  This `/api/data/google-spread-sheets` should be the reference to use for
- end point = `/api/data/google-spread-sheets/:id`
+ end point = `/api/data/google-spread-sheets/:id`.
  
- see index.js in root dir for endpoint and maybe helpful comments
+ For developers see .nodejsModule/index.js in root dir for endpoint and maybe helpful comments
