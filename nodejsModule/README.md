@@ -3,6 +3,7 @@
 ## This directory contains the node module with utitlity functions for parsing and converting data in this repo as well as raw hospital pricing records into the appropriate, standardized format
 
 Folder and file structure
+`./database` (sequelize ORM )contains our database configs and model definitions ignore the seeders and migration folders, we might not need those
 `./services` contains helper modules to help convert formats or fetch data to feed to the api (index.js)
 
 `./reactui` might contain a react app that consumes our endpoint for easier and better visualization during development
@@ -41,5 +42,21 @@ it will return json data of the given file
  app dir client_secret.json, client_email: 'Value to share'). 
  This `/api/data/google-spread-sheets` should be the reference to use for
  end point = `/api/data/google-spread-sheets/:id`.
+ 
+ ### Database related endpoints
+ 
+ #### To test these endpoints you must have mysql running in your local server on port 
+ 127.0.0.1, with username root, and password not set (edit later for user custom values)
+ also make sure you have the database by name as defined in database key in `./database/config/config.json`
+ in our case database_development for dev env. 
+ ##And head to the api endpoints to test and decide from here..
+ 
+ .`/api/update-script` updates the database tables with the structure(s) defined in the models folder
+ 
+ .`/api/update/google-spreadsheets-hospital-services` given the right object, this endpoint should insert
+ or patch the services table
+ 
+ .`/api/update/institutions` given the right object this endpoint should insert or patch the
+ institutions table
  
  For developers see .nodejsModule/index.js in root dir for endpoint and maybe helpful comments
