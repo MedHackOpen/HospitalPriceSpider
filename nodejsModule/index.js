@@ -9,13 +9,19 @@ const uuid = require('uuid/v4')
 const cors = require('cors')
 const app = express()
 
-// allow cors for use with react app http://localhost:3000/ when using other render like react or vue on dev
+
+/**
+ * allow cors for use with react app http://localhost:3000/ when
+ * using other render like react or vue on dev
+ * @TODO configure security on production (cors)
+ */
 app.use(cors())
 
 // import local services
 const csvToJsonService = require('./services/csvToJson');
 const xlsxToJson = require('./services/spreadsheetToJson')
 const googleSheets = require('./services/spreadsheetGoogleApi')
+
 
 //---------------------------------------------------------------------------------------------------------
 /**
@@ -33,7 +39,7 @@ async function getFileData(filePath) {
  *@TODO tests the api returns json data with fields unmatched
  */
 async function testingConvert() {
-    const csvFilePath = path.join(__dirname, 'rawCSVs','hospital_CPMC.csv')
+    const csvFilePath = path.join(__dirname, '../rawCSVs','hospital_CPMC.csv')
     const data = await csvToJsonService.getJsonFromCsv(csvFilePath)
 
     return data
@@ -55,7 +61,7 @@ app.get('/', (req, res) => {
  * folder and return
  */
 app.get('/api/csv-files', async (req, res) => {
-    const csvFolder = path.join(__dirname, 'rawCSVs')
+    const csvFolder = path.join(__dirname, '../rawCSVs')
 
     try {
         fs.readdir(csvFolder,  (err, files) => {
@@ -81,7 +87,7 @@ app.get('/api/csv-files', async (req, res) => {
  */
 app.get('/api/csvdata/:id', async (req, res) => {
     const fileName = req.params.id
-    const csvFilePath = path.join(__dirname, 'rawCSVs', fileName)
+    const csvFilePath = path.join(__dirname, '../rawCSVs', fileName)
     const data =  await getFileData(csvFilePath)
     res.send(data)
 })
@@ -93,7 +99,7 @@ app.get('/api/csvdata/:id', async (req, res) => {
 app.get('/api/data/local-spread-sheets', async (req, res) => {
 
     // path to the local folder
-    const xlsxFolder = path.join(__dirname, 'rawXlsxs')
+    const xlsxFolder = path.join(__dirname, '../rawXlsxs')
     try {
         fs.readdir(xlsxFolder,  (err, files) => {
             if (err) {
@@ -123,9 +129,8 @@ app.get('/api/data/local-spread-sheets', async (req, res) => {
  */
 app.get('/api/data/local-xlsl-file/:id', async (req, res) => {
     const fileName = req.params.id
-    const folderPath = `services/${fileName}`
-    const filePath = path.join(__dirname,folderPath)
-    console.log('the path REQUESing ',filePath)
+    const filePath = path.join(__dirname, '../rawXlsxs',fileName)
+
     const data = await xlsxToJson.convertXlsxToJson(filePath)
 
     res.send(data)
@@ -168,70 +173,6 @@ app.get('/api/test', async (req, res) => {
 })
 
 
-/*
-const prices = [
-    { id: 1, name: 'consultation fee'},
-    { id: 2, name: ' fee'},
-    { id: 3, name: 'antibiotics'},
-    { id: 4, name: 'ultrasound'},
-    { id: 5, name: 'vaccine'},
-]
-
-app.get('/api/prices', (req, res) => {
-    res.send(prices)
-})
-
-app.get('/api/prices/:id', (req, res) => {
-  const price = prices.find( p => p.id === parseInt(req.params.id))
-    if (!price) res.status(404).send('The prices for the given amount is not in record') // return no found 404
-    res.send(price)
-})
-
-app.post('/api/prices', (req, res) => {
-
-    const result = validatePrice(req.body)
-
-    if (result.error) {
-        res.status(400).send(result.error.details[0].message) // Bad request
-    }
-    const price = {
-        uuid: uuid(),
-        id: prices.length+1,
-        name: req.body.name
-    }
-
-    prices.push(price);
-    res.send(price)
-})
-
-app.put('/api/prices/:id', (req, res) => {
-    const price = prices.find( p => p.id === parseInt(req.params.id))
-    if (!price) res.status(404).send('The prices for the given amount is not in record') // return no found 404
-
-    const result = validatePrice(req.body)
-
-    if (result.error) {
-        res.status(400).send(result.error.details[0].message) // Bad request
-    }
-
-    price.name = req.body.name
-    res.send(price)
-
-})
-
-app.delete('/api/prices/:id', (req, res) => {
-
-})
-
-function validatePrice(price) {
-
-    const schema = {
-        name: Joi.string().min(3).required()
-    }
-
-    return Joi.validate(price, schema)
-}
-*/
 const port = process.env.PORT || 3007;
 app.listen(port, () => {
     console.log('listening to port....# ', port)

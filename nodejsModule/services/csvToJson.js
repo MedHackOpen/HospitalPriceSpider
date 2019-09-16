@@ -15,6 +15,7 @@ function getPrice(id) {
     return prices.find(p => p._id === id);
 }
 */
+
 function getCsvFiles(csvFolder) {
 
     try {

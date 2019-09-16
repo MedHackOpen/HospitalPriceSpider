@@ -1,3 +1,5 @@
+#This file should be ignored at the moment, was left  here for references, if you're here because you're lost please check the readme.md in the root of this project folder and also the readme in nodejsModule folder
+
 #File contains steps and choices made in each
 
 ##Stage 1: Convert csv to json

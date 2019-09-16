@@ -83,12 +83,25 @@ For Hospitals/Health Care institutions, example:
 ```
 
 
-
-
-
-
 The others are "nice-to-haves" that will make applications built on top of this much easier and will expose inconsistencies that make the medical industry what it is. The in surance companies have this data; however, they will never release it, so it's up to us. Also, this README should probably be rewritten to sound less angry at the medical industry.... Which leads us to contributions.
 
+## Folder structure
+
+.`./browserJS` testing stuff
+
+.`./nodejsModule` contains nodejs app(s) to convert file formats and output that data via an api endpoint for others to consume
+
+. `./proposals ` project proposals in readme.md
+
+. `./rawCSVs` contains .csv files to process 
+
+. `./rawXlsxs` contains .xlsx (spreadsheets) files to process
+
+. `./SQLs` contains .sql files to process
+
+## Testing endpoints during development
+
+To test please view the readme.md in ./nodejsModule folder
 
 ## Contributions 
 
