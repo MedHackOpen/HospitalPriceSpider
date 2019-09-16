@@ -4,9 +4,12 @@
 
 Folder and file structure
 `./services` contains helper modules to help convert formats or fetch data to feed to the api (index.js)
+
 `./reactui` might contain a react app that consumes our endpoint for easier and better visualization during development
-paginations.....()
+paginations.....
+
 `index.js` contains our api endpoints
+
 `package.json` defines our dependencies
 
 To test the endpoints you must have node installed.
