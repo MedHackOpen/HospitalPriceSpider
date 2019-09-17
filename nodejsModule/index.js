@@ -288,7 +288,7 @@ app.get('/api/update/google-spreadsheets-hospital-services', (req, res) => {
 /**
  * This endpoint inserts or updates the institution table given the hospital name as ID
  */
-app.get('/api/update/institutions', async (req, res) => {
+app.get('/api/update/institutions', (req, res) => {
     const dummyInstitution = [
         {hospitalName: 'hospital Name 01', website: 'www.hospitalname.com'},
         {hospitalName: 'hospital Name 02', website: 'www.hospitalname2.com'},
