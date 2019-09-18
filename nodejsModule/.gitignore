@@ -1,3 +1,5 @@
 /node_modules
-client_secret.json
 /coverage
+
+# application specific variables
+client_secret.json
