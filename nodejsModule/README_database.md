@@ -1,6 +1,7 @@
 ### This readme describes how to use/test/maybe improve endpoint `/api/update/google-spreadsheets-hospital-services`
 
 ####So far
+
 NOTE:: our app is configured to run on `http://localhost:3007/` during development
 
 1.Have nodejs installed
@@ -13,6 +14,6 @@ NOTE:: our app is configured to run on `http://localhost:3007/` during developme
 
 5.Go to `/api/update-script` to create the tables required by our models.(make sure to have a database already as defined in step 2)
 
-6. `/api/update/google-spreadsheets-hospital-services` endpoint now creates or updates the database rows as per rId
+6.`/api/update/google-spreadsheets-hospital-services` endpoint now creates or updates the database rows as per rId
 
 7.To help and contribute to this task see `index.js` in this folder on line 250..The fields need matching

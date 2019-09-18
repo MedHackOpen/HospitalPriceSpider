@@ -101,7 +101,7 @@ The others are "nice-to-haves" that will make applications built on top of this 
 
 ## Testing endpoints during development
 
-If you wish to skip ahead and jump in to database see `/nodejsModule/README_database.md here` [README_database](/nodejsModule/README_database.md)
+If you wish to skip ahead and jump in to database see `/nodejsModule/README_database.md` here [README_database](/nodejsModule/README_database.md)
 
 To test please view the readme.md in ./nodejsModule folder
 
