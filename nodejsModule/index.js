@@ -274,7 +274,7 @@ app.get('/api/update/google-spreadsheets-hospital-services', async (req, res) =>
             //console.log('Response...DATA............',response.data)
             _.forEach(response.data, row => {
 
-                // data from googlesheets
+                // data from googlesheets/response.data from the const dataUrl above
 
                 console.log('Google spreadsheet DATA......')
                 console.log('Rows..id : ', row.id)
@@ -382,7 +382,7 @@ app.get('/api/update/google-spreadsheets-hospital-services', async (req, res) =>
 
 
                 /**
-                 * find if the record exists with the hospital id, if not create a new record
+                 * find if the Services record exists with the hospital id, if not create a new record
                  * if the record exists then update with the latest data from
                  */
                 Services.findOne({
