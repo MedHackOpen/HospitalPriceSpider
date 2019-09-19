@@ -22,6 +22,7 @@ const Services = require('./database/models').Services
 /**
  * allow cors for use with react app http://localhost:3000/ when
  * using other render like react or vue on dev
+ * @TODO add status response codes
  * @TODO configure security on production (cors) also implement response status for consumers og there apis
  */
 app.use(cors())
@@ -205,6 +206,11 @@ app.get('/api/data/google-spread-sheets/:id', async (req, res) => {
 
 })
 
+/**
+ * this endpoint is used for testing
+ * Current testing on matching data in the csv files
+ * in relation to the records in the institutions database table
+ */
 app.get('/api/test', async (req, res) => {
 
     // get data from database, see what to make of the csv folder and it's file from that data
