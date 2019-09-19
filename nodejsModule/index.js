@@ -215,16 +215,37 @@ app.get('/api/test', async (req, res) => {
 
     // get data from database, see what to make of the csv folder and it's file from that data
     Institutions.findAll({
+
+        where : {
+            'savedRepoTableName': 'hospital_CPMC'
+        },
+
         attributes: ['rId', 'hospitalName', 'itemColumnName', 'avgPriceColumnName',
             'priceSampleSizeColumnName', 'extraColumnName', 'categoryColumnName',
             'medianPricingColumnName', 'outPatientPriceColumnName', 'inPatientPriceColumnName','removedHeaderRowsForCSV',
-        'savedRepoTableName'],
+            'savedRepoTableName'],
         raw: true
     }) .then(institutions => {
+
+        // api endpoints need to communicate within the app
+        // req data from '/api/data/google-spread-sheets/:id'
+        let homeUrl = url.format({
+            protocol: req.protocol,
+            host: req.get('host'),
+        });
+        const csvFileName = 'hospital_CPMC' // change this to match your spreadsheet
+        const dataUrl = `${homeUrl}/api/csvdata/${csvFileName}.csv`
+        axios.get(dataUrl)
+            .then((data) => {
+                console.log(data)
+            })
+
+
 
         console.log(institutions)
 
         res.send(institutions)
+
     })
     //const data =  await testingConvert()
     //res.send(data)
