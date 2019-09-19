@@ -7,29 +7,38 @@ module.exports = (sequelize, DataTypes) => {
     city: DataTypes.STRING,
     region: DataTypes.STRING,
     country: DataTypes.STRING,
+    mainHospitalName: DataTypes.STRING,
+    numberBeds: DataTypes.DOUBLE,
     streetAddress: DataTypes.STRING,
     numberLocation: DataTypes.INTEGER,
     ownedBy: DataTypes.STRING,
     managedBy: DataTypes.STRING,
     keyShareholdersAndPeople: DataTypes.JSON,
-    grossRevenueFiscal: DataTypes.DOUBLE,
+    grossRevenueFiscal: DataTypes.STRING,
     annualReportDocs: DataTypes.JSON,
     website: DataTypes.STRING,
     currentPricingUrl: DataTypes.STRING,
+    currentPricingLandingURL: DataTypes.STRING,
     itemColumnName: DataTypes.STRING,
     avgPriceColumnName: DataTypes.STRING,
     priceSampleSizeColumnName: DataTypes.STRING,
+    extraColumnName: DataTypes.STRING,
+    categoryColumnName: DataTypes.STRING,
     medianPricingColumnName: DataTypes.STRING,
     outPatientPriceColumnName: DataTypes.STRING,
     inpatientPriceColumnName: DataTypes.STRING,
-    removedHeaderRowsForCSV: DataTypes.INTEGER,
+    removedHeaderRowsForCSV: DataTypes.STRING,//should be bol
     longitude: DataTypes.DOUBLE,
     latitude: DataTypes.DOUBLE,
-    founded: DataTypes.DATE,
+    savedRepoTableName: DataTypes.STRING,
+    communityHospital: DataTypes.STRING,//should be bol
     type: DataTypes.STRING,
-    nonProfit: DataTypes.BOOLEAN,
-    communityHospital: DataTypes.BOOLEAN,
-    savedRepoTableName: DataTypes.STRING
+    founded: DataTypes.DATE,
+    siteUp: DataTypes.STRING,//should be bol
+    contributor: DataTypes.STRING,
+    hasSpreadSheet: DataTypes.STRING,////should be bol
+    notes: DataTypes.STRING, //should be bol
+    nonProfit: DataTypes.STRING,
   }, {});
   Institutions.associate = function(models) {
     // associations can be defined here

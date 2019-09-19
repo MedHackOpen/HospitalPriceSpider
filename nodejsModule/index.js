@@ -206,8 +206,22 @@ app.get('/api/data/google-spread-sheets/:id', async (req, res) => {
 })
 
 app.get('/api/test', async (req, res) => {
-    const data =  await testingConvert()
-    res.send(data)
+
+    // get data from database, see what to make of the csv folder and it's file from that data
+    Institutions.findAll({
+        attributes: ['rId', 'hospitalName', 'itemColumnName', 'avgPriceColumnName',
+            'priceSampleSizeColumnName', 'extraColumnName', 'categoryColumnName',
+            'medianPricingColumnName', 'outPatientPriceColumnName', 'inPatientPriceColumnName','removedHeaderRowsForCSV',
+        'savedRepoTableName'],
+        raw: true
+    }) .then(institutions => {
+
+        console.log(institutions)
+
+        res.send(institutions)
+    })
+    //const data =  await testingConvert()
+    //res.send(data)
 })
 
 //-------------------------Database endpoints--------------------------------------------------------------------------
@@ -275,6 +289,7 @@ app.get('/api/update/google-spreadsheets-hospital-services', async (req, res) =>
             _.forEach(response.data, row => {
 
                 // data from googlesheets/response.data from the const dataUrl above
+                //console.log(row) // for more data structure
 
                 console.log('Google spreadsheet DATA......')
                 console.log('Rows..id : ', row.id)
@@ -355,29 +370,38 @@ app.get('/api/update/google-spreadsheets-hospital-services', async (req, res) =>
                     city: row.city,//string
                     region: row.region,//string
                     country: row.country,//string
+                    mainHospitalName: row.mainhospitalname,//STRING
+                    numberBeds: row.numberbeds,//INTEGER,
                     streetAddress: row.streetaddress,//string
                     numberLocation: row.numberlocations,//int
                     ownedBy: row.ownedby,//string
                     managedBy: row.managedby,//string
                     keyShareholdersAndPeople: row.keyshareholdersandpeople,//json
-                    grossRevenueFiscal: row.grossrevenuefiscal,//double
+                    grossRevenueFiscal: row.grossrevenuefiscal,//string
                     annualReportDocs: row.annualreportdocs,//json
                     website: row.website,//string
                     currentPricingUrl: row.currentpricingurl,//string
+                    currentPricingLandingURL: row.currentpricinglandingurl,//STRING,
                     itemColumnName: row.itemcolumnname,//string
                     avgPriceColumnName: row.avgpricecolumnname,//string
                     priceSampleSizeColumnName: row.pricesamplesizecolumnname,//string
+                    extraColumnName: row.extracolumnname,//STRING,
+                    categoryColumnName: row.categorycolumnname,//STRING,
                     medianPricingColumnName: row.medianpricingcolumnname,//string
                     outPatientPriceColumnName: row.outpatientpricecolumnname,//string
                     inpatientPriceColumnName: row.inpatientpricecolumnname,//string
                     removedHeaderRowsForCSV: row.removedheaderrowsforcsv,//int
                     longitude: row.longitude,//double
                     latitude: row.latitude,//double
-                    founded: row.founded,//data
+                    savedRepoTableName: row.savedrepotablename,//string
+                    communityHospital: row.communityhospital,// bol
                     type: row.type,  //string
-                    nonProfit: 'Test!!',//bol
-                    communityHospital: 'Test!!', // bol
-                    savedRepoTableName: 'Test!!' // string
+                    founded: row.founded,//data
+                    siteUp: row.siteup,//bol
+                    contributor: row.contributor,
+                    hasSpreadSheet: row.hasspreadsheet,//bol
+                    notes: row.notes,
+                    nonProfit: row.nonprofit,//bol
                 }
 
 
@@ -470,34 +494,43 @@ app.get('/api/update/google-spreadsheets-hospital-services', async (req, res) =>
                     if (record){
                         Institutions.update(
                             {
-                                rId: row.rid, //double
-                                hospitalName: 'They updated me for testing',//row.hospitalname,//string
+                                //rId: row.rid, //double
+                                //hospitalName: row.hospitalname,//string
                                 city: row.city,//string
                                 region: row.region,//string
                                 country: row.country,//string
+                                mainHospitalName: row.mainhospitalname,//STRING
+                                numberBeds: row.numberbeds,//INTEGER,
                                 streetAddress: row.streetaddress,//string
                                 numberLocation: row.numberlocations,//int
                                 ownedBy: row.ownedby,//string
                                 managedBy: row.managedby,//string
                                 keyShareholdersAndPeople: row.keyshareholdersandpeople,//json
-                                grossRevenueFiscal: row.grossrevenuefiscal,//double
+                                grossRevenueFiscal: row.grossrevenuefiscal,//string
                                 annualReportDocs: row.annualreportdocs,//json
                                 website: row.website,//string
                                 currentPricingUrl: row.currentpricingurl,//string
+                                currentPricingLandingURL: row.currentpricinglandingurl,//STRING,
                                 itemColumnName: row.itemcolumnname,//string
                                 avgPriceColumnName: row.avgpricecolumnname,//string
                                 priceSampleSizeColumnName: row.pricesamplesizecolumnname,//string
+                                extraColumnName: row.extracolumnname,//STRING,
+                                categoryColumnName: row.categorycolumnname,//STRING,
                                 medianPricingColumnName: row.medianpricingcolumnname,//string
                                 outPatientPriceColumnName: row.outpatientpricecolumnname,//string
                                 inpatientPriceColumnName: row.inpatientpricecolumnname,//string
                                 removedHeaderRowsForCSV: row.removedheaderrowsforcsv,//int
                                 longitude: row.longitude,//double
                                 latitude: row.latitude,//double
-                                founded: row.founded,//data
+                                savedRepoTableName: row.savedrepotablename,//string
+                                communityHospital: row.communityhospital,// bol
                                 type: row.type,  //string
-                                nonProfit: 'UpdatedTest',//bol
-                                communityHospital: 'updatedTest', // bol
-                                savedRepoTableName: 'updatedTest' // string
+                                founded: row.founded,//data
+                                siteUp: row.siteup,//bol
+                                contributor: row.contributor,
+                                hasSpreadSheet: row.hasspreadsheet,//bol
+                                notes: row.notes,
+                                nonProfit: row.nonprofit,//bol
                             },
                             {
                                 where: {rId: row.rid}
