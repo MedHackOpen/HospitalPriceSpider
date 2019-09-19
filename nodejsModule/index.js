@@ -236,13 +236,57 @@ app.get('/api/test', async (req, res) => {
         const csvFileName = 'hospital_CPMC' // change this to match your spreadsheet
         const dataUrl = `${homeUrl}/api/csvdata/${csvFileName}.csv`
         axios.get(dataUrl)
-            .then((data) => {
-                console.log(data)
+            .then( async (data) => {
+                const responseData = await data.data
+               _.forEach(responseData, (dt) => {
+
+                   _.forEach(institutions, (institution) => {
+
+                       //console.log('dataaaaa>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<',responseData)
+
+
+                           //console.log('iietmemm>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', dt`.${item}`)
+
+                        const  newData = [
+                            { uuid: uuid() },
+                            { rId: institution.rId },
+                            //{ itemName}
+                            { hospitalId: institution.rId },
+                            //{ price:  },
+                            {  },
+                            {  },
+                            {  },
+                            {  },
+                            {  },
+                            {  },
+                            {  },
+                            {  },
+                            {  },
+                            {  },
+                            {  },
+                            {  },
+                            {  },
+                            {  },
+                            {  },
+                            {  },
+                            {  },
+                        ]
+
+                       console.log('institution.avgPriceColumnName ==== ',institution.avgPriceColumnName)
+                       const fieldName = institution.avgPriceColumnName
+                       //console.log('Dynamic Data........', `${dt}${institution.avgPriceColumnName}`)
+                       console.log('fieldName...++...++..+++...+++......+++.....++++..++..++...',fieldName)
+                       console.log('Institution =========================================================================',institution)
+
+                       console.log('dt.CHARGE ALLLLhhhhh4h4h4h4hh4.............',dt.CHARGE)
+                       console.log('dt.CHARGE..................................................',dt+`.`+fieldName)
+                        console.log('newDATA********************************************************************************************', newData)
+
+                    })
+
+                })
+
             })
-
-
-
-        console.log(institutions)
 
         res.send(institutions)
 
