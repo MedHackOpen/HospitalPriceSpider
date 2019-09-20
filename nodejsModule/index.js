@@ -217,7 +217,7 @@ app.get('/api/test', async (req, res) => {
     Institutions.findAll({
 
         where : {
-            'savedRepoTableName': 'hospital_CPMC'
+            'savedRepoTableName': 'YKHC_MasterChargesheet'
         },
 
         attributes: ['rId', 'hospitalName', 'itemColumnName', 'avgPriceColumnName',
@@ -233,7 +233,7 @@ app.get('/api/test', async (req, res) => {
             protocol: req.protocol,
             host: req.get('host'),
         });
-        const csvFileName = 'hospital_CPMC' // change this to match your spreadsheet
+        const csvFileName = 'YKHC_MasterChargesheet' // change this to match your spreadsheet
         const dataUrl = `${homeUrl}/api/csvdata/${csvFileName}.csv`
         axios.get(dataUrl)
             .then( async (data) => {
@@ -242,17 +242,12 @@ app.get('/api/test', async (req, res) => {
 
                    _.forEach(institutions, (institution) => {
 
-                       //console.log('dataaaaa>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<',responseData)
-
-
-                           //console.log('iietmemm>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', dt`.${item}`)
-
-                        const  newData = [
+                        /*const  newData = [
                             { uuid: uuid() },
                             { rId: institution.rId },
                             //{ itemName}
                             { hospitalId: institution.rId },
-                            //{ price:  },
+                            { price: dt[institution.avgPriceColumnName] },
                             {  },
                             {  },
                             {  },
@@ -270,9 +265,24 @@ app.get('/api/test', async (req, res) => {
                             {  },
                             {  },
                             {  },
-                        ]
+                        ]*/
 
-                       console.log('institution.avgPriceColumnName ==== ',institution.avgPriceColumnName)
+                        const newData = {
+                            uuid: uuid() ,
+                            rId: institution.rId ,
+                            itemName: dt[institution.itemColumnName],
+                            hospitalId: institution.rId ,
+                            price: dt[institution.avgPriceColumnName],
+                            hospitalName: dt[institution.extraColumnName],
+                            avgPrice: dt[institution.avgPriceColumnName], //@TODO maybe
+                            medianPrice: dt[institution.medianPricingColumnName],
+                            // sampleSize: ,
+                            outpatientAvgPrice: dt[institution.outPatientPriceColumnName],
+                            inpatientAvgPrice:  dt[institution.inpatientPriceColumnName],
+                            revenue_code: dt[institution.categoryColumnName],
+                        }
+
+                       //console.log('institution.avgPriceColumnName ==== ',institution.avgPriceColumnName)
                        const fieldName = institution.avgPriceColumnName
                        //console.log('Dynamic Data........', `${dt}${institution.avgPriceColumnName}`)
                        console.log('fieldName...++...++..+++...+++......+++.....++++..++..++...',fieldName)
@@ -290,6 +300,7 @@ app.get('/api/test', async (req, res) => {
                        console.log('Institution.removedHeaderRowsForCSV =======================',institution.removedHeaderRowsForCSV)
                        console.log('institution.savedRepoTableName=======',institution.savedRepoTableName)
 
+                       console.log('dtdtttttttttt.............',dt)
                        console.log('dt.FACILITY.............',dt.FACILITY)
                        console.log('dt.CMS_PROV_ID.............',dt.CMS_PROV_ID)
                        console.log('dt.HOSPITAL_NAME.............',dt.HOSPITAL_NAME)
@@ -298,9 +309,11 @@ app.get('/api/test', async (req, res) => {
                        console.log('dt.DESCRIPION...........',dt.DESCRIPION)
                        console.log('dt.REVENUE_CODE............',dt.REVENUE_CODE)
                        console.log('dt.CHARGE............',dt.CHARGE)
-                       console.log('dt.CHARGE............',dt[institution.avgPriceColumnName])// TODO.. start here tomorrow
-                       console.log('dt.Test...............................................',dt+`.`+fieldName)
-                        console.log('newDATA********************************************************************************************', newData)
+                       console.log('dt.CHARGE Dynamic............',dt[institution.avgPriceColumnName])
+                       console.log('dt.DESCRIPTION Dynamic............',dt[institution.itemColumnName])
+                       console.log('dt.REVENUE_CODE Dynamic............',dt[institution.categoryColumnName])
+                        console.log('newDATA*******************|||||********************', newData)
+                        console.log('csvItem************************************')
 
                     })
 
@@ -369,18 +382,18 @@ app.get('/api/load-data-from-csv', async (req, res) => {
                         /**
                          * new procedure item to insert into procedures table
                          */
-                        const  newData = {
+                        /*const  newData = {
                             uuid: uuid() ,
                             rId: institution.rId ,
-                            // itemName
+                            itemName: dt[institution.itemColumnName],
                             hospitalId: institution.rId ,
-                            price:  dt[institution.avgPriceColumnName] ,
-                            avgPrice: dt[institution.avgPriceColumnName] ,
-                            type: institution.type ,
+                            price: dt[institution.avgPriceColumnName],
+                            avgPrice: dt[institution.avgPriceColumnName], //@TODO maybe
                             medianPrice: dt[institution.medianPricingColumnName],
                             // sampleSize: ,
                             outpatientAvgPrice: dt[institution.outPatientPriceColumnName],
                             inpatientAvgPrice:  dt[institution.inpatientPriceColumnName],
+                            revenue_code: dt[institution.categoryColumnName],
                             //latestPriceDate: ,
                             //firstPriceDate: ,
                             //changeSinceLastUpdate: ,
@@ -391,6 +404,22 @@ app.get('/api/load-data-from-csv', async (req, res) => {
                             //keywords: ,
                             country: institution.country ,
                             //currency: ,
+                        }*/
+
+                        const newData = {
+                            //revenue_code: dt[institution.categoryColumnName],
+                            uuid: uuid() ,
+                            rId: institution.rId ,
+                            itemName: dt[institution.itemColumnName],
+                            hospitalId: institution.rId ,
+                            price: dt[institution.avgPriceColumnName],
+                            hospitalName: dt[institution.extraColumnName],
+                            avgPrice: dt[institution.avgPriceColumnName], //@TODO maybe
+                            medianPrice: dt[institution.medianPricingColumnName],
+                            // sampleSize: ,
+                            outpatientAvgPrice: dt[institution.outPatientPriceColumnName],
+                            inpatientAvgPrice:  dt[institution.inpatientPriceColumnName],
+                            revenue_code: dt[institution.categoryColumnName],
                         }
 
                             /*
@@ -423,7 +452,8 @@ app.get('/api/load-data-from-csv', async (req, res) => {
                         console.log('dt.REVENUE_CODE............',dt.REVENUE_CODE)
                         console.log('dt.CHARGE............',dt.CHARGE)
                         console.log('dt.CHARGE Dynamic............',dt[institution.avgPriceColumnName])// TODO.. start here tomorrow
-                        */console.log('newDATA******************************************************', newData)
+                        console.log('newDATA******************************************************', newData)
+                        */
 
                         /**
                          * find if the Services record exists with the hospital id, if not create a new record
@@ -458,25 +488,12 @@ app.get('/api/load-data-from-csv', async (req, res) => {
                         if (record) {
                             Services.update(
                                 {
-                                    itemName: 'updatedTest', //string
-                                    hospitalId: 'updatedTest', // double
-                                    price: 'updatedTest', //double
-                                    avgPrice: 'Test', //double
-                                    type: row.type, // string
-                                    medianPrice: 'Test', // double
-                                    sampleSize: 'Test', // double
-                                    outpatientAvgPrice: 'Test', //double
-                                    inpatientAvgPrice: 'Test', // double
-                                    latestPriceDate: 'Test', // string
-                                    firstPriceDate: 'Test', // string
-                                    changeSinceLastUpdate: 'Test', // double
-                                    description: 'Test', // string
-                                    relatedItemsFromOthers: 'Test', // json
-                                    relatedItemsFromThisLocation: 'Test', // json
-                                    itemsRequiredForThis: 'updatedTest', // json
-                                    keywords: 'updatedTest', // json
-                                    country: row.country, // string
-                                    currency: 'Test' // string
+                                    price: dt[institution.avgPriceColumnName],
+                                    avgPrice: dt[institution.avgPriceColumnName], //@TODO maybe
+                                    medianPrice: dt[institution.medianPricingColumnName],
+                                    // sampleSize: ,
+                                    outpatientAvgPrice: dt[institution.outPatientPriceColumnName],
+                                    inpatientAvgPrice:  dt[institution.inpatientPriceColumnName],
                                 },
                                 {
                                     where: {rId: institution.rId }
