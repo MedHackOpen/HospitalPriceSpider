@@ -333,9 +333,9 @@ app.get('/api/load-data-from-csv', async (req, res) => {
     // get data from database, see what to make of the csv folder and it's file from that data
     Institutions.findAll({
 
-        where : {
+        /*where : {
             'savedRepoTableName': 'YKHC_MasterChargesheet' //YKHC_MasterChargesheet, hospital_virtua, hospital_CPMC,Wake_Forest_Baptist_Health
-        },
+        },*/
 
         attributes: ['rId', 'hospitalName', 'country', 'type', 'itemColumnName', 'avgPriceColumnName',
             'priceSampleSizeColumnName', 'extraColumnName', 'categoryColumnName',
@@ -344,20 +344,25 @@ app.get('/api/load-data-from-csv', async (req, res) => {
         raw: true
     }) .then(institutions => {
 
-        // api endpoints need to communicate within the app
-        // req data from '/api/data/google-spread-sheets/:id'
-        let homeUrl = url.format({
-            protocol: req.protocol,
-            host: req.get('host'),
-        });
-        const csvFileName = 'YKHC_MasterChargesheet' // change this to match your spreadsheet
-        const dataUrl = `${homeUrl}/api/csvdata/${csvFileName}.csv`
-        axios.get(dataUrl)
-            .then( async (data) => {
-                const responseData = await data.data
-                _.forEach(responseData, (dt) => {
+        /**
+         * get each institution from database so we can relate to its file name
+         * (institution.savedRepoTableName)
+         * in our local rawCSVs folder
+         */
+        _.forEach(institutions, (institution) => {
 
-                    _.forEach(institutions, (institution) => {
+            // api endpoints need to communicate within the app
+            // req data from '/api/data/google-spread-sheets/:id'
+            let homeUrl = url.format({
+                protocol: req.protocol,
+                host: req.get('host'),
+            });
+            const csvFileName = institution.savedRepoTableName // change this to match your spreadsheet
+            const dataUrl = `${homeUrl}/api/csvdata/${csvFileName}.csv`
+            axios.get(dataUrl)
+                .then( async (data) => {
+                    const responseData = await data.data
+                    _.forEach(responseData, (dt) => {
 
                         //console.log('dataaaaa>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<',responseData)
 
@@ -385,7 +390,7 @@ app.get('/api/load-data-from-csv', async (req, res) => {
                             //{ itemsRequiredForThis:  },
                             //{ keywords: },
                             { country: institution.country },
-                           //{ currency: },
+                            //{ currency: },
                         ]
 
                         console.log('institution.avgPriceColumnName ==== ',institution.avgPriceColumnName)
@@ -422,9 +427,10 @@ app.get('/api/load-data-from-csv', async (req, res) => {
 
                 })
 
-            })
+            res.send(institutions)
 
-        res.send(institutions)
+        })
+
 
     })
     //const data =  await testingConvert()
