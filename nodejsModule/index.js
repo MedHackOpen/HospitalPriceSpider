@@ -298,6 +298,7 @@ app.get('/api/test', async (req, res) => {
                        console.log('dt.DESCRIPION...........',dt.DESCRIPION)
                        console.log('dt.REVENUE_CODE............',dt.REVENUE_CODE)
                        console.log('dt.CHARGE............',dt.CHARGE)
+                       console.log('dt.CHARGE............',dt[institution.avgPriceColumnName])// TODO.. start here tomorrow
                        console.log('dt.Test...............................................',dt+`.`+fieldName)
                         console.log('newDATA********************************************************************************************', newData)
 
@@ -318,6 +319,117 @@ app.get('/api/test', async (req, res) => {
 /**
  * This section maybe broken into a separate file
  */
+
+
+/**
+ * this endpoint is an improvement of the current /api/test on line 214
+ * Should load the database items (institutions table/model) and get their
+ * csvFile by named saved as 'savedRepoTableName' , then loop through each
+ * file by name and match the fields required, then create or update the
+ * services/procedures table with the right values
+ */
+app.get('/api/load-data-from-csv', async (req, res) => {
+
+    // get data from database, see what to make of the csv folder and it's file from that data
+    Institutions.findAll({
+
+        where : {
+            'savedRepoTableName': 'YKHC_MasterChargesheet' //YKHC_MasterChargesheet, hospital_virtua, hospital_CPMC,Wake_Forest_Baptist_Health
+        },
+
+        attributes: ['rId', 'hospitalName', 'country', 'type', 'itemColumnName', 'avgPriceColumnName',
+            'priceSampleSizeColumnName', 'extraColumnName', 'categoryColumnName',
+            'medianPricingColumnName', 'outPatientPriceColumnName', 'inPatientPriceColumnName','removedHeaderRowsForCSV',
+            'savedRepoTableName'],
+        raw: true
+    }) .then(institutions => {
+
+        // api endpoints need to communicate within the app
+        // req data from '/api/data/google-spread-sheets/:id'
+        let homeUrl = url.format({
+            protocol: req.protocol,
+            host: req.get('host'),
+        });
+        const csvFileName = 'YKHC_MasterChargesheet' // change this to match your spreadsheet
+        const dataUrl = `${homeUrl}/api/csvdata/${csvFileName}.csv`
+        axios.get(dataUrl)
+            .then( async (data) => {
+                const responseData = await data.data
+                _.forEach(responseData, (dt) => {
+
+                    _.forEach(institutions, (institution) => {
+
+                        //console.log('dataaaaa>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<',responseData)
+
+
+                        //console.log('iietmemm>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', dt`.${item}`)
+
+                        const  newData = [
+                            { uuid: uuid() },
+                            { rId: institution.rId },
+                            //{ itemName}
+                            { hospitalId: institution.rId },
+                            { price:  dt[institution.avgPriceColumnName] },
+                            { avgPrice: dt[institution.avgPriceColumnName] },
+                            { type: institution.type },
+                            { medianPrice: dt[institution.medianPricingColumnName]},
+                            //{ sampleSize: },
+                            { outpatientAvgPrice: dt[institution.outPatientPriceColumnName]},
+                            { inpatientAvgPrice:  dt[institution.inpatientPriceColumnName]},
+                            //{ latestPriceDate: },
+                            //{ firstPriceDate: },
+                            //{ changeSinceLastUpdate: },
+                            //{ description: },
+                            //{ relatedItemsFromOthers: },
+                            //{ relatedItemsFromThisLocation: },
+                            //{ itemsRequiredForThis:  },
+                            //{ keywords: },
+                            { country: institution.country },
+                           //{ currency: },
+                        ]
+
+                        console.log('institution.avgPriceColumnName ==== ',institution.avgPriceColumnName)
+                        const fieldName = institution.avgPriceColumnName
+                        //console.log('Dynamic Data........', `${dt}${institution.avgPriceColumnName}`)
+                        console.log('fieldName...++...++..+++...+++......+++.....++++..++..++...',fieldName)
+                        //console.log('Institution =======================',institution)
+                        console.log('Institution.rId =======================',institution.rId)
+                        console.log('Institution.hospitalName =======================',institution.hospitalName)
+                        console.log('Institution.itemColumnName =======================',institution.itemColumnName)
+                        console.log('Institution.avgPriceColumnName =======================',institution.avgPriceColumnName)
+                        console.log('Institution.priceSampleSizeColumnName =======================',institution.priceSampleSizeColumnName)
+                        console.log('Institution.extraColumnName =======================',institution.extraColumnName)
+                        console.log('Institution.categoryColumnName =======================',institution.categoryColumnName)
+                        console.log('Institution.medianPricingColumnName =======================',institution.medianPricingColumnName)
+                        console.log('Institution.outPatientPriceColumnName =======================',institution.outPatientPriceColumnName)
+                        console.log('Institution.inPatientPriceColumnName =======================',institution.inPatientPriceColumnName)
+                        console.log('Institution.removedHeaderRowsForCSV =======================',institution.removedHeaderRowsForCSV)
+                        console.log('institution.savedRepoTableName=======',institution.savedRepoTableName)
+
+                        console.log('dt.dtdtdtdtdtdtdtdtdtdtdtdtdtd............',dt)
+                        console.log('dt.FACILITY.............',dt.FACILITY)
+                        console.log('dt.CMS_PROV_ID.............',dt.CMS_PROV_ID)
+                        console.log('dt.HOSPITAL_NAME.............',dt.HOSPITAL_NAME)
+                        console.log('dt.SERVICE_SETTING.............',dt.SERVICE_SETTING)
+                        console.log('dt.CDM.............',dt.CDM)
+                        console.log('dt.DESCRIPION...........',dt.DESCRIPION)
+                        console.log('dt.REVENUE_CODE............',dt.REVENUE_CODE)
+                        console.log('dt.CHARGE............',dt.CHARGE)
+                        console.log('dt.CHARGE Dynamic............',dt[institution.avgPriceColumnName])// TODO.. start here tomorrow
+                        console.log('newDATA********************************************************************************************', newData)
+
+                    })
+
+                })
+
+            })
+
+        res.send(institutions)
+
+    })
+    //const data =  await testingConvert()
+    //res.send(data)
+})
 /**
  * Helper function for creating database tables from the models in this project
  * should be called on the endpoint that updates the database when new models are
@@ -427,6 +539,7 @@ app.get('/api/update/google-spreadsheets-hospital-services', async (req, res) =>
                 /**
                  * newData item/Procedure/service
                  */
+                /*
                 let newData = {
                     uuid: uuid(),
                     rId: row.rid,// double
@@ -449,7 +562,7 @@ app.get('/api/update/google-spreadsheets-hospital-services', async (req, res) =>
                     keywords: 'Test', // json
                     country: row.country, // string
                     currency: 'Test' // string
-                }
+                }*/
 
 
                 // newInstitution item/Hospital
@@ -499,6 +612,7 @@ app.get('/api/update/google-spreadsheets-hospital-services', async (req, res) =>
                  * find if the Services record exists with the hospital id, if not create a new record
                  * if the record exists then update with the latest data from
                  */
+                /*
                 Services.findOne({
 
                     where: { rId: row.rid }
@@ -508,7 +622,7 @@ app.get('/api/update/google-spreadsheets-hospital-services', async (req, res) =>
                     /**
                      * if record is not in the table, create one
                      */
-                    if (!record) {
+                    /*if (!record) {
                         // insert items in database Services table
 
 
@@ -556,7 +670,7 @@ app.get('/api/update/google-spreadsheets-hospital-services', async (req, res) =>
                     }
 
                     //console.log(record.dataValues)
-                })
+                })*/
 
                 // Hospital table now
                 Institutions.findOne({
