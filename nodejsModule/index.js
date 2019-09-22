@@ -15,7 +15,7 @@ const app = express()
 //Database
 const sequelize = require('./database/models').sequelize
 const Institutions = require('./database/models').Institutions
-const Services = require('./database/models').Services
+const Procedures = require('./database/models').Procedures
 
 //require('./prod')(app) //prod settings and middlewares
 
@@ -380,47 +380,55 @@ app.get('/api/load-data-from-csv', async (req, res) => {
                         console.log(institution)
 
                         /**
-                         * new procedure item to insert into procedures table
+                         *  validate required fields before proceeding
+                         *  ie itemName, hospitalId, price and currency
+                         *  @TODO not sure what to make of currency currently
+                         *  below validation in that order
                          */
-                        /*const  newData = {
-                            uuid: uuid() ,
-                            rId: institution.rId ,
-                            itemName: dt[institution.itemColumnName],
-                            hospitalId: institution.rId ,
-                            price: dt[institution.avgPriceColumnName],
-                            avgPrice: dt[institution.avgPriceColumnName], //@TODO maybe
-                            medianPrice: dt[institution.medianPricingColumnName],
-                            // sampleSize: ,
-                            outpatientAvgPrice: dt[institution.outPatientPriceColumnName],
-                            inpatientAvgPrice:  dt[institution.inpatientPriceColumnName],
-                            revenue_code: dt[institution.categoryColumnName],
-                            //latestPriceDate: ,
-                            //firstPriceDate: ,
-                            //changeSinceLastUpdate: ,
-                            //description: ,
-                            //relatedItemsFromOthers: ,
-                            //relatedItemsFromThisLocation: ,
-                            //itemsRequiredForThis:  ,
-                            //keywords: ,
-                            country: institution.country ,
-                            //currency: ,
-                        }*/
+                        if ( dt[institution.itemColumnName] && institution.rId && dt[institution.avgPriceColumnName]) {
 
-                        const newData = {
-                            //revenue_code: dt[institution.categoryColumnName],
-                            uuid: uuid() ,
-                            rId: institution.rId ,
-                            itemName: dt[institution.itemColumnName],
-                            hospitalId: institution.rId ,
-                            price: dt[institution.avgPriceColumnName],
-                            hospitalName: dt[institution.extraColumnName],
-                            avgPrice: dt[institution.avgPriceColumnName], //@TODO maybe
-                            medianPrice: dt[institution.medianPricingColumnName],
-                            // sampleSize: ,
-                            outpatientAvgPrice: dt[institution.outPatientPriceColumnName],
-                            inpatientAvgPrice:  dt[institution.inpatientPriceColumnName],
-                            revenue_code: dt[institution.categoryColumnName],
-                        }
+                            /**
+                             * new procedure item to insert into procedures table
+                             */
+                            /*const  newData = {
+                                uuid: uuid() ,
+                                rId: institution.rId ,
+                                itemName: dt[institution.itemColumnName],
+                                hospitalId: institution.rId ,
+                                price: dt[institution.avgPriceColumnName],
+                                avgPrice: dt[institution.avgPriceColumnName], //@TODO maybe
+                                medianPrice: dt[institution.medianPricingColumnName],
+                                // sampleSize: ,
+                                outpatientAvgPrice: dt[institution.outPatientPriceColumnName],
+                                inpatientAvgPrice:  dt[institution.inpatientPriceColumnName],
+                                revenue_code: dt[institution.categoryColumnName],
+                                //latestPriceDate: ,
+                                //firstPriceDate: ,
+                                //changeSinceLastUpdate: ,
+                                //description: ,
+                                //relatedItemsFromOthers: ,
+                                //relatedItemsFromThisLocation: ,
+                                //itemsRequiredForThis:  ,
+                                //keywords: ,
+                                country: institution.country ,
+                                //currency: ,
+                            }*/
+
+                            const newData = {
+                                //revenue_code: dt[institution.categoryColumnName],
+                                uuid: uuid() ,
+                                rId: institution.rId ,
+                                itemName: dt[institution.itemColumnName],
+                                hospitalId: institution.rId ,
+                                price: dt[institution.avgPriceColumnName],
+                                hospitalName: dt[institution.extraColumnName],
+                                avgPrice: dt[institution.avgPriceColumnName], //@TODO maybe
+                                medianPrice: dt[institution.medianPricingColumnName],
+                                // sampleSize: ,
+                                outpatientAvgPrice: dt[institution.outPatientPriceColumnName],
+                                inpatientAvgPrice:  dt[institution.inpatientPriceColumnName],
+                                revenue_code: dt[institution.categoryColumnName],
+                            }
 
                             /*
 
@@ -455,56 +463,58 @@ app.get('/api/load-data-from-csv', async (req, res) => {
                         console.log('newDATA******************************************************', newData)
                         */
 
-                        /**
-                         * find if the Services record exists with the hospital id, if not create a new record
-                         * if the record exists then update with the latest data from
-                         */
-
-                        Services.findOne({
-
-                            where: { rId: institution.rId  }
-
-                        }).then(record => {
-
                             /**
-                             * if record is not in the table, create one
+                             * find if the Procedures record exists with the hospital id, if not create a new record
+                             * if the record exists then update with the latest data from
                              */
-                        if (!record) {
-                            // insert items in database Services table
+
+                            Procedures.findOne({
+
+                                where: { rId: institution.rId  }
+
+                            }).then(record => {
+
+                                /**
+                                 * if record is not in the table, create one
+                                 */
+                                if (!record) {
+                                    // insert items in database Procedures table
 
 
-                            let newDataInstance = Services.build(
-                                newData
-                            )
+                                    let newDataInstance = Procedures.build(
+                                        newData
+                                    )
 
-                            newDataInstance.save()
-                                .then((savedData) => {
-                                    //console.log('Updated.............', savedData)
-                                })
+                                    newDataInstance.save()
+                                        .then((savedData) => {
+                                            //console.log('Updated.............', savedData)
+                                        })
 
+                                }
+
+                                // if record is truthy...update/patch its data
+                                if (record) {
+                                    Procedures.update(
+                                        {
+                                            price: dt[institution.avgPriceColumnName],
+                                            avgPrice: dt[institution.avgPriceColumnName], //@TODO maybe
+                                            medianPrice: dt[institution.medianPricingColumnName],
+                                            // sampleSize: ,
+                                            outpatientAvgPrice: dt[institution.outPatientPriceColumnName],
+                                            inpatientAvgPrice:  dt[institution.inpatientPriceColumnName],
+                                        },
+                                        {
+                                            where: {rId: institution.rId }
+                                        })
+                                        .then((data) => {
+                                            //console.log('Updated.............', data)
+                                        })
+                                }
+
+                                //console.log(record.dataValues)
+                            })
                         }
 
-                        // if record is truthy...update/patch its data
-                        if (record) {
-                            Services.update(
-                                {
-                                    price: dt[institution.avgPriceColumnName],
-                                    avgPrice: dt[institution.avgPriceColumnName], //@TODO maybe
-                                    medianPrice: dt[institution.medianPricingColumnName],
-                                    // sampleSize: ,
-                                    outpatientAvgPrice: dt[institution.outPatientPriceColumnName],
-                                    inpatientAvgPrice:  dt[institution.inpatientPriceColumnName],
-                                },
-                                {
-                                    where: {rId: institution.rId }
-                                })
-                                .then((data) => {
-                                    //console.log('Updated.............', data)
-                                })
-                        }
-
-                        //console.log(record.dataValues)
-                    })
 
                     })
 
@@ -554,12 +564,8 @@ app.get('/api/update-script', async (req, res) => {
 
 /**
  * This endpoints should retrieve data from google and populate or update
- * the services table with the relevant values from each column
- * @TODO remove dummy data and match fields data from the response object we get from google sheets
- * @TODO validate data before sending to db(ie ensure required fields are set)
- * Previously we had used this endpoint to post only to services table(test data)
- * now we use it to post to both tables in one request with the one response
- * object we get.
+ * the institutions table with the relevant values from each column
+ * @TODO load data from both local spreadsheets and google spreadsheets
  */
 app.get('/api/update/google-spreadsheets-hospital-services', async (req, res) => {
 
@@ -625,221 +631,131 @@ app.get('/api/update/google-spreadsheets-hospital-services', async (req, res) =>
                 console.log('++++++++++++++++++++++++++++++++++BREAK+++++++++++++++++++++++++++++++++')
                 console.log('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
 
+
                 /**
-                 * newData item/Procedure/service
+                 * Validate required values before proceeding
                  */
-                /*
-                let newData = {
-                    uuid: uuid(),
-                    rId: row.rid,// double
-                    itemName: 'Test', //string
-                    hospitalId: 'Test', // double
-                    price: 'Test', //double
-                    avgPrice: 'Test', //double
-                    type: row.type, // string
-                    medianPrice: 'Test', // double
-                    sampleSize: 'Test', // double
-                    outpatientAvgPrice: 'Test', //double
-                    inpatientAvgPrice: 'Test', // double
-                    latestPriceDate: 'Test', // string
-                    firstPriceDate: 'Test', // string
-                    changeSinceLastUpdate: 'Test', // double
-                    description: 'Test', // string
-                    relatedItemsFromOthers: 'Test', // json
-                    relatedItemsFromThisLocation: 'Test', // json
-                    itemsRequiredForThis: 'Test', // json
-                    keywords: 'Test', // json
-                    country: row.country, // string
-                    currency: 'Test' // string
-                }*/
 
+                if (row.rid) { // Though every row has rid
 
-                // newInstitution item/Hospital
-                let newInstitution = {
-                    uuid: uuid(), //string
-                    rId: row.rid, //double
-                    hospitalName: row.hospitalname,//string
-                    city: row.city,//string
-                    region: row.region,//string
-                    country: row.country,//string
-                    mainHospitalName: row.mainhospitalname,//STRING
-                    numberBeds: row.numberbeds,//INTEGER,
-                    streetAddress: row.streetaddress,//string
-                    numberLocation: row.numberlocations,//int
-                    ownedBy: row.ownedby,//string
-                    managedBy: row.managedby,//string
-                    keyShareholdersAndPeople: row.keyshareholdersandpeople,//json
-                    grossRevenueFiscal: row.grossrevenuefiscal,//string
-                    annualReportDocs: row.annualreportdocs,//json
-                    website: row.website,//string
-                    currentPricingUrl: row.currentpricingurl,//string
-                    currentPricingLandingURL: row.currentpricinglandingurl,//STRING,
-                    itemColumnName: row.itemcolumnname,//string
-                    avgPriceColumnName: row.avgpricecolumnname,//string
-                    priceSampleSizeColumnName: row.pricesamplesizecolumnname,//string
-                    extraColumnName: row.extracolumnname,//STRING,
-                    categoryColumnName: row.categorycolumnname,//STRING,
-                    medianPricingColumnName: row.medianpricingcolumnname,//string
-                    outPatientPriceColumnName: row.outpatientpricecolumnname,//string
-                    inpatientPriceColumnName: row.inpatientpricecolumnname,//string
-                    removedHeaderRowsForCSV: row.removedheaderrowsforcsv,//int
-                    longitude: row.longitude,//double
-                    latitude: row.latitude,//double
-                    savedRepoTableName: row.savedrepotablename,//string
-                    communityHospital: row.communityhospital,// bol
-                    type: row.type,  //string
-                    founded: row.founded,//data
-                    siteUp: row.siteup,//bol
-                    contributor: row.contributor,
-                    hasSpreadSheet: row.hasspreadsheet,//bol
-                    notes: row.notes,
-                    nonProfit: row.nonprofit,//bol
+                    // newInstitution item/Hospital
+                    let newInstitution = {
+                        uuid: uuid(), //string
+                        rId: row.rid, //double
+                        hospitalName: row.hospitalname,//string
+                        city: row.city,//string
+                        region: row.region,//string
+                        country: row.country,//string
+                        mainHospitalName: row.mainhospitalname,//STRING
+                        numberBeds: row.numberbeds,//INTEGER,
+                        streetAddress: row.streetaddress,//string
+                        numberLocation: row.numberlocations,//int
+                        ownedBy: row.ownedby,//string
+                        managedBy: row.managedby,//string
+                        keyShareholdersAndPeople: row.keyshareholdersandpeople,//json
+                        grossRevenueFiscal: row.grossrevenuefiscal,//string
+                        annualReportDocs: row.annualreportdocs,//json
+                        website: row.website,//string
+                        currentPricingUrl: row.currentpricingurl,//string
+                        currentPricingLandingURL: row.currentpricinglandingurl,//STRING,
+                        itemColumnName: row.itemcolumnname,//string
+                        avgPriceColumnName: row.avgpricecolumnname,//string
+                        priceSampleSizeColumnName: row.pricesamplesizecolumnname,//string
+                        extraColumnName: row.extracolumnname,//STRING,
+                        categoryColumnName: row.categorycolumnname,//STRING,
+                        medianPricingColumnName: row.medianpricingcolumnname,//string
+                        outPatientPriceColumnName: row.outpatientpricecolumnname,//string
+                        inpatientPriceColumnName: row.inpatientpricecolumnname,//string
+                        removedHeaderRowsForCSV: row.removedheaderrowsforcsv,//int
+                        longitude: row.longitude,//double
+                        latitude: row.latitude,//double
+                        savedRepoTableName: row.savedrepotablename,//string
+                        communityHospital: row.communityhospital,// bol
+                        type: row.type,  //string
+                        founded: row.founded,//data
+                        siteUp: row.siteup,//bol
+                        contributor: row.contributor,
+                        hasSpreadSheet: row.hasspreadsheet,//bol
+                        notes: row.notes,
+                        nonProfit: row.nonprofit,//bol
+                    }
+
+                    // Hospital table now
+                    Institutions.findOne({
+                        where: { rId: row.rid }
+                    }).then(record => {
+                        console.log('record===============', record)
+                        /**
+                         * if record doesn't exist, create one
+                         */
+                        if (!record){
+                            // insert item in database Institutions table
+
+                            let institutionInstance = Institutions.build(
+                                newInstitution
+                            )
+
+                            institutionInstance.save().then((insertedInstitution) => {
+                                //console.log('insertedInstitution...',insertedInstitution)
+                            })
+                        }
+
+                        /**
+                         * if record exists update/patch data
+                         */
+                        if (record){
+                            Institutions.update(
+                                {
+                                    //rId: row.rid, //double
+                                    //hospitalName: row.hospitalname,//string
+                                    city: row.city,//string
+                                    region: row.region,//string
+                                    country: row.country,//string
+                                    mainHospitalName: row.mainhospitalname,//STRING
+                                    numberBeds: row.numberbeds,//INTEGER,
+                                    streetAddress: row.streetaddress,//string
+                                    numberLocation: row.numberlocations,//int
+                                    ownedBy: row.ownedby,//string
+                                    managedBy: row.managedby,//string
+                                    keyShareholdersAndPeople: row.keyshareholdersandpeople,//json
+                                    grossRevenueFiscal: row.grossrevenuefiscal,//string
+                                    annualReportDocs: row.annualreportdocs,//json
+                                    website: row.website,//string
+                                    currentPricingUrl: row.currentpricingurl,//string
+                                    currentPricingLandingURL: row.currentpricinglandingurl,//STRING,
+                                    itemColumnName: row.itemcolumnname,//string
+                                    avgPriceColumnName: row.avgpricecolumnname,//string
+                                    priceSampleSizeColumnName: row.pricesamplesizecolumnname,//string
+                                    extraColumnName: row.extracolumnname,//STRING,
+                                    categoryColumnName: row.categorycolumnname,//STRING,
+                                    medianPricingColumnName: row.medianpricingcolumnname,//string
+                                    outPatientPriceColumnName: row.outpatientpricecolumnname,//string
+                                    inpatientPriceColumnName: row.inpatientpricecolumnname,//string
+                                    removedHeaderRowsForCSV: row.removedheaderrowsforcsv,//int
+                                    longitude: row.longitude,//double
+                                    latitude: row.latitude,//double
+                                    savedRepoTableName: row.savedrepotablename,//string
+                                    communityHospital: row.communityhospital,// bol
+                                    type: row.type,  //string
+                                    founded: row.founded,//data
+                                    siteUp: row.siteup,//bol
+                                    contributor: row.contributor,
+                                    hasSpreadSheet: row.hasspreadsheet,//bol
+                                    notes: row.notes,
+                                    nonProfit: row.nonprofit,//bol
+                                },
+                                {
+                                    where: {rId: row.rid}
+                                })
+                                .then((data) => {
+                                    console.log('Updated.............', data)
+                                })
+                        }
+
+                    })
                 }
-
-
-                /**
-                 * find if the Services record exists with the hospital id, if not create a new record
-                 * if the record exists then update with the latest data from
-                 */
-                /*
-                Services.findOne({
-
-                    where: { rId: row.rid }
-
-                }).then(record => {
-
-                    /**
-                     * if record is not in the table, create one
-                     */
-                    /*if (!record) {
-                        // insert items in database Services table
-
-
-                        let newDataInstance = Services.build(
-                            newData
-                        )
-
-                        newDataInstance.save()
-                            .then((savedData) => {
-                                //console.log('Updated.............', savedData)
-                            })
-
-                    }
-
-                    // if record is truthy...update/patch its data
-                    if (record) {
-                        Services.update(
-                            {
-                                itemName: 'updatedTest', //string
-                                hospitalId: 'updatedTest', // double
-                                price: 'updatedTest', //double
-                                avgPrice: 'Test', //double
-                                type: row.type, // string
-                                medianPrice: 'Test', // double
-                                sampleSize: 'Test', // double
-                                outpatientAvgPrice: 'Test', //double
-                                inpatientAvgPrice: 'Test', // double
-                                latestPriceDate: 'Test', // string
-                                firstPriceDate: 'Test', // string
-                                changeSinceLastUpdate: 'Test', // double
-                                description: 'Test', // string
-                                relatedItemsFromOthers: 'Test', // json
-                                relatedItemsFromThisLocation: 'Test', // json
-                                itemsRequiredForThis: 'updatedTest', // json
-                                keywords: 'updatedTest', // json
-                                country: row.country, // string
-                                currency: 'Test' // string
-                            },
-                            {
-                                where: {rId: row.rid}
-                            })
-                            .then((data) => {
-                                console.log('Updated.............', data)
-                            })
-                    }
-
-                    //console.log(record.dataValues)
-                })*/
-
-                // Hospital table now
-                Institutions.findOne({
-                    where: { rId: row.rid }
-                }).then(record => {
-                    console.log('record===============', record)
-                    /**
-                     * if record doesn't exist, create one
-                     */
-                    if (!record){
-                        // insert item in database Institutions table
-
-                        let institutionInstance = Institutions.build(
-                            newInstitution
-                        )
-
-                        institutionInstance.save().then((insertedInstitution) => {
-                            //console.log('insertedInstitution...',insertedInstitution)
-                        })
-                    }
-
-                    /**
-                     * if record exists update/patch data
-                     */
-                    if (record){
-                        Institutions.update(
-                            {
-                                //rId: row.rid, //double
-                                //hospitalName: row.hospitalname,//string
-                                city: row.city,//string
-                                region: row.region,//string
-                                country: row.country,//string
-                                mainHospitalName: row.mainhospitalname,//STRING
-                                numberBeds: row.numberbeds,//INTEGER,
-                                streetAddress: row.streetaddress,//string
-                                numberLocation: row.numberlocations,//int
-                                ownedBy: row.ownedby,//string
-                                managedBy: row.managedby,//string
-                                keyShareholdersAndPeople: row.keyshareholdersandpeople,//json
-                                grossRevenueFiscal: row.grossrevenuefiscal,//string
-                                annualReportDocs: row.annualreportdocs,//json
-                                website: row.website,//string
-                                currentPricingUrl: row.currentpricingurl,//string
-                                currentPricingLandingURL: row.currentpricinglandingurl,//STRING,
-                                itemColumnName: row.itemcolumnname,//string
-                                avgPriceColumnName: row.avgpricecolumnname,//string
-                                priceSampleSizeColumnName: row.pricesamplesizecolumnname,//string
-                                extraColumnName: row.extracolumnname,//STRING,
-                                categoryColumnName: row.categorycolumnname,//STRING,
-                                medianPricingColumnName: row.medianpricingcolumnname,//string
-                                outPatientPriceColumnName: row.outpatientpricecolumnname,//string
-                                inpatientPriceColumnName: row.inpatientpricecolumnname,//string
-                                removedHeaderRowsForCSV: row.removedheaderrowsforcsv,//int
-                                longitude: row.longitude,//double
-                                latitude: row.latitude,//double
-                                savedRepoTableName: row.savedrepotablename,//string
-                                communityHospital: row.communityhospital,// bol
-                                type: row.type,  //string
-                                founded: row.founded,//data
-                                siteUp: row.siteup,//bol
-                                contributor: row.contributor,
-                                hasSpreadSheet: row.hasspreadsheet,//bol
-                                notes: row.notes,
-                                nonProfit: row.nonprofit,//bol
-                            },
-                            {
-                                where: {rId: row.rid}
-                            })
-                            .then((data) => {
-                                console.log('Updated.............', data)
-                            })
-                    }
-
-                })
             })
 
-
-
-            //console.log('requesationh from.................',homeUrl)
-            //console.log('requesationh from.................',dataUrl)
             res.send('Data------insync')
         })
 

@@ -26,6 +26,12 @@ module.exports = {
       country: {
         type: Sequelize.STRING
       },
+      mainHospitalName: {
+        type: Sequelize.STRING
+      },
+      numberBeds: {
+        type: Sequelize.DOUBLE
+      },
       streetAddress: {
         type: Sequelize.STRING
       },
@@ -45,12 +51,15 @@ module.exports = {
         type: Sequelize.DOUBLE
       },
       annualReportDocs: {
-        type: Sequelize.ARRAY
+        type: Sequelize.JSON
       },
       website: {
         type: Sequelize.STRING
       },
       currentPricingUrl: {
+        type: Sequelize.STRING
+      },
+      currentPricingLandingURL: {
         type: Sequelize.STRING
       },
       itemColumnName: {
@@ -60,6 +69,12 @@ module.exports = {
         type: Sequelize.STRING
       },
       priceSampleSizeColumnName: {
+        type: Sequelize.STRING
+      },
+      extraColumnName: {
+        type: Sequelize.STRING
+      },
+      categoryColumnName: {
         type: Sequelize.STRING
       },
       medianPricingColumnName: {
@@ -72,7 +87,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       removedHeaderRowsForCSV: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       longitude: {
         type: Sequelize.DOUBLE
@@ -80,19 +95,31 @@ module.exports = {
       latitude: {
         type: Sequelize.DOUBLE
       },
-      founded: {
-        type: Sequelize.INTEGER
+      savedRepoTableName: {
+        type: Sequelize.STRING
+      },
+      communityHospital: {
+        type: Sequelize.STRING
       },
       type: {
         type: Sequelize.STRING
       },
+      founded: {
+        type: Sequelize.DATE
+      },
+      siteUp: {
+        type: Sequelize.STRING
+      },
+      contributor: {
+        type: Sequelize.STRING
+      },
+      hasSpreadSheet: {
+        type: Sequelize.STRING
+      },
+      notes: {
+        type: Sequelize.STRING
+      },
       nonProfit: {
-        type: Sequelize.BOOLEAN
-      },
-      communityHospital: {
-        type: Sequelize.BOOLEAN
-      },
-      savedRepoTableName: {
         type: Sequelize.STRING
       },
       createdAt: {
