@@ -516,7 +516,7 @@ app.get('/api/load-data-from-csv', async (req, res) => {
                                             await newDataInstance.save()
                                                 .then(async (savedData) => {
                                                     //console.log('Updated.............', savedData)
-                                                    await res.send('Saving Data.......')
+                                                    await res.send('Data.Saved.........')
                                                 })
                                         } catch (e) {
                                             console.log('Error creating procedure',  e)

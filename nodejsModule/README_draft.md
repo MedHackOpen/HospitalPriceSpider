@@ -1,65 +1,22 @@
 # MedHack Hospital Spider Node.js Module
 
-CONTENTS OF THIS FILE
----------------------
+## This directory contains the node module with utitlity functions for parsing and converting data in this repo as well as raw hospital pricing records into the appropriate, standardized format
 
- * Introduction
- * Folder Structure
- * Configuration
- * Testing
- * Troubleshooting
- * API Endpoints
- * Contributing
-
-INTRODUCTION
-------------
-This directory contains the node module with utility functions for parsing and converting data in this repo as well as
-raw hospital pricing records into the appropriate, standardized format
-
-FOLDER STRUCTURE
-----------------
-
-`./database` (sequelize ORM )contains our database configs and model definitions, seeders and migration folders,
-
+Folder and file structure
+`./database` (sequelize ORM )contains our database configs and model definitions ignore the seeders and migration folders, we might not need those
 `./services` contains helper modules to help convert formats or fetch data to feed to the api (index.js)
 
-`./reactui` might contain a react app that consumes our endpoint for easier and better visualization during development paginations.....
+`./reactui` might contain a react app that consumes our endpoint for easier and better visualization during development
+paginations.....
 
 `index.js` contains our api endpoints
 
 `package.json` defines our dependencies
 
-CONFIGURATION
--------------
-
 To test the endpoints you must have node installed.
+In the root of this folder, from your favorite cli run `npm install` or `yarn install` to install app dependencies defined in package.json.
+After that run `node index.js` to start the dev server (express js) configured to run on port 3007 during development ie `http://localhost:3007/`
 
-In the root of this folder, from your favorite cli 
-run `npm install` or `yarn install` to install app dependencies defined in package.json.
-After that run `node index.js` , `yarn start` or `npm start` to start the dev server (express js) 
-configured to run on port 3007 during development ie `http://localhost:3007/`
-**NOTE:** Remember to check README_database.md to configure your **database** connections
-
-TESTING
--------
-Currently we're testing on importing csv file(s) in relation to our institutions table(data in the spreadsheet) into the
-database, some files are not properly formatted and others can't import completely, other's are missing the required 
-values or even a matching hospital rId and we need help with that.
-
-To help test, go to `http://localhost:3007/api/load-data-from-csv` , make sure to have your database configured and your
-institutions table loaded. This endpoint is meant to process files in our `rawCSVs` folder so only file 
-`hospital_Zuckerberg San Francisco General Hospital and Trauma Center.csv` will be processed, after success you will get 
-a message output `'Data.Saved.........'` . You can test with other files and move each to a folder accordingly, ie if 
-processed, processed but not complete, and so on.
-
-
-TROUBLESHOOTING
----------------
-
-
-
-API ENDPOINTS
--------------
 ###Below are the endpoints to test
 ##### homepage url = http://localhost:3007
 

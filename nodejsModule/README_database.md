@@ -1,6 +1,6 @@
 ### This readme describes how to use/test/maybe improve endpoint `/api/update/google-spreadsheets-hospital-services`
 
-#Step 1 : Done
+#Step 1 : Setup database config
 #Step 2: Some review and testing
 
 #STEP 1
@@ -9,7 +9,7 @@ NOTE:: our app is configured to run on `http://localhost:3007/` during developme
 
 1.Have nodejs installed
 
-2.Have mysql running check ./database/config/config.json for environment configs, and edit to fit your own
+2.Have mysql running check `./database/config/config.json` for environment configs, and edit to fit your own
 
 3.Create a database with the name defined in config.json above
 

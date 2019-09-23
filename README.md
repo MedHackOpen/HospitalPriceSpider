@@ -2,6 +2,8 @@
 
 ### Making public hospital pricing data *actually* machine-readable and uniform, because the hospitals are developing all kinds of tricks to complicate, evade and mislead around the topic of pricing.
 
+#### To run this repo in node js see README.md in ./nodejsModule folder 
+
 Since hospitals do not release their pricing data in a standardized format (but at least release it now in the US by law), this repo seeks to provide universal conversion functions, as well as raw data of hospital pricing spreadsheets/Word Docs/other formats that contain medical pricing records. The reason this repo contains the data is because pricing data changes (URL locations, content, format, as well as availability).
 
 `This is starting with US data; however, we plan to incorporate pricing for all countries eventually, and as soon as possible. America just happens to have one of the worst systems, so we're starting there.`
@@ -90,6 +92,7 @@ The others are "nice-to-haves" that will make applications built on top of this 
 .`./browserJS` testing stuff
 
 .`./nodejsModule` contains nodejs app(s) to convert file formats and output that data via an api endpoint for others to consume
+see the **README.md** in this folder
 
 . `./proposals ` project proposals in readme.md
 
@@ -101,11 +104,8 @@ The others are "nice-to-haves" that will make applications built on top of this 
 
 ## Testing endpoints during development
 
-If you wish to skip ahead and jump in to database see `/nodejsModule/README_database.md` here [README_database](/nodejsModule/README_database.md)
+Refer to **README.md** in ./nodejsFolder or wiki documentation [here](https://github.com/MedHackOpen/HospitalPriceSpider/wiki)
 
-To test please view the readme.md in ./nodejsModule folder
-
-or refer to documentation [here](https://github.com/MedHackOpen/HospitalPriceSpider/wiki)
 ## Contributions 
 
 We welcome pull requests, issues, and other contributions. This README could use a lot of work, as well as the converter code to get to our shared goal of making the world a better place. Please send pull requests to the `develop` branch.
