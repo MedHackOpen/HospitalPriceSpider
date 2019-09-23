@@ -1,0 +1,90 @@
+Hospital Name:  Eisenhower Health,,
+OSHPD Facility No:  106331168,,
+"Effective Date of Charges: June 1, 2018",,
+,,
+"In response to requests from hospitals and the public, OSHPD has developed this form to assist hospitals in collecting and submitting the average charge for 25 common outpatient procedures performed by hospitals, as required by AB 1045 (Chapter 532, Statutes of 2005).  Use of the OSHPD form is voluntary, but highly encouraged, as it allows hospitals to report and the public to compare uniform information regarding common outpatient procedures.",,
+Evaluation & Management Services (CPT Codes 99201-99499),2018 CPT Code,Average Charge
+"Emergency Room Visit, Level 2 (low to moderate severity)",99282,$932.00
+"Emergency Room Visit, Level 3 (moderate severity)",99283,"$1,476.00"
+"Emergency Room Visit, Level 4 (high severity)",99284,"$2,732.00"
+"Outpatient Visit, established patient, 15 minutes",99213,$301.00
+Laboratory & Pathology Services (CPT Codes 80047-89398),2018 CPT Code,Average Charge
+Basic Metabolic Panel,80048,$149.05
+"Blood Gas Analysis, including 02 saturation",82805,$678.00
+"Complete Blood Count, automated",85027,$113.90
+"Complete Blood Count, with differential WBC, automated",85025,$136.85
+Comprehensive Metabolic Panel,80053,$186.10
+"Creatine Kinase (CK), (CPK), Total",82550,
+Lipid Panel,80061,
+Partial Thromboplastin Time,85730,
+Prothrombin Time,85610,
+Thyroid Stimulating Hormone,84443,$126.80
+"Troponin, Quantitative",84484,
+"Urinalysis, without microscopy",81002 or 81003,$39.55
+"Urinalysis, with microscopy",81000 or 81001,$66.15
+Radiology Services  (CPT Codes 70010-79999),2018 CPT Code,Average Charge
+"CT Scan, Abdomen, with contrast",74160,"$4,296.00"
+"CT Scan, Head or Brain, without contrast",70450,"$3,640.00"
+"CT Scan, Pelvis, with contrast",72193,"$3,947.00"
+"Mammography, Bilateral",77056,
+"MRI, Head or Brain, without contrast, followed by contrast",70553,"$7,207.00"
+"Ultrasound, Abdomen, Complete",76700,"$1,859.00"
+"Ultrasound, OB, 14 weeks or more, transabdominal",76805,"$1,346.00"
+"X-Ray, Lower Back, four views",72110,$181.00
+"X-Ray, Chest, two views",71020,$107.00
+Medicine Services  (CPT Codes 90281-99607),2018 CPT Code,Average Charge
+"Cardiac Catheterization, Left Heart, percutaneous ",93452,
+"Echocardiography, complete",93307,"$2,312.00"
+"Electrocardiogram, routine, with interpretation and report",93000,
+"Inhalation Treatment, pressurized or nonpressurized",94640,$298.00
+"Physical Therapy, Evaluation",97001,$666.00
+"Physical Therapy, Gait Training",97116,$221.00
+"Physical Therapy, Therapeutic Exercise",97110,$219.00
+Surgery Services  (CPT Codes 10021-69990),2018 CPT Code,Average Charge
+"Arthroscopy, Knee, with meniscectomy (medial or lateral)",29881,
+"Arthroscopy, Shoulder, with partial acromioplasty",29826,
+Carpal Tunnel Surgery,64721,
+"Cataract Removal with Insertion of Intraocular Lens, 1 Stage",66984,
+"Colonoscopy, diagnostic",45378,
+"Colonoscopy, with biopsy",45380,
+"Colonoscopy, with lesion removal, by snare technique",45385,
+"Discission, secondary membranous cataract, laser surgery",66821,
+"Endoscopy, Upper GI, with biopsy",43239,
+"Endoscopy, Upper GI, diagnostic",43235,
+"Excision, Breast Lesion",19120,
+"Hernia Repair, Inguinal, 5 years and older",49505,
+"Injection, Diagnostic or Therapeutic substance, epidural, lumbar",62311,
+"Injection, Anesthetic or Steroid, transforaminal epidural, lumbar",64483,
+Laparoscopic Cholecystectomy,47562,
+"Tympanostomy (insert ventilating  tube, general anesthesia)",69436,
+"Tonsillectomy with Adenoidectomy, less than 12 years old",42820,
+Other Common Outpatient Procedures (list as needed),2018 CPT Code,Average Charge
+,,
+,,
+,,
+,,
+,,
+,,
+,,
+,,
+,,
+,,
+Count of Reported Procedures (minimum 25 required),,25
+Instructions for Completing AB 1045 Common Outpatient Procedure Form,,
+"1. Enter Hospital Name and OSHPD Facility Number.  Revise Effective Date of Charges, if necessary.",,
+2. Enter Average Charge for at least 25 commonly performed outpatient procedures.  For Evaluation & Management,,
+"    Services, do not include related ancillary charges.  For all other procedures, include related ancillary charges.",,
+    NOTE:  The CPT codes are included on this form to help identify the listed procedures based on the frequencies,,
+   across hospital-based ambulatory surgery data.  The average charge for all related services and procedures,,
+"    (e.g., supplies, drugs, lab, use of operating room, etc.) should be included in the average charge for that procedure.",,
+"3. Do not change procedure descriptions or CPT code references.  Use ""Other Common Outpatient Procedures"" ",,
+    (rows 62-71) if you are unable to select procedures from list.,,
+"4. Submit completed form as Excel (.xls) file, along with chargemaster and percent change in gross revenue",,
+"    calculation, by e-mail to chargemaster@oshpd.ca.gov or by standard mail on CD.",,
+,,
+,,
+,,
+,,
+,,
+,,
+,,

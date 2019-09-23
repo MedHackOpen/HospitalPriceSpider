@@ -347,79 +347,54 @@ app.get('/api/load-data-from-csv', async (req, res) => {
     const fileNames = await Institutions.findAll({}).map(item => item.get('savedRepoTableName'))
     const institutions = await Institutions.findAll({}).map(item => item.get({ plain: true }))
 
-    _.forEach(institutions, (institution) => {
-
-        console.log('ALL Institution uuid ==============================', institution.uuid)
-        console.log('ALL Institution rid ==============================', institution.rId)
-        console.log('ALL Institution hospitalName ==============================', institution.hospitalName)
-        console.log('ALL Institution city ==============================', institution.city)
-        console.log('ALL Institution region ==============================', institution.region)
-        console.log('ALL Institution country ==============================', institution.country)
-        console.log('ALL Institution mainHospitalName ==============================', institution.mainHospitalName)
-        console.log('ALL Institution numberBeds ==============================', institution.numberBeds)
-        console.log('ALL Institution streetAddress ==============================', institution.streetAddress)
-        console.log('ALL Institution numberLocation ==============================', institution.numberLocation)
-        console.log('ALL Institution ownedBy ==============================', institution.ownedBy)
-        console.log('ALL Institution managedBy ==============================', institution.managedBy)
-        console.log('ALL Institution fileName ==============================', institution.keyShareholdersAndPeople)
-        console.log('ALL Institution fileName ==============================', institution.grossRevenueFiscal)
-        console.log('ALL Institution fileName ==============================', institution.annualReportDocs)
-        console.log('ALL Institution fileName ==============================', institution.website)
-        console.log('ALL Institution fileName ==============================', institution.currentPricingUrl)
-        console.log('ALL Institution fileName ==============================', institution.currentPricingLandingURL)
-        console.log('ALL Institution fileName ==============================', institution.itemColumnName)
-        console.log('ALL Institution fileName ==============================', institution.avgPriceColumnName)
-        console.log('ALL Institution fileName ==============================', institution.priceSampleSizeColumnName)
-        console.log('ALL Institution fileName ==============================', institution.extraColumnName)
-        console.log('ALL Institution fileName ==============================', institution.categoryColumnName)
-        console.log('ALL Institution fileName ==============================', institution.medianPricingColumnName)
-        console.log('ALL Institution fileName ==============================', institution.outPatientPriceColumnName)
-        console.log('ALL Institution fileName ==============================', institution.inpatientPriceColumnName)
-        console.log('ALL Institution fileName ==============================', institution.removedHeaderRowsForCSV)
-        console.log('ALL Institution fileName ==============================', institution.longitude)
-        console.log('ALL Institution fileName ==============================', institution.latitude)
-        console.log('ALL Institution fileName ==============================', institution.savedRepoTableName)
-        console.log('ALL Institution fileName ==============================', institution.communityHospital)
-        console.log('ALL Institution fileName ==============================', institution.type)
-        console.log('ALL Institution fileName ==============================', institution.founded)
-        console.log('ALL Institution fileName ==============================', institution.siteUp)
-        console.log('ALL Institution fileName ==============================', institution.contributor)
-        console.log('ALL Institution fileName ==============================', institution.hasSpreadSheet)
-        console.log('ALL Institution fileName ==============================', institution.notes)
-        console.log('ALL Institution fileName ==============================', institution.nonProfit)
-        console.log('ALL Institution fileName ==============================', institution.createdAt)
-
-    })
-
-    process.exit('ALL Institutions ====++++++ logged')
-
-
-    // get data from database, see what to make of the csv folder and it's file from that data
-    await Institutions.findAll({
-
-        attributes: ['rId', 'hospitalName', 'country', 'type', 'itemColumnName', 'avgPriceColumnName',
-            'priceSampleSizeColumnName', 'extraColumnName', 'categoryColumnName',
-            'medianPricingColumnName', 'outPatientPriceColumnName', 'inPatientPriceColumnName','removedHeaderRowsForCSV',
-            'savedRepoTableName']
-
-    }).then( (institutions) => {
-
-        console.log('ALL Institutions ==============================', institutions)
-        process.exit('ALL Institutions ====++++++ logged')
-        _.map(institutions, test => {
-            console.log('ALL Institutions ==============================', test.dataValues)
-            process.exit('ALL Institutions ====++++++ logged')
-        })
+   await _.forEach(institutions,async (institution) => {
 
         /**
-         * get each institution from database so we can relate to its file name
-         * (institution.savedRepoTableName)
-         * in our local rawCSVs folder
+         *  Check the required fields before proceeding
+         *  if there's a csv file related to this institution &&
+         *  avgPriceColumnName value is not null
          */
-        _.forEach(institutions, (institution) => {
+        if (institution.rId /*rId just sanity check*/ && institution.savedRepoTableName && institution.avgPriceColumnName) {
 
-            console.log('Institution .dataValues ==============================', institution.dataValues)
-            process.exit('Institutions logged')
+            /*console.log('ALL Institution uuid ==============================', institution.uuid)
+            console.log('ALL Institution rid ==============================', institution.rId)
+            console.log('ALL Institution hospitalName ==============================', institution.hospitalName)
+            console.log('ALL Institution city ==============================', institution.city)
+            console.log('ALL Institution region ==============================', institution.region)
+            console.log('ALL Institution country ==============================', institution.country)
+            console.log('ALL Institution mainHospitalName ==============================', institution.mainHospitalName)
+            console.log('ALL Institution numberBeds ==============================', institution.numberBeds)
+            console.log('ALL Institution streetAddress ==============================', institution.streetAddress)
+            console.log('ALL Institution numberLocation ==============================', institution.numberLocation)
+            console.log('ALL Institution ownedBy ==============================', institution.ownedBy)
+            console.log('ALL Institution managedBy ==============================', institution.managedBy)
+            console.log('ALL Institution keyShareholdersAndPeople ==============================', institution.keyShareholdersAndPeople)
+            console.log('ALL Institution grossRevenueFiscal ==============================', institution.grossRevenueFiscal)
+            console.log('ALL Institution annualReportDocs ==============================', institution.annualReportDocs)
+            console.log('ALL Institution website ==============================', institution.website)
+            console.log('ALL Institution currentPricingUrl ==============================', institution.currentPricingUrl)
+            console.log('ALL Institution currentPricingLandingURL ==============================', institution.currentPricingLandingURL)
+            console.log('ALL Institution itemColumnName==============================', institution.itemColumnName)
+            console.log('ALL Institution avgPriceColumnName ==============================', institution.avgPriceColumnName)
+            console.log('ALL Institution priceSampleSizeColumnName ==============================', institution.priceSampleSizeColumnName)
+            console.log('ALL Institution extraColumnName ==============================', institution.extraColumnName)
+            console.log('ALL Institution categoryColumnName ==============================', institution.categoryColumnName)
+            console.log('ALL Institution medianPricingColumnName ==============================', institution.medianPricingColumnName)
+            console.log('ALL Institution outPatientPriceColumnName ==============================', institution.outPatientPriceColumnName)
+            console.log('ALL Institution inpatientPriceColumnName ==============================', institution.inpatientPriceColumnName)
+            console.log('ALL Institution removedHeaderRowsForCSV ==============================', institution.removedHeaderRowsForCSV)
+            console.log('ALL Institution longitude ==============================', institution.longitude)
+            console.log('ALL Institution latitude ==============================', institution.latitude)
+            console.log('ALL Institution savedRepoTableName/fileName ==============================', institution.savedRepoTableName)
+            console.log('ALL Institution communityHospital ==============================', institution.communityHospital)
+            console.log('ALL Institution type ==============================', institution.type)
+            console.log('ALL Institution founded ==============================', institution.founded)
+            console.log('ALL Institution siteUp ==============================', institution.siteUp)
+            console.log('ALL Institution contributor ==============================', institution.contributor)
+            console.log('ALL Institution hasSpreadSheet ==============================', institution.hasSpreadSheet)
+            console.log('ALL Institution notes ==============================', institution.notes)
+            console.log('ALL Institution nonProfit ==============================', institution.nonProfit)
+            console.log('ALL Institution createdAt ==============================', institution.createdAt)*/
 
             // api endpoints need to communicate within the app
             // req data from '/api/data/google-spread-sheets/:id'
@@ -427,14 +402,23 @@ app.get('/api/load-data-from-csv', async (req, res) => {
                 protocol: req.protocol,
                 host: req.get('host'),
             });
-            const csvFileName = institution.savedRepoTableName // each csv file by its file name
-            const dataUrl = `${homeUrl}/api/csvdata/${csvFileName}.csv` // call this endpoint with this app
-            axios.get(dataUrl)
-                .then( async (data) => {
-                    const responseData = await data.data
-                    _.forEach(responseData, (dt) => {
 
-                        console.log(institution)
+            // each csv file by its file name in relation to this institution
+            const csvFileName = institution.savedRepoTableName
+            const dataUrl = `${homeUrl}/api/csvdata/${csvFileName}.csv` // call this endpoint within this app
+
+            //let csvData = await axios.get(dataUrl)
+            //let { data } = csvData
+            //if (data) {
+            //}
+
+            await axios.get(dataUrl)
+                .then(async (data) => {
+
+                    const responseData = await data.data
+                    _.forEach(responseData, async (dt) => {
+
+                        //console.log(institution)
 
                         /**
                          *  validate required fields before proceeding
@@ -454,7 +438,7 @@ app.get('/api/load-data-from-csv', async (req, res) => {
                                 itemName: dt[institution.itemColumnName],
                                 hospitalId: institution.rId ,
                                 price: dt[institution.avgPriceColumnName],
-                                hospitalName: dt[institution.extraColumnName],
+                                hospitalName: institution.hospitalName,
                                 avgPrice: dt[institution.avgPriceColumnName], //@TODO maybe
                                 medianPrice: dt[institution.medianPricingColumnName],
                                 // sampleSize: ,
@@ -473,102 +457,126 @@ app.get('/api/load-data-from-csv', async (req, res) => {
                                 //currency: ,
                             }
 
-                            /*
+                            //console.log('institution.avgPriceColumnName ==== ',institution.avgPriceColumnName)
+                            const fieldName = institution.avgPriceColumnName
+                            //console.log('Dynamic Data........', `${dt}${institution.avgPriceColumnName}`)
+                            /*console.log('fieldName...++...++..+++...+++......+++.....++++..++..++...',fieldName)
+                            //console.log('Institution =======================',institution)
+                            console.log('Institution.rId =======================',institution.rId)
+                            console.log('Institution.hospitalName =======================',institution.hospitalName)
+                            console.log('Institution.itemColumnName =======================',institution.itemColumnName)
+                            console.log('Institution.avgPriceColumnName =======================',institution.avgPriceColumnName)
+                            console.log('Institution.priceSampleSizeColumnName =======================',institution.priceSampleSizeColumnName)
+                            console.log('Institution.extraColumnName =======================',institution.extraColumnName)
+                            console.log('Institution.categoryColumnName =======================',institution.categoryColumnName)
+                            console.log('Institution.medianPricingColumnName =======================',institution.medianPricingColumnName)
+                            console.log('Institution.outPatientPriceColumnName =======================',institution.outPatientPriceColumnName)
+                            console.log('Institution.inPatientPriceColumnName =======================',institution.inPatientPriceColumnName)
+                            console.log('Institution.removedHeaderRowsForCSV =======================',institution.removedHeaderRowsForCSV)
+                            console.log('institution.savedRepoTableName=======',institution.savedRepoTableName)
 
-                        console.log('institution.avgPriceColumnName ==== ',institution.avgPriceColumnName)
-                        const fieldName = institution.avgPriceColumnName
-                        //console.log('Dynamic Data........', `${dt}${institution.avgPriceColumnName}`)
-                        console.log('fieldName...++...++..+++...+++......+++.....++++..++..++...',fieldName)
-                        //console.log('Institution =======================',institution)
-                        console.log('Institution.rId =======================',institution.rId)
-                        console.log('Institution.hospitalName =======================',institution.hospitalName)
-                        console.log('Institution.itemColumnName =======================',institution.itemColumnName)
-                        console.log('Institution.avgPriceColumnName =======================',institution.avgPriceColumnName)
-                        console.log('Institution.priceSampleSizeColumnName =======================',institution.priceSampleSizeColumnName)
-                        console.log('Institution.extraColumnName =======================',institution.extraColumnName)
-                        console.log('Institution.categoryColumnName =======================',institution.categoryColumnName)
-                        console.log('Institution.medianPricingColumnName =======================',institution.medianPricingColumnName)
-                        console.log('Institution.outPatientPriceColumnName =======================',institution.outPatientPriceColumnName)
-                        console.log('Institution.inPatientPriceColumnName =======================',institution.inPatientPriceColumnName)
-                        console.log('Institution.removedHeaderRowsForCSV =======================',institution.removedHeaderRowsForCSV)
-                        console.log('institution.savedRepoTableName=======',institution.savedRepoTableName)
+                            console.log('dt.dtdtdtdtdtdtdtdtdtdtdtdtdtd............',dt)
+                            console.log('dt.FACILITY.............',dt.FACILITY)
+                            console.log('dt.CMS_PROV_ID.............',dt.CMS_PROV_ID)
+                            console.log('dt.HOSPITAL_NAME.............',dt.HOSPITAL_NAME)
+                            console.log('dt.SERVICE_SETTING.............',dt.SERVICE_SETTING)
+                            console.log('dt.CDM.............',dt.CDM)
+                            console.log('dt.DESCRIPION...........',dt.DESCRIPION)
+                            console.log('dt.REVENUE_CODE............',dt.REVENUE_CODE)
+                            console.log('dt.CHARGE............',dt.CHARGE)*/
+                            //console.log('dt.CHARGE Dynamic............',dt[institution.avgPriceColumnName])// TODO.. start here tomorrow
+                            //console.log('newDATA******************************************************', newData)
 
-                        console.log('dt.dtdtdtdtdtdtdtdtdtdtdtdtdtd............',dt)
-                        console.log('dt.FACILITY.............',dt.FACILITY)
-                        console.log('dt.CMS_PROV_ID.............',dt.CMS_PROV_ID)
-                        console.log('dt.HOSPITAL_NAME.............',dt.HOSPITAL_NAME)
-                        console.log('dt.SERVICE_SETTING.............',dt.SERVICE_SETTING)
-                        console.log('dt.CDM.............',dt.CDM)
-                        console.log('dt.DESCRIPION...........',dt.DESCRIPION)
-                        console.log('dt.REVENUE_CODE............',dt.REVENUE_CODE)
-                        console.log('dt.CHARGE............',dt.CHARGE)
-                        console.log('dt.CHARGE Dynamic............',dt[institution.avgPriceColumnName])// TODO.. start here tomorrow
-                        console.log('newDATA******************************************************', newData)
-                        */
 
                             /**
                              * find if the Procedures record exists with the hospital id, if not create a new record
                              * if the record exists then update with the latest data from
                              */
 
-                            /*rocedures.findOne({
+                            try {
 
-                                where: { rId: institution.rId  }
+                                await Procedures.findOne({
 
-                            }).then(record => {
+                                    where: { rId: institution.rId, itemName: dt[institution.itemColumnName] },
+                                    returning: true,
+
+                                }).then(async (record) => {
+                                    console.log('RECORED||||||||||||||||||||||||||||||||||', record)
+                                    // if record is not in the table, create one
+
+                                    if (!record) {
+                                        // insert items in database Procedures table
+
+                                        try {
+
+                                            let newDataInstance = await Procedures.build(
+                                                newData
+                                            )
+
+                                            await newDataInstance.save()
+                                                .then(async (savedData) => {
+                                                    //console.log('Updated.............', savedData)
+                                                    await res.send('Saving Data.......')
+                                                })
+                                        } catch (e) {
+                                            console.log('Error creating procedure',  e)
+                                        }
 
 
-                                 // if record is not in the table, create one
+                                    }
 
-                                if (!record) {
-                                    // insert items in database Procedures table
+                                    // if record is truthy...update/patch its data
+                                    if (record) {
 
+                                        try {
 
-                                    let newDataInstance = Procedures.build(
-                                        newData
-                                    )
+                                            await Procedures.update(
+                                                {
+                                                    itemName: dt[institution.itemColumnName],
+                                                    hospitalId: institution.rId ,
+                                                    price: dt[institution.avgPriceColumnName],
+                                                    hospitalName: institution.hospitalName,
+                                                    avgPrice: dt[institution.avgPriceColumnName], //@TODO maybe
+                                                    medianPrice: dt[institution.medianPricingColumnName],
+                                                    // sampleSize: ,
+                                                    outpatientAvgPrice: dt[institution.outPatientPriceColumnName],
+                                                    inpatientAvgPrice:  dt[institution.inpatientPriceColumnName],
+                                                    revenue_code: dt[institution.categoryColumnName],
+                                                },
+                                                {
+                                                    where: {rId: institution.rId, itemName: dt[institution.itemColumnName]}
+                                                })
+                                                .then((data) => {
+                                                    //console.log('Updated.............', data)
+                                                })
 
-                                    newDataInstance.save()
-                                        .then((savedData) => {
-                                            //console.log('Updated.............', savedData)
-                                        })
+                                        } catch (e) {
+                                            console.log('Error updating procedure', e)
+                                        }
 
-                                }
+                                    }
 
-                                // if record is truthy...update/patch its data
-                                if (record) {
-                                    Procedures.update(
-                                        {
-                                            price: dt[institution.avgPriceColumnName],
-                                            avgPrice: dt[institution.avgPriceColumnName], //@TODO maybe
-                                            medianPrice: dt[institution.medianPricingColumnName],
-                                            // sampleSize: ,
-                                            outpatientAvgPrice: dt[institution.outPatientPriceColumnName],
-                                            inpatientAvgPrice:  dt[institution.inpatientPriceColumnName],
-                                        },
-                                        {
-                                            where: {rId: institution.rId }
-                                        })
-                                        .then((data) => {
-                                            //console.log('Updated.............', data)
-                                        })
-                                }
+                                    //console.log(record.dataValues)
+                                })
+                            } catch (e) {
+                                console.log('Error finding', e)
+                            }
 
-                                //console.log(record.dataValues)
-                            })*/
                         }
 
 
                     })
-
+                    //console.log('Data........................', responseData)
                 })
 
-            res.send(institutions)
-
-        })
-
+            //console.log('DataUrl........................', dataUrl)
+        }
 
     })
+
+    //process.exit('ALL Institutions ====++++++ logged')
+
+
     //const data =  await testingConvert()
     //res.send(data)
 })
@@ -600,7 +608,7 @@ async function updateDatabase() {
 app.get('/api/update-script', async (req, res) => {
 
     let database = await updateDatabase()
-    console.log(database)
+    //console.log(database)
     //database = JSON.stringify(database)
     res.send(database)
 })

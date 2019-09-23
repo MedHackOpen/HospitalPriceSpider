@@ -6,7 +6,7 @@
   "author": "Nick Tests",
   "license": "MIT",
   "scripts": {
-    "start": "node index.js"
+    "start": "node --max-old-space-size=6076 index.js"
   },
   "engines": {
     "node": "10.16.2"
