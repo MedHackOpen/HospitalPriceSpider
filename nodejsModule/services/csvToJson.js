@@ -1,20 +1,6 @@
 const fs = require('fs')
 const csvToJsonV2=require("csvtojson/v2");
-/*
-const prices = [
-    { _id: "20", name: "Glucoe" },
-    { _id: "22", name: "Tabs" },
-    { _id: "23", name: "Syru" }
-];
 
-function getPrices() {
-    return prices
-}
-
-function getPrice(id) {
-    return prices.find(p => p._id === id);
-}
-*/
 
 function getCsvFiles(csvFolder) {
 

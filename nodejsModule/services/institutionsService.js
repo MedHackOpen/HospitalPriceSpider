@@ -1,3 +1,4 @@
+const _ = require('lodash')
 // Database
 const Institutions = require('../database/models').Institutions
 
@@ -35,8 +36,6 @@ async function institutionFileNames() {
     try {
         // Get file names from institutions Table
         const fileNames =  await Institutions.findAll({}).map(item => item.get('savedRepoTableName'))
-
-        //console.log(fileNames)
         return fileNames
     } catch (e) {
 
@@ -46,11 +45,40 @@ async function institutionFileNames() {
 
 }
 
+async function institutionFileName(rId) {
+
+    try {
+        const institutions = await getInstitutions()
+        const institution = await institutions.find(i => i.rId === rId)
+
+        if (institution) {
+            return institution.savedRepoTableName
+        }
+
+    } catch (e) {
+        return e
+    }
+}
+
+async function institutionsRID() {
+
+    try {
+        const rId =  await Institutions.findAll({}).map(item => item.get('rId'))
+
+        return rId
+    } catch (e) {
+
+        return e
+    }
+}
+
 //------END OF---------Getting Data from the database (institution) and processing it---------------------
 
 
 module.exports = {
     getInstitutions,
     getInstitution,
-    institutionFileNames
+    institutionFileNames,
+    institutionFileName,
+    institutionsRID
 }

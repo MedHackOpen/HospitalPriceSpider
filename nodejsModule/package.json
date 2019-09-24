@@ -28,5 +28,7 @@
     "util": "^0.12.1",
     "uuid": "^3.3.3"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "move-file": "^1.2.0"
+  }
 }
