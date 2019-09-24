@@ -8,7 +8,7 @@ const parser = require('simple-excel-to-json')
 async function convertXlsxToJson(filePath) {
     try {
 
-        let doc = await parser.parseXls2Json(filePath)
+        let doc = await parser.parseXls2Json(filePath, { isNested: true })
 
         return doc
     }

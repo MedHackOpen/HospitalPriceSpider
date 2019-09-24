@@ -208,8 +208,13 @@ app.get('/api/data/google-spread-sheets/:id', async (req, res) => {
 
 /**
  * this endpoint is used for testing
- * Current testing on matching data in the csv files
- * in relation to the records in the institutions database table
+ * Current testing on moving imported files with all records into their folders
+ * and those with errors to another fol;der
+ *
+ * Create and exportable module resposible for moving the files, then suppplky it with folder
+ * name and file name respectively
+ *
+ * After that, files with errors can be forwarded to the researchers team, and
  */
 app.get('/api/test', async (req, res) => {
 
@@ -614,12 +619,15 @@ app.get('/api/update-script', async (req, res) => {
 })
 
 /**
- * This endpoints should retrieve data from google and populate or update
- * the institutions table with the relevant values from each column
- * @TODO load data from both local spreadsheets and google spreadsheets
+ * This endpoints should retrieve data from google spreadsheet
+ * and populate or update the institutions table with the relevant
+ * values from each column
  */
-app.get('/api/update/google-spreadsheets-hospital-services', async (req, res) => {
+app.get('/api/update/institutions-from-online-spreadsheet', async (req, res) => {
 
+    //res.send('To load data in the institutions database add either','|local|','or','|online|' , 'in the url to load from local spreadsheet or online spreadsheet respectively')
+
+    //process.exit()
     // api endpoints need to communicate within the app
     // req data from '/api/data/google-spread-sheets/:id'
     let homeUrl = url.format({
@@ -632,6 +640,7 @@ app.get('/api/update/google-spreadsheets-hospital-services', async (req, res) =>
 
     // get data from google via our internal endpoint..call another endpoint in this app
     axios.get(dataUrl)
+    //process.exit()
         .then( (response) => {
             //console.log('Response...DATA............',response.data)
             _.forEach(response.data, row => {
@@ -813,9 +822,168 @@ app.get('/api/update/google-spreadsheets-hospital-services', async (req, res) =>
 })
 
 /**
- * This endpoint inserts or updates the institution table given the hospital name as ID
+ * This endpoints should retrieve data from locally saved
+ * spreadsheets and populate or update the institutions table with the relevant
+ * values from each column
  */
-app.get('/api/update/institutions', (req, res) => {
+
+app.get('/api/update/institutions-from-local-spreadsheet', async (req, res) => {
+
+
+    // api endpoints need to communicate within the app
+    // req data from '/api/data/google-spread-sheets/:id'
+    let homeUrl = url.format({
+        protocol: req.protocol,
+        host: req.get('host'),
+    });
+
+    const spreadSheetFileName = 'Hospital Database'
+    const dataUrl = `${homeUrl}/api/data/local-xlsl-file/${spreadSheetFileName}.xlsx`
+
+    try {
+
+        await axios.get(dataUrl)
+            .then( async (fileData) => {
+                //console.log('fileData++++++++++++++++++++++++++++++++++++',await fileData.data)
+                _.forEach(await fileData.data[0], row => {
+                    //console.log('dataStructure logged',row)
+
+                    /**
+                     * Validate required values before proceeding
+                     */
+
+                    if (row.rId && row.hospitalName) { // Though every row has rid
+                        console.log('fileData+++++++++++++++++++++++++++++++++END+++++++++++++++++++++++++++++++++')
+
+                        // newInstitution item/Hospital
+                        let newInstitution = {
+                            uuid: uuid(), //string
+                            rId: row.rId, //double
+                            hospitalName: row.hospitalName,//string
+                            city: row.city,//string
+                            region: row.region,//string
+                            country: row.country,//string
+                            mainHospitalName: row.mainHospitalName,//STRING
+                            numberBeds: row.numberBeds,//INTEGER,
+                            streetAddress: row.streetAddress,//string
+                            numberLocation: row.numberLocations,//int
+                            ownedBy: row.ownedBy,//string
+                            managedBy: row.managedBy,//string
+                            keyShareholdersAndPeople: row.keyShareholdersAndPeople,//json
+                            grossRevenueFiscal: row.grossRevenueFiscal,//string
+                            annualReportDocs: row.annualReportDocs,//json
+                            website: row.website,//string
+                            currentPricingUrl: row.currentPricingUrl,//string
+                            currentPricingLandingURL: row.currentPricingLandingURL,//STRING,
+                            itemColumnName: row.itemColumnName,//string
+                            avgPriceColumnName: row.avgPriceColumnName,//string
+                            priceSampleSizeColumnName: row.priceSampleSizeColumnName,//string
+                            extraColumnName: row.extraColumnName,//STRING,
+                            categoryColumnName: row.categoryColumnName,//STRING,
+                            medianPricingColumnName: row.medianPricingColumnName,//string
+                            outPatientPriceColumnName: row.outPatientPriceColumnName,//string
+                            inpatientPriceColumnName: row.inPatientPriceColumnName,//string
+                            removedHeaderRowsForCSV: row.removedHeaderRowsForCSV,//int
+                            longitude: row.longitude,//double
+                            latitude: row.latitude,//double
+                            savedRepoTableName: row.savedRepoTableName,//string
+                            communityHospital: row.communityHospital,// bol
+                            type: row.type,  //string
+                            founded: row.founded,//data
+                            siteUp: row.siteUp,//bol
+                            contributor: row.contributor,
+                            hasSpreadSheet: row.hasSpreadSheet,//bol
+                            notes: row.notes,
+                            nonProfit: row.nonProfit,//bol
+                        }
+
+                        //console.log('fileData+++++++++++++++++++++++++++++++++END+++++++++++++++++++++++++++++++++')
+
+                        // Hospital table now
+                        Institutions.findOne({
+                            where: { rId: row.rId }
+                        }).then(record => {
+                            //console.log('record===============', record)
+                            /**
+                             * if record doesn't exist, create one
+                             */
+                            if (!record){
+                                // insert item in database Institutions table
+
+                                let institutionInstance = Institutions.build(
+                                    newInstitution
+                                )
+
+                                institutionInstance.save().then((insertedInstitution) => {
+                                    //console.log('insertedInstitution...',insertedInstitution)
+                                    //console.log('fileData+++++++++++++++++++++++++++++++++END+++++++++++++++++++++++++++++++++')
+                                })
+                            }
+
+                            /**
+                             * if record exists update/patch data
+                             */
+                            if (record){
+                                Institutions.update(
+                                    {
+                                        //rId: row.rid, //double
+                                        //hospitalName: row.hospitalname,//string
+                                        city: row.city,//string
+                                        region: row.region,//string
+                                        country: row.country,//string
+                                        mainHospitalName: row.mainHospitalName,//STRING
+                                        numberBeds: row.numberBeds,//INTEGER,
+                                        streetAddress: row.streetAddress,//string
+                                        numberLocation: row.numberLocations,//int
+                                        ownedBy: row.ownedBy,//string
+                                        managedBy: row.managedBy,//string
+                                        keyShareholdersAndPeople: row.keyShareholdersAndPeople,//json
+                                        grossRevenueFiscal: row.grossRevenueFiscal,//string
+                                        annualReportDocs: row.annualReportDocs,//json
+                                        website: row.website,//string
+                                        currentPricingUrl: row.currentPricingUrl,//string
+                                        currentPricingLandingURL: row.currentPricingLandingURL,//STRING,
+                                        itemColumnName: row.itemColumnName,//string
+                                        avgPriceColumnName: row.avgPriceColumnName,//string
+                                        priceSampleSizeColumnName: row.priceSampleSizeColumnName,//string
+                                        extraColumnName: row.extraColumnName,//STRING,
+                                        categoryColumnName: row.categoryColumnName,//STRING,
+                                        medianPricingColumnName: row.medianPricingColumnName,//string
+                                        outPatientPriceColumnName: row.outPatientPriceColumnName,//string
+                                        inpatientPriceColumnName: row.inPatientPriceColumnName,//string
+                                        removedHeaderRowsForCSV: row.removedHeaderRowsForCSV,//int
+                                        longitude: row.longitude,//double
+                                        latitude: row.latitude,//double
+                                        savedRepoTableName: row.savedRepoTableName,//string
+                                        communityHospital: row.communityHospital,// bol
+                                        type: row.type,  //string
+                                        founded: row.founded,//data
+                                        siteUp: row.siteUp,//bol
+                                        contributor: row.contributor,
+                                        hasSpreadSheet: row.hasSpreadSheet,//bol
+                                        notes: row.notes,
+                                        nonProfit: row.nonProfit,//bol
+                                    },
+                                    {
+                                        where: {rId: row.rId}
+                                    })
+                                    .then((data) => {
+                                        console.log('Updated.............', data)
+                                    })
+                            }
+
+                        })
+                    }
+                    //console.log('fileData+++++++++++++++++++++++++++++FINISHED+++++++++++++++++++++++++++++++++')
+                })
+                res.send(fileData)
+            })
+
+    } catch (e) {
+
+        res.send(e)
+    }
+    /*
     const dummyInstitution = [
         {hospitalName: 'hospital Name 01', website: 'www.hospitalname.com'},
         {hospitalName: 'hospital Name 02', website: 'www.hospitalname2.com'},
@@ -871,7 +1039,7 @@ app.get('/api/update/institutions', (req, res) => {
         res.send(dummyInstitution)  // we may send the inserted object(s) instead of the raw spreadsheet
     } catch (e) {
         res.send(e)
-    }
+    }*/
 
 
 })

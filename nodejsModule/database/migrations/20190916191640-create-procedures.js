@@ -9,7 +9,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       uuid: {
-        type: DataTypes.STRING
+        type: Sequelize.STRING
       },
       rId: {
         type: Sequelize.DOUBLE
@@ -21,6 +21,9 @@ module.exports = {
         type: Sequelize.DOUBLE
       },
       price: {
+        type: Sequelize.STRING
+      },
+      hospitalName: {
         type: Sequelize.STRING
       },
       avgPrice: {
@@ -39,6 +42,9 @@ module.exports = {
         type: Sequelize.STRING
       },
       inpatientAvgPrice: {
+        type: Sequelize.STRING
+      },
+      revenue_code: {
         type: Sequelize.STRING
       },
       latestPriceDate: {
