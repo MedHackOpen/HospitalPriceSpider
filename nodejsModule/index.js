@@ -31,6 +31,8 @@ app.use(cors())
 const csvToJsonService = require('./services/csvToJson');
 const xlsxToJson = require('./services/spreadsheetToJson')
 const googleSheets = require('./services/spreadsheetGoogleApi')
+const institutionsService = require('./services/institutionsService')
+const proceduresService = require('./services/proceduresSerive')
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -217,120 +219,20 @@ app.get('/api/data/google-spread-sheets/:id', async (req, res) => {
  * After that, files with errors can be forwarded to the researchers team, and
  */
 app.get('/api/test', async (req, res) => {
+    const institutions = await institutionsService.getInstitutions()
+    const institutionFileNames = await institutionsService.institutionFileNames()
 
-    // get data from database, see what to make of the csv folder and it's file from that data
-    Institutions.findAll({
-
-        where : {
-            'savedRepoTableName': 'YKHC_MasterChargesheet'
-        },
-
-        attributes: ['rId', 'hospitalName', 'itemColumnName', 'avgPriceColumnName',
-            'priceSampleSizeColumnName', 'extraColumnName', 'categoryColumnName',
-            'medianPricingColumnName', 'outPatientPriceColumnName', 'inPatientPriceColumnName','removedHeaderRowsForCSV',
-            'savedRepoTableName'],
-        raw: true
-    }) .then(institutions => {
-
-        // api endpoints need to communicate within the app
-        // req data from '/api/data/google-spread-sheets/:id'
-        let homeUrl = url.format({
-            protocol: req.protocol,
-            host: req.get('host'),
-        });
-        const csvFileName = 'YKHC_MasterChargesheet' // change this to match your spreadsheet
-        const dataUrl = `${homeUrl}/api/csvdata/${csvFileName}.csv`
-        axios.get(dataUrl)
-            .then( async (data) => {
-                const responseData = await data.data
-               _.forEach(responseData, (dt) => {
-
-                   _.forEach(institutions, (institution) => {
-
-                        /*const  newData = [
-                            { uuid: uuid() },
-                            { rId: institution.rId },
-                            //{ itemName}
-                            { hospitalId: institution.rId },
-                            { price: dt[institution.avgPriceColumnName] },
-                            {  },
-                            {  },
-                            {  },
-                            {  },
-                            {  },
-                            {  },
-                            {  },
-                            {  },
-                            {  },
-                            {  },
-                            {  },
-                            {  },
-                            {  },
-                            {  },
-                            {  },
-                            {  },
-                            {  },
-                        ]*/
-
-                        const newData = {
-                            uuid: uuid() ,
-                            rId: institution.rId ,
-                            itemName: dt[institution.itemColumnName],
-                            hospitalId: institution.rId ,
-                            price: dt[institution.avgPriceColumnName],
-                            hospitalName: dt[institution.extraColumnName],
-                            avgPrice: dt[institution.avgPriceColumnName], //@TODO maybe
-                            medianPrice: dt[institution.medianPricingColumnName],
-                            // sampleSize: ,
-                            outpatientAvgPrice: dt[institution.outPatientPriceColumnName],
-                            inpatientAvgPrice:  dt[institution.inpatientPriceColumnName],
-                            revenue_code: dt[institution.categoryColumnName],
-                        }
-
-                       //console.log('institution.avgPriceColumnName ==== ',institution.avgPriceColumnName)
-                       const fieldName = institution.avgPriceColumnName
-                       //console.log('Dynamic Data........', `${dt}${institution.avgPriceColumnName}`)
-                       console.log('fieldName...++...++..+++...+++......+++.....++++..++..++...',fieldName)
-                       //console.log('Institution =======================',institution)
-                       console.log('Institution.rId =======================',institution.rId)
-                       console.log('Institution.hospitalName =======================',institution.hospitalName)
-                       console.log('Institution.itemColumnName =======================',institution.itemColumnName)
-                       console.log('Institution.avgPriceColumnName =======================',institution.avgPriceColumnName)
-                       console.log('Institution.priceSampleSizeColumnName =======================',institution.priceSampleSizeColumnName)
-                       console.log('Institution.extraColumnName =======================',institution.extraColumnName)
-                       console.log('Institution.categoryColumnName =======================',institution.categoryColumnName)
-                       console.log('Institution.medianPricingColumnName =======================',institution.medianPricingColumnName)
-                       console.log('Institution.outPatientPriceColumnName =======================',institution.outPatientPriceColumnName)
-                       console.log('Institution.inPatientPriceColumnName =======================',institution.inPatientPriceColumnName)
-                       console.log('Institution.removedHeaderRowsForCSV =======================',institution.removedHeaderRowsForCSV)
-                       console.log('institution.savedRepoTableName=======',institution.savedRepoTableName)
-
-                       console.log('dtdtttttttttt.............',dt)
-                       console.log('dt.FACILITY.............',dt.FACILITY)
-                       console.log('dt.CMS_PROV_ID.............',dt.CMS_PROV_ID)
-                       console.log('dt.HOSPITAL_NAME.............',dt.HOSPITAL_NAME)
-                       console.log('dt.SERVICE_SETTING.............',dt.SERVICE_SETTING)
-                       console.log('dt.CDM.............',dt.CDM)
-                       console.log('dt.DESCRIPION...........',dt.DESCRIPION)
-                       console.log('dt.REVENUE_CODE............',dt.REVENUE_CODE)
-                       console.log('dt.CHARGE............',dt.CHARGE)
-                       console.log('dt.CHARGE Dynamic............',dt[institution.avgPriceColumnName])
-                       console.log('dt.DESCRIPTION Dynamic............',dt[institution.itemColumnName])
-                       console.log('dt.REVENUE_CODE Dynamic............',dt[institution.categoryColumnName])
-                        console.log('newDATA*******************|||||********************', newData)
-                        console.log('csvItem************************************')
-
-                    })
-
-                })
-
-            })
-
-        res.send(institutions)
-
+    // get each institution in the table
+    _.forEach(institutions, (institution) => {
+        console.log('TEST!!!!', institution)
+        console.log('================BREAK========================')
+        console.log('===============ALL=ITEMS====================', institutions.length)
     })
-    //const data =  await testingConvert()
-    //res.send(data)
+
+    //console.log('TEST!!!!', institutions)
+    //res.send(institutions)
+    console.log('FILE NAMES!!!!', institutionFileNames)
+    res.send(institutionFileNames)
 })
 
 //-------------------------Database endpoints--------------------------------------------------------------------------
