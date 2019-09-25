@@ -36,7 +36,10 @@ async function institutionFileNames() {
     try {
         // Get file names from institutions Table
         const fileNames =  await Institutions.findAll({}).map(item => item.get('savedRepoTableName'))
-        return fileNames
+        if (fileNames) {
+            return fileNames
+        }
+
     } catch (e) {
 
         return e

@@ -32,6 +32,7 @@ const csvToJsonService = require('./services/csvToJson');
 const xlsxToJson = require('./services/spreadsheetToJson')
 const googleSheets = require('./services/spreadsheetGoogleApi')
 const institutionsService = require('./services/institutionsService')
+const fileFolderService = require('./services/fileFolderService')
 const proceduresService = require('./services/proceduresSerive')
 
 
@@ -259,7 +260,60 @@ app.get('/api/test', async (req, res) => {
     res.send(institutionFileNames)
 })
 
-//-------------------------Database endpoints--------------------------------------------------------------------------
+//------------------START----------Sort files endpoint(s)---------------------------START-----------------------------
+
+/**
+ * In relation to the file names in the institutions database table
+ *  (institution.savedRepoTableName), we compare that with our local
+ *  folders and move the files that are in database to a folder
+ *  ready for processing. This endpoint should move files in './rawCSVs/unSortedFiles' into
+ *  './rawCSVs' folder
+ *  @TODO log files that are missing maybe
+ */
+app.get('/api/sort-files', async (req, res) => {
+
+    const institutionFileNames = await institutionsService.institutionFileNames()
+
+    _.forEach(institutionFileNames, async (csvFileName) => {
+
+        // if the institution has a value in institution.savedRepoTableName (csv file)
+        if (csvFileName) {
+
+            try {
+
+                const ext = '.csv' // moving .csv files
+                const fileName = `${csvFileName}${ext}`//'csvFileName.csv'
+                const dirPath = '../rawCSVs/unSortedFiles/'
+                const destPath = '../rawCSVs/'
+                const from = `${dirPath}${fileName}`
+                const to = `${destPath}${fileName}`
+                //console.log('from=======',dirPath)
+                //console.log('to++++++++++++',destPath)
+                await fileFolderService.stageFilesForProcessing(from, to)
+
+                res.send('Files..sorting............')
+
+            } catch (e) {
+
+                //res.send(`Error moving file ${csvFileName}::${e}`)
+
+            }
+
+
+            /**
+             * After this maybe run through the same folder for required fields and so on
+             */
+
+        }
+
+    })
+
+    //const MoveFile = fileFolderService.stageFilesForProcessing()
+})
+
+//----------------END OF------------------Sort files endpoint(s)----------------------END OF--------------------------
+
+//-----------------START---------------Database endpoints-----------------------START----------------------------------
 /**
  * This section maybe broken into a separate file
  */

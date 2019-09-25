@@ -1,21 +1,36 @@
 const moveFile = require('move-file');
+
 /**
- * compares files in database and files in our csv folder
- * moves those that are in the database (savedRepoTableName) into a folder
- * ready for processing
+ * @param from
+ * @param to
+ * given full path names with filename plus extensions, from the folder to move in relation
+ * to the folder where this function is called from, to the destination folder
+ * from = where file is located
+ * to = destination folder and filename to move to
+ * example from = '../../rawCSVs/source/file_to_move.txt'
+ *         to = '../../rawCSVs/destination/file_to_move.txt'
+ *
+ *         and make sure the file exists in the source (from) folder
  */
-async function stageFilesForProcessing(from, to, fileName) {
+async function stageFilesForProcessing(from, to) {
 
     try {
 
-        await moveFile('../../rawCSVs/source/googlespreadsheetdoc.txt', '../../rawCSVs/testingFolder/googlespreadsheetdoc.txt')
-        console.log('file has been moved')
+        (async () => {
+
+            await moveFile(from, to)
+            console.log('file has been moved')
+
+        })()
 
     } catch (e) {
-
+        //console.log(e)
         return e
     }
 
 }
 
-stageFilesForProcessing()
+
+module.exports = {
+    stageFilesForProcessing,
+}
