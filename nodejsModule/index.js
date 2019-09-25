@@ -308,7 +308,6 @@ app.get('/api/sort-files', async (req, res) => {
 
     })
 
-    //const MoveFile = fileFolderService.stageFilesForProcessing()
 })
 
 //----------------END OF------------------Sort files endpoint(s)----------------------END OF--------------------------
