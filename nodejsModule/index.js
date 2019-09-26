@@ -92,6 +92,31 @@ app.get('/api/csv-files', async (req, res) => {
 
 })
 
+/**
+ * Get all available CSVs data files in our local
+ * folder and return/
+ * @TODO duplicate from above remove one
+ */
+app.get('/api/local-csv-files', async (req, res) => {
+    const csvFolder = path.join(__dirname, '../rawCSVs')
+
+    try {
+        await fs.readdir(csvFolder,  (err, files) => {
+            if (err) res.send(err)
+            else
+                filesList = files.filter((e) => {
+                    return path.extname(e).toLowerCase() === '.csv'
+                });
+
+            res.send(filesList)
+        })
+    } catch (e) {
+        res.send(e)
+    }
+
+})
+
+
 
 
 /**
@@ -220,25 +245,9 @@ app.get('/api/data/google-spread-sheets/:id', async (req, res) => {
  * After that, files with errors can be forwarded to the researchers team, and
  */
 app.get('/api/test', async (req, res) => {
-    const institutions = await institutionsService.getInstitutions()
-    const institutionFileNames = await institutionsService.institutionFileNames()
-
-    // get each institution in the table
-    _.forEach(institutions, async (institution) => {
-        //console.log('TEST!!!!', institution)
-        //console.log('================BREAK========================')
-        //console.log('===============ALL=ITEMS====================', institutions.length)
-
-        const institutionFileName = await institutionsService.institutionFileName(institution.rId)
-        if (institutionFileName) {
-
-            /**
-             * @TODO implement logic to sort files ready for processing here
-             * run once when needed..comment when not
-             */
-            console.log('File Name ======= |||||| ========== ',institutionFileName)
-        }
-
+    //const institutions = await institutionsService.getInstitutions()
+    //const institutionFileNames = await institutionsService.institutionFileNames()
+    try {
 
         // api endpoints need to communicate within the app
         // req data from '/api/data/google-spread-sheets/:id'
@@ -247,17 +256,52 @@ app.get('/api/test', async (req, res) => {
             host: req.get('host'),
         });
 
+        // api endPoint to get the file list
+        const dataUrl = `${homeUrl}/api/local-csv-files`
+
+        // Get files ready to process from our rawCSVs folder from the api above
+        const files = await fileFolderService.filesReadyToProcess(dataUrl)
+        console.log('Files..**********.....*****....', files)
+
+
+    } catch (e) {
+
+        console.log('Error getting files')
+    }
+
+
+    // get each institution in the table
+    //_.forEach(institutions, async (institution) => {
+        //console.log('TEST!!!!', institution)
+        //console.log('================BREAK========================')
+        //console.log('===============ALL=ITEMS====================', institutions.length)
+
+        //const institutionFileName = await institutionsService.institutionFileName(institution.rId)
+        //const institutionFileName = institution.savedRepoTableName
+        //if (institutionFileName) {
+
+            /**
+             * @TODO implement logic to sort files ready for processing here
+             * run once when needed..comment when not
+             */
+            //console.log('File Name ======= |||||| ========== ',institutionFileName)
+            //res.send(institutionFileName)
+        //}
+
+        //res.send(institutions)
+
+
         // each csv file by its file name in relation to this institution
-        const csvFileName = institution.savedRepoTableName
-        const dataUrl = `${homeUrl}/api/csvdata/${csvFileName}.csv` // call this endpoint within this app
+        //const csvFileName = institution.savedRepoTableName
+        //const dataUrl = `${homeUrl}/api/csvdata/${csvFileName}.csv` // call this endpoint within this app
 
 
-    })
+    //})
 
     //console.log('TEST!!!!', institutions)
     //res.send(institutions)
     //console.log('FILE NAMES!!!!', institutionFileNames)
-    res.send(institutionFileNames)
+
 })
 
 //------------------START----------Sort files endpoint(s)---------------------------START-----------------------------
@@ -272,7 +316,6 @@ app.get('/api/test', async (req, res) => {
  */
 app.get('/api/sort-files', async (req, res) => {
 
-    const institutionFileNames = await institutionsService.institutionFileNames()
     const institutions = await institutionsService.getInstitutions()
 
     // get each institution in the table
@@ -304,7 +347,7 @@ app.get('/api/sort-files', async (req, res) => {
                  */
                 if (!institution.itemColumnName || !institution.avgPriceColumnName || !institution.country ) {
 
-                    const dirPath = '../rawCSVs/' // remove file from above folder to missingDetails
+                    const dirPath = '../rawCSVs/' // remove file from above folder, move to ./missingDetails
                     const destPath = '../rawCSVs/missingDetails/'
                     const from = `${dirPath}${fileName}`
                     const to = `${destPath}${fileName}`
@@ -318,7 +361,7 @@ app.get('/api/sort-files', async (req, res) => {
             }
 
         }
-        
+
 
     })
 

@@ -1,3 +1,4 @@
+const axios = require('axios')
 const moveFile = require('move-file');
 
 /**
@@ -32,7 +33,26 @@ async function stageFilesForProcessing(from, to) {
 
 }
 
+/**
+ * @param endPointUrl
+ *
+ * Given an endpoint, should return an
+ * object list of available files to process
+ * in ./rawCSVs folder
+ */
+async function filesReadyToProcess(endPointUrl) {
+    try {
+        const request = await axios.get(endPointUrl)
+        console.log('Requestinging files_____|||__|||||_____',request.data)
+        return request.data
+
+    } catch (e) {
+
+        return e
+    }
+}
 
 module.exports = {
     stageFilesForProcessing,
+    filesReadyToProcess,
 }
