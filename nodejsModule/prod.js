@@ -1,4 +1,4 @@
-// contains production specific settings
+// contains production specific settings/middleware
 const helmet = require('helmet')
 const compression = require('compression')
 

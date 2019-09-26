@@ -1,3 +1,4 @@
+
 -- phpMyAdmin SQL Dump
 -- version 4.9.0.1
 -- https://www.phpmyadmin.net/
@@ -46,29 +47,29 @@ CREATE TABLE `institutions` (
 	`grossRevenueFiscal` varchar(255) DEFAULT NULL,
 	`annualReportDocs` varchar(255) DEFAULT NULL,
 	`website` varchar(255) DEFAULT NULL,
-	`currentPricingUrl` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL, 
-	`currentPricingLandingURL` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL, 
-	`itemColumnName` varchar(255) DEFAULT NULL, 
-	`avgPriceColumnName` varchar(255) DEFAULT NULL, 
-	`priceSampleSizeColumnName` varchar(255) DEFAULT NULL, 
-	`extraColumnName` varchar(255) DEFAULT NULL, 
-	`categoryColumnName` varchar(255) DEFAULT NULL, 
-	`medianPricingColumnName` varchar(255) DEFAULT NULL, 
-	`outPatientPriceColumnName` varchar(255) DEFAULT NULL, 
-	`inpatientPriceColumnName` varchar(255) DEFAULT NULL, 
-	`removedHeaderRowsForCSV` varchar(255) DEFAULT NULL, 
-	`longitude` double DEFAULT NULL, 
-	`latitude` double DEFAULT NULL, 
-	`savedRepoTableName` varchar(255) DEFAULT NULL, 
-	`communityHospital` varchar(255) DEFAULT NULL, 
-	`type` varchar(255) DEFAULT NULL, 
-	`founded` varchar(255) DEFAULT NULL, 
-	`siteUp` varchar(255) DEFAULT NULL, 
-	`contributor` varchar(255) DEFAULT NULL, 
-	`hasSpreadSheet` varchar(255) DEFAULT NULL, 
-	`notes` varchar(255) DEFAULT NULL, 
-	`nonProfit` varchar(255) DEFAULT NULL, 
-	`createdAt` varchar(255) DEFAULT NULL, 
+	`currentPricingUrl` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+	`currentPricingLandingURL` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+	`itemColumnName` varchar(255) DEFAULT NULL,
+	`avgPriceColumnName` varchar(255) DEFAULT NULL,
+	`priceSampleSizeColumnName` varchar(255) DEFAULT NULL,
+	`extraColumnName` varchar(255) DEFAULT NULL,
+	`categoryColumnName` varchar(255) DEFAULT NULL,
+	`medianPricingColumnName` varchar(255) DEFAULT NULL,
+	`outPatientPriceColumnName` varchar(255) DEFAULT NULL,
+	`inpatientPriceColumnName` varchar(255) DEFAULT NULL,
+	`removedHeaderRowsForCSV` varchar(255) DEFAULT NULL,
+	`longitude` double DEFAULT NULL,
+	`latitude` double DEFAULT NULL,
+	`savedRepoTableName` varchar(255) DEFAULT NULL,
+	`communityHospital` varchar(255) DEFAULT NULL,
+	`type` varchar(255) DEFAULT NULL,
+	`founded` varchar(255) DEFAULT NULL,
+	`siteUp` varchar(255) DEFAULT NULL,
+	`contributor` varchar(255) DEFAULT NULL,
+	`hasSpreadSheet` varchar(255) DEFAULT NULL,
+	`notes` varchar(255) DEFAULT NULL,
+	`nonProfit` varchar(255) DEFAULT NULL,
+	`createdAt` varchar(255) DEFAULT NULL,
 	`updatedAt` varchar(255) DEFAULT NULL,
 	PRIMARY KEY (`id`)
 );
@@ -77,7 +78,7 @@ CREATE TABLE `institutions` (
 -- Dumping data for table `institutions`
 --
 
-INSERT INTO `institutions` (`id`, `uuid`, `rId`, `hospitalName`, `city`, `region`, `country`, `mainHospitalName`, `numberBeds`, `streetAddress`, `numberLocation`, `ownedBy`, `managedBy`, `keyShareholdersAndPeople`, `grossRevenueFiscal`, `annualReportDocs`, `website`, `currentPricingUrl`, `currentPricingLandingURL`, `itemColumnName`, `avgPriceColumnName`, `priceSampleSizeColumnName`, `extraColumnName`, `categoryColumnName`, `medianPricingColumnName`, `outPatientPriceColumnName`, `inpatientPriceColumnName`, `removedHeaderRowsForCSV`, `longitude`, `latitude`, `savedRepoTableName`, `communityHospital`, `type`, `founded`, `siteUp`, `contributor`, `hasSpreadSheet`, `notes`, `nonProfit`, `createdAt`, `updatedAt`) VALUES 
+INSERT INTO `institutions` (`id`, `uuid`, `rId`, `hospitalName`, `city`, `region`, `country`, `mainHospitalName`, `numberBeds`, `streetAddress`, `numberLocation`, `ownedBy`, `managedBy`, `keyShareholdersAndPeople`, `grossRevenueFiscal`, `annualReportDocs`, `website`, `currentPricingUrl`, `currentPricingLandingURL`, `itemColumnName`, `avgPriceColumnName`, `priceSampleSizeColumnName`, `extraColumnName`, `categoryColumnName`, `medianPricingColumnName`, `outPatientPriceColumnName`, `inpatientPriceColumnName`, `removedHeaderRowsForCSV`, `longitude`, `latitude`, `savedRepoTableName`, `communityHospital`, `type`, `founded`, `siteUp`, `contributor`, `hasSpreadSheet`, `notes`, `nonProfit`, `createdAt`, `updatedAt`) VALUES
 (1, 'fa27c8b6-ce76-46b4-95f1-9c813fe32328', 1, 'NYU Langone Medical Center', 'New York', 'NY', 'US', 'Tisch Hospital', 1069, '550 1st Avenue', 5, 'NYU', 'NYU', '\"Kenneth G. Langone, Elaine Langone, Martin Kimmel\"', '$135.1 million', '\"https://www.crainsnewyork.com/health-care/nyu-langone-earned-153-million-q1\"', 'https://med.nyu.edu', 'https://med.nyu.edu/standard-charges/webform_protected_file/8Yk7bpydhONWtd7WAdXSOofKy-RrKYXfjwG2XYXDfeg/download', 'https://med.nyu.edu/standard-charges/form/price-transparency-info-download', 'DESCRIPTION', 'CHARGE AMOUNT', '', 'IDENTIFIER', 'CATEGORY OF SERVICE', '', '', '', '0', -73.97433663, 40.74207345, 'hospital_nyu_langone', 'FALSE', 'hospital', '1841-01-01 00:00:00', 'TRUE', 'Mike D', 'TRUE', 'NYU Withrop might be associated/may be overlap. We need to make a decision on this', NULL, '2019-09-22 21:27:41', '2019-09-22 21:27:41'),
 (2, '1f57b227-8725-4e8e-9f40-aa46398df971', 4, 'Yale New Haven Hospital', 'New Haven', 'Connecticut', 'US', 'Yale New Haven Hospital', 1541, '20 York St', 16, 'Yale New Haven Health system', 'Yale New Haven Health system', '\"Jonathan Knight\"', '$4.3 billion', '\"https://www.ynhh.org/ynhhs/about/corporate-overview/system-statistics.aspx\"', 'https://www.ynhh.org/', 'https://www.ynhh.org/patients-visitors/billing-insurance/pricing.aspx', 'https://www.ynhh.org/-/media/files/ynhhs/cm/ynhh_chargemaster_0819.csv?la=en&hash=70E2DD5D83BFDAE6507217009BF9F90DDA07BC3C', 'Item Description', 'Item Price', '', 'Item Code', '', '', '', '', '5', -73.1181, 41.71496, 'hospital_yale_newhaven', 'FALSE', 'hospital', '1826-01-01 00:00:00', 'TRUE', 'Pauline', 'TRUE', '', NULL, '2019-09-22 21:27:41', '2019-09-22 21:27:41'),
 (3, '8245c892-dfc8-444f-8dfe-4452db638e7c', 2, 'AtlantiCare', 'Atlantic County', 'New Jersy', 'US', 'AtlantiCare', 267, '2500 ENGLISH CREEK AVENUE', 70, 'Geisinger', 'Geisinger', '\"David Tilton\"', '$41 Million', '\"https://www.owler.com/company/atlanticare\"', '', 'https://www.atlanticare.org/assets/images/services/price-transparency/2019finalpricetransparencyforjan1.pdf', 'https://www.atlanticare.org/patients-and-visitors/for-patients/billing-and-insurance/hospital-charge-list', '', '', '', '', '', '', '', '', '', -74.6048281, 39.4388721, 'hospital_atlanticare_Atlantic', 'FALSE', 'hospital', '1898-01-01 00:00:00', 'TRUE', 'Franklin A', 'FALSE', 'Pricelist not in sheet format', NULL, '2019-09-22 21:27:41', '2019-09-22 21:27:41'),
@@ -199,7 +200,7 @@ INSERT INTO `institutions` (`id`, `uuid`, `rId`, `hospitalName`, `city`, `region
 (113, '493f9bc2-a66d-470e-8932-d057a97ffc43', 113, 'Sharp Memorial Hospital', 'San Diego', 'California', 'US', 'SHARP', 394, '7901 Frost St', 7, 'Sharp HealthCare', 'Sharp HealthCare', '\"Tim Smith\"', '$3.8 Billion', '\"https://www.modernhealthcare.com/article/20190128/NEWS/190129939/sharp-healthcare-reports-admissions-growth-as-it-welcomes-new-ceo\"', 'https://www.sharp.com', 'https://www.sharp.com/chargemaster/memorial/standard-charges.cfm', 'https://www.sharp.com/chargemaster/memorial/standard-charges.cfm', 'DRG Description', 'Avg Charges', '', 'DRG', '', '', '', '', '2', -117.1543535, 32.79969815, 'Sharp_Memorial_Hospital', 'FALSE', 'hospital', '1955-01-01 00:00:00', 'TRUE', 'George W.', 'TRUE', '', NULL, '2019-09-22 21:27:41', '2019-09-22 21:27:41'),
 (114, 'e9e30926-cc20-42c5-9975-ba3eeb15de86', 114, 'Beverly Hospital', 'Montebello', 'California', 'US', 'Beverly Hospital', 224, '309 W Beverly Blvd, Montebello, CA 90640, USA', 2, 'Beverly Hospital', 'Beverly Hospital', '\"Philip M. Cormier, Rebecca Imperiali\"', '$434.78 Million', '\"https://www.beverlyhospital.org/about-us/annual-report/2011-annual-report\"', 'https://www.beverlyhospital.org', 'https://www.beverlyhospital.org/media/885611/north%20east.csv', 'https://www.beverlyhospital.org/media/885611/north%20east.csv', 'Charge Description', 'Charge', '', 'Charge Code', '', '', '', '', '0', -118.1009171, 34.0153327, 'hospital_BeverlyHospital', 'FALSE', 'hospital', '1949-01-01 00:00:00', 'TRUE', 'Edward', 'TRUE', '', NULL, '2019-09-22 21:27:41', '2019-09-22 21:27:41'),
 (115, '2b7df62e-ee3f-4b84-bc92-d6440b59e76d', 115, 'Canyon Ridge Hospital', 'Chino', 'California', 'US', 'Canyon Ridge Hospital', 106, '5353 G St, Chino, CA 91710, USA', 1, 'Canyon Ridge Hospital', 'Canyon Ridge Hospital', '\"Stephanie Bernier, Wadie Alkhouri\"', '$68.89 Million', '\"https://www.ahd.com/free_profile/054111/Canyon_Ridge_Hospital/Chino/California/\"', 'https://canyonridgehospital.com/', 'https://oshpd.ca.gov/ml/v1/resources/document?rs:path=/Data-And-Reports/Chargemaster/2018/Canyon_Ridge_Hospital/106364050_Common25_2018.xls', 'https://oshpd.ca.gov/ml/v1/resources/document?rs:path=/Data-And-Reports/Chargemaster/2018/Canyon_Ridge_Hospital/106364050_Common25_2018.xls', 'Description', 'PRICE', '', 'Service Code', '', '', '', '', '7', -117.6880682, 34.00919285, 'hospital_Canyon-Ridge-Hospital', 'FALSE', 'hospital', '2005-01-01 00:00:00', 'TRUE', 'Edward', 'TRUE', '', NULL, '2019-09-22 21:27:41', '2019-09-22 21:27:41'),
-(116, '56110964-e51d-4bde-903a-7ce2d340bae1', 116, 'Centinela Hospital Medical Center', 'Inglewood', 'California', 'US', 'Centinela Hospital Medical Center', 369, '555 E Hardy St, Inglewood, CA 90301, USA', 1, 'Prime Healthcare Services', 'Prime Healthcare Services', '\"Mohammad Abdelnaser, Paul Sennett\"', '$1.133 Billion', '\"https://www.ahd.com/free_profile/050739/Centinela_Hospital_Medical_Center/Inglewood/California/\"', 'https://www.centinelamed.com', 'https://www.centinelamed.com/documents/CHMC-CDM-Utilization-csv.csv', 'https://www.centinelamed.com/documents/CHMC-CDM-Utilization-csv.csv', 'Procedure Name', '  Price   ', '', '', '', '', '', '', '0', -118.3483066, 33.95046115, 'hospital_Centinela-Hospital-Medical-Center', 'FALSE', 'hospital', '1924-01-01 00:00:00', 'TRUE', 'Edward', 'TRUE', '', NULL, '2019-09-22 21:27:41', '2019-09-22 21:27:41');
+(116, '56110964-e51d-4bde-903a-7ce2d340bae1', 116, 'Centinela Hospital Medical Center', 'Inglewood', 'California', 'US', 'Centinela Hospital Medical Center', 369, '555 E Hardy St, Inglewood, CA 90301, USA', 1, 'Prime Healthcare Services', 'Prime Healthcare Services', '\"Mohammad Abdelnaser, Paul Sennett\"', '$1.133 Billion', '\"https://www.ahd.com/free_profile/050739/Centinela_Hospital_Medical_Center/Inglewood/California/\"', 'https://www.centinelamed.com', 'https://www.centinelamed.com/documents/CHMC-CDM-Utilization-csv.csv', 'https://www.centinelamed.com/documents/CHMC-CDM-Utilization-csv.csv', 'Procedure Name', '  Price   ', '', '', '', '', '', '', '0', -118.3483066, 33.95046115, 'hospital_Centinela-Hospital-Medical-Center', 'FALSE', 'hospital', '1924-01-01 00:00:00', 'TRUE', 'Edward', 'TRUE', '', NULL, '2019-09-22 21:27:41', '2019-09-22 21:27:41');
 INSERT INTO `institutions` (`id`, `uuid`, `rId`, `hospitalName`, `city`, `region`, `country`, `mainHospitalName`, `numberBeds`, `streetAddress`, `numberLocation`, `ownedBy`, `managedBy`, `keyShareholdersAndPeople`, `grossRevenueFiscal`, `annualReportDocs`, `website`, `currentPricingUrl`, `currentPricingLandingURL`, `itemColumnName`, `avgPriceColumnName`, `priceSampleSizeColumnName`, `extraColumnName`, `categoryColumnName`, `medianPricingColumnName`, `outPatientPriceColumnName`, `inpatientPriceColumnName`, `removedHeaderRowsForCSV`, `longitude`, `latitude`, `savedRepoTableName`, `communityHospital`, `type`, `founded`, `siteUp`, `contributor`, `hasSpreadSheet`, `notes`, `nonProfit`, `createdAt`, `updatedAt`) VALUES
 (117, '35ab41f1-9139-4783-a461-1e364acb0edb', 117, 'Zuckerberg San Francisco General Hospital and Trauma Center', ' San Francisco', 'California', 'US', 'Zuckerberg San Francisco General Hospital and Trauma Center', 645, '1001 Potrero Ave, San Francisco', 0, '', '', '\"Susan P. Ehrlich\"', '$3.428 Billion', '\"https://www.ahd.com/free_profile/050228/Zuckerberg_San_Francisco_General_Hospital_and_Trauma_Center/San_Francisco/California/\"', 'https://zuckerbergsanfranciscogeneral.org/about-us/our-history/', 'https://oshpd.ca.gov/ml/v1/resources/document?rs:path=\\Data-And-Reports\\Chargemaster\\2018\\Zuckerberg%20San%20Francisco%20General%20Hospital%20and%20Trauma%20Center\\106380939_CDM_All_2018.xlsx', 'https://oshpd.ca.gov/ml/v1/resources/document?rs:path=\\Data-And-Reports\\Chargemaster\\2018\\Zuckerberg%20San%20Francisco%20General%20Hospital%20and%20Trauma%20Center\\106380939_CDM_All_2018.xlsx', 'Service Description', 'Hospital Charge', '', 'Hospital Service Code', '', '', '', '', '1', -74.0059731, 40.7143528, 'hospital_Zuckerberg San Francisco General Hospital and Trauma Center', 'TRUE', 'hospital', '1850-01-01 00:00:00', 'TRUE', 'Franklin A', 'TRUE', '', NULL, '2019-09-22 21:27:41', '2019-09-22 21:27:41'),
 (118, '0b92804f-7183-445d-8d4e-3370b35f5f10', 118, 'Woodland Memorial Hospital', 'Woodland', 'California', 'US', 'Woodland Memorial Hospital', 0, '1325 Cottonwood St, Woodland', 39, 'dignity health', 'dignity health', '\"Lloyd H. Dean, Daniel J. Morissette\"', '$10.522 Billion', '\"https://en.wikipedia.org/wiki/Dignity_Health\"', 'https://dignityhealth.org/', 'https://oshpd.ca.gov/ml/v1/resources/document?rs:path=/Data-And-Reports/Chargemaster/2018/Woodland_Memorial_Hospital/106571086_CDM_All_2018.xls', 'https://oshpd.ca.gov/ml/v1/resources/document?rs:path=/Data-And-Reports/Chargemaster/2018/Woodland_Memorial_Hospital/106571086_CDM_All_2018.xls', 'Evaluation & Management Services (CPT Codes 99201-99499)', 'Average Charge', '', '2018 CPT Code', '', '', '', '', '4', -74.52232361, 40.91351258, 'hospital_Woodland Memorial ', 'FALSE', 'hospital', '1905-01-01 00:00:00', 'TRUE', 'Franklin A', 'TRUE', '', NULL, '2019-09-22 21:27:41', '2019-09-22 21:27:41'),

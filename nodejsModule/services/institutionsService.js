@@ -6,9 +6,24 @@ const Institutions = require('../database/models').Institutions
 async function getInstitutions(){
     try {
 
-        const institutions = await Institutions.findAll({}).map(item => item.get({ plain: true }))
+        let institutions = {}
 
-        return institutions
+        institutions = await Institutions.findAll({}).map(item => item.get({ plain: true }))
+
+        if (!_.isEmpty(institutions)) {
+
+            return institutions
+        }
+
+        if (_.isEmpty(institutions)){
+
+            institutions = {
+                data: 'No data...'
+            }
+
+            return institutions
+        }
+
     } catch (e) {
 
         return e

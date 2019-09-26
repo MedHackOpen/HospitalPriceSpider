@@ -16,12 +16,14 @@ async function stageFilesForProcessing(from, to) {
 
     try {
 
-        (async () => {
+        const files = await moveFile(from, to)
 
-            await moveFile(from, to)
-            console.log('file has been moved')
+        if (files) {
 
-        })()
+            console.log('file has been moved', files)
+            return files
+        }
+        //console.log('file has been moved')
 
     } catch (e) {
         //console.log(e)

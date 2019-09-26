@@ -25,6 +25,7 @@ const Procedures = require('./database/models').Procedures
  * @TODO add status response codes
  * @TODO configure security on production (cors) also implement response status for consumers og there apis
  */
+app.use(express.json())
 app.use(cors())
 
 // import local services
@@ -33,7 +34,7 @@ const xlsxToJson = require('./services/spreadsheetToJson')
 const googleSheets = require('./services/spreadsheetGoogleApi')
 const institutionsService = require('./services/institutionsService')
 const fileFolderService = require('./services/fileFolderService')
-const proceduresService = require('./services/proceduresSerive')
+const proceduresService = require('./services/proceduresService')
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -58,7 +59,6 @@ async function testingConvert() {
     return data
 }
 //----------------------------------------------------------------------------------------------------------
-app.use(express.json())
 
 //------------------api endpoints below
 /**
@@ -273,8 +273,67 @@ app.get('/api/test', async (req, res) => {
 app.get('/api/sort-files', async (req, res) => {
 
     const institutionFileNames = await institutionsService.institutionFileNames()
+    const institutions = await institutionsService.getInstitutions()
 
-    _.forEach(institutionFileNames, async (csvFileName) => {
+    // get each institution in the table
+    _.forEach(institutions, async (institution) => {
+
+        // institution file name as saved in the institution table
+        const institutionFileName = institution.savedRepoTableName
+        if (institutionFileName) {
+            try {
+
+                //@TODO implement logic to sort files ready for processing here
+                //console.log('File Name ======= |||||| ========== ',institutionFileName)
+                const ext = '.csv' // moving .csv files
+                const fileName = `${institutionFileName}${ext}`//'csvFileName.csv'
+                const dirPath = '../rawCSVs/unSortedFiles/'
+                const destPath = '../rawCSVs/'
+                const from = `${dirPath}${fileName}`
+                const to = `${destPath}${fileName}`
+                //console.log('from=======',dirPath)
+                //console.log('to++++++++++++',destPath)
+                await fileFolderService.stageFilesForProcessing(from, to)
+
+                /**
+                 * From the readme.md in the root of this repo, we move files without the
+                 * required fields to another folder for those details to be accurate/available
+                 * Required fields for all are itemName, hospitalId, currency and price.
+                 * use country to get currency
+                 */
+                if (!institution.itemColumnName || !institution.avgPriceColumnName || !institution.country ) {
+
+                    const dirPath = '../rawCSVs/' // remove file from above folder to missingDetails
+                    const destPath = '../rawCSVs/missingDetails/'
+                    const from = `${dirPath}${fileName}`
+                    const to = `${destPath}${fileName}`
+                    await fileFolderService.stageFilesForProcessing(from, to)
+                }
+
+                res.send('Files..sorting............')
+
+            } catch (e) {
+                console.log(e)
+            }
+
+        }
+
+
+        // api endpoints need to communicate within the app
+        // req data from '/api/data/google-spread-sheets/:id'
+        let homeUrl = url.format({
+            protocol: req.protocol,
+            host: req.get('host'),
+        });
+
+        // each csv file by its file name in relation to this institution
+        const csvFileName = institution.savedRepoTableName
+        const dataUrl = `${homeUrl}/api/csvdata/${csvFileName}.csv` // call this endpoint within this app
+
+
+    })
+
+    /*_.forEach(institutionFileNames, async (csvFileName) => {
 
         // if the institution has a value in institution.savedRepoTableName (csv file)
         if (csvFileName) {
@@ -297,16 +356,16 @@ app.get('/api/sort-files', async (req, res) => {
 
                 //res.send(`Error moving file ${csvFileName}::${e}`)
 
-            }
+            }*/
 
 
             /**
              * After this maybe run through the same folder for required fields and so on
              */
 
-        }
+        //}
 
-    })
+    //})
 
 })
 
@@ -832,7 +891,7 @@ app.get('/api/update/institutions-from-local-spreadsheet', async (req, res) => {
                      */
 
                     if (row.rId && row.hospitalName) { // Though every row has rid
-                        console.log('fileData+++++++++++++++++++++++++++++++++END+++++++++++++++++++++++++++++++++')
+                        //console.log('fileData+++++++++++++++++++++++++++++++++END+++++++++++++++++++++++++++++++++')
 
                         // newInstitution item/Hospital
                         let newInstitution = {
@@ -952,10 +1011,13 @@ app.get('/api/update/institutions-from-local-spreadsheet', async (req, res) => {
                             }
 
                         })
+
                     }
                     //console.log('fileData+++++++++++++++++++++++++++++FINISHED+++++++++++++++++++++++++++++++++')
+
                 })
-                res.send(fileData)
+
+                res.send('...................Saved......Data.................')
             })
 
     } catch (e) {
