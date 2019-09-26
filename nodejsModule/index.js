@@ -257,11 +257,30 @@ app.get('/api/test', async (req, res) => {
         });
 
         // api endPoint to get the file list
-        const dataUrl = `${homeUrl}/api/local-csv-files`
+        const endPoint = '/api/local-csv-files'
+        const dataUrl = `${homeUrl}${endPoint}`
 
         // Get files ready to process from our rawCSVs folder from the api above
         const files = await fileFolderService.filesReadyToProcess(dataUrl)
-        console.log('Files..**********.....*****....', files)
+
+
+        const csvFileName = await files.map((item, index) => {
+
+            const file = {
+                fileNumber: index,
+                name: item
+            }
+
+            console.log('csvFileName|||||====|||||====', file )
+
+            return file
+        })
+
+
+        const csvFileData = await fileFolderService.processCsvFile(homeUrl, 'Gadsden Regional Medical Center_ChargeMaster_AL.csv')
+
+        //res.send(files)
+        res.send(csvFileName)
 
 
     } catch (e) {

@@ -34,17 +34,21 @@ async function stageFilesForProcessing(from, to) {
 }
 
 /**
- * @param endPointUrl
+ * @param dataUrl
  *
- * Given an endpoint, should return an
+ * Given a url endpoint within our app, should return an
  * object list of available files to process
  * in ./rawCSVs folder
  */
-async function filesReadyToProcess(endPointUrl) {
+async function filesReadyToProcess(dataUrl) {
     try {
-        const request = await axios.get(endPointUrl)
-        console.log('Requestinging files_____|||__|||||_____',request.data)
-        return request.data
+        const request = await axios.get(dataUrl)
+
+        if (request) {
+            //console.log('Requestinging files_____|||__|||||_____',request.data)
+            return request.data
+        }
+
 
     } catch (e) {
 
@@ -52,7 +56,30 @@ async function filesReadyToProcess(endPointUrl) {
     }
 }
 
+/**
+ * @param homeUrl
+ * @param fileName
+ */
+async function processCsvFile(homeUrl, fileName) {
+    try {
+
+        // const dataUrl = our epi endPoint the returns json data given a fileName(csv) + .ext
+        const dataUrl = `${homeUrl}/api/csvdata/${fileName}`
+
+        //console.log('dataURL====+++++++++=====  ', dataUrl)
+
+        const request = await axios.get(dataUrl)
+        //console.log(request.data)
+
+        return request.data
+
+    } catch (e) {
+        return e
+    }
+}
+
 module.exports = {
     stageFilesForProcessing,
     filesReadyToProcess,
+    processCsvFile,
 }
