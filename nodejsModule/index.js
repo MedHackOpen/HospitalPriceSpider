@@ -296,7 +296,8 @@ app.get('/api/sort-files', async (req, res) => {
                 await fileFolderService.stageFilesForProcessing(from, to)
 
                 /**
-                 * From the readme.md in the root of this repo, we move files without the
+                 * From the readme.md in the root of this repo (defined required fields),
+                 * we move files without the
                  * required fields to another folder for those details to be accurate/available
                  * Required fields for all are itemName, hospitalId, currency and price.
                  * use country to get currency
@@ -317,55 +318,9 @@ app.get('/api/sort-files', async (req, res) => {
             }
 
         }
-
-
-        // api endpoints need to communicate within the app
-        // req data from '/api/data/google-spread-sheets/:id'
-        let homeUrl = url.format({
-            protocol: req.protocol,
-            host: req.get('host'),
-        });
-
-        // each csv file by its file name in relation to this institution
-        const csvFileName = institution.savedRepoTableName
-        const dataUrl = `${homeUrl}/api/csvdata/${csvFileName}.csv` // call this endpoint within this app
-
+        
 
     })
-
-    /*_.forEach(institutionFileNames, async (csvFileName) => {
-
-        // if the institution has a value in institution.savedRepoTableName (csv file)
-        if (csvFileName) {
-
-            try {
-
-                const ext = '.csv' // moving .csv files
-                const fileName = `${csvFileName}${ext}`//'csvFileName.csv'
-                const dirPath = '../rawCSVs/unSortedFiles/'
-                const destPath = '../rawCSVs/'
-                const from = `${dirPath}${fileName}`
-                const to = `${destPath}${fileName}`
-                //console.log('from=======',dirPath)
-                //console.log('to++++++++++++',destPath)
-                await fileFolderService.stageFilesForProcessing(from, to)
-
-                res.send('Files..sorting............')
-
-            } catch (e) {
-
-                //res.send(`Error moving file ${csvFileName}::${e}`)
-
-            }*/
-
-
-            /**
-             * After this maybe run through the same folder for required fields and so on
-             */
-
-        //}
-
-    //})
 
 })
 
