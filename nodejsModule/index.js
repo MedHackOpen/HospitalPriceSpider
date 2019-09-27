@@ -325,6 +325,55 @@ app.get('/api/update/institutions', async (req, res) => {
 //--------------------------End of database endpoints------------------------------------------------------------------
 
 
+//--------------------------Search endpoints---------------------------------------------------------------------------
+/*Endpoint  for searching average price within a radius using
+* latitude longitude and range in miles*/
+app.get('/averageprice/location', function (req, res) {
+    var range = req.param('range');
+    var lon = req.param('lon');
+    var lat = req.param('lat');
+
+    sequelize.query('SELECT avg(avgPrice) AS average\n' +
+        'FROM ( SELECT avgPrice FROM institutions ' +
+        '      INNER JOIN procedures ON institutions.rId = procedures.rId' +
+        '          WHERE \n' +
+        '          longitude between (:lon-:range/cos(radians(:lat))*69) \n' +
+        '          and (:lon+:range/cos(radians(:lat))*69) \n' +
+        '          and latitude between (:lat-(:range/69)) \n' +
+        '          and (:lat+(:range/69)) \n' +
+        '          and  3956 * 2 * \n' +
+        '          ASIN(SQRT( POWER(SIN((:lat - institutions.latitude)*pi()/180/2),2)\n' +
+        '          +COS(:lat*pi()/180 )*COS(institutions.latitude*pi()/180)\n' +
+        '          *POWER(SIN((:lon-institutions.longitude)*pi()/180/2),2))) \n' +
+        '           < :range) as average_temp',
+        {replacements: {range: range, lon: lon, lat: lat}, type: sequelize.QueryTypes.SELECT}
+    ).then(average => {
+        res.send(average[0]);
+    })
+});
+
+/*Endpoint  for searching costliest procedure using phrase*/
+app.get('/costliestProcedure/containingPhrase', function (req, res) {
+    var phrase = req.param('phrase');
+    sequelize.query("SELECT itemName, MAX(price) as price FROM procedures WHERE itemName REGEXP :phrase ",
+        {replacements: {phrase: phrase}, type: sequelize.QueryTypes.SELECT}
+    ).then(procudure => {
+        res.send(procudure[0])
+    });
+});
+
+/*Endpoint  for searching cheapest procedure using phrase*/
+app.get('/cheapestProcedure/containingPhrase', function (req, res) {
+    var phrase = req.param('phrase');
+
+    sequelize.query("SELECT itemName, MIN(price) as price FROM procedures WHERE itemName REGEXP :phrase ",
+        {replacements: {phrase: phrase}, type: sequelize.QueryTypes.SELECT}
+    ).then(procudure => {
+        res.send(procudure[0])
+    });
+});
+//--------------------------End of search endpoints--------------------------------------------------------------------
+
 const port = process.env.PORT || 3007;
 //save the server object into a variable
 var server = app.listen(port, () => {
