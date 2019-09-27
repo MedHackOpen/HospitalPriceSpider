@@ -1,4 +1,5 @@
 const fs = require('fs')
+const _ = require('lodash')
 const csvToJsonV2=require("csvtojson/v2");
 
 
@@ -27,9 +28,12 @@ async function getJsonFromCsv(filePath){
 
         const data = await csvToJsonV2().fromFile(filePath)
 
-        //console.log('Raw data', data)
 
-        return data
+        if (data) {
+
+            //console.log('Raw data', data)
+            return data
+        }
 
     } catch (e) {
 
@@ -43,7 +47,27 @@ async function getJsonFromCsv(filePath){
     }
 }
 
+async function csvDataItems(filePath) {
+    try {
+
+        const data = await getJsonFromCsv(filePath)
+
+        if (data) {
+            return data
+        }
+
+
+    } catch (e) {
+
+        return e
+    }
+
+
+}
+
+
 module.exports =  {
     getJsonFromCsv,
     getCsvFiles,
+    csvDataItems,
 };

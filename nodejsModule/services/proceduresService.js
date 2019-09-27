@@ -1,23 +1,228 @@
+const path = require('path')
+const fs = require('fs')
 const uuid = require('uuid/v4')
+const _ = require('lodash')
 
-// Database
+// Database/Models
 const Procedures = require('../database/models').Procedures
 
-async function createProcedureItem(institution, dt) {
+// Services
+
+const institutionsService = require('./institutionsService')
+const csvToJson = require('./csvToJson')
+const fileFolderService = require('./fileFolderService')
+
+async function test() {
+
+    const fileName = 'hospital_CPMC.csv'
+    const csvFilePath = path.join(__dirname, '../../rawCSVs', fileName)
+    //console.log('*****csvFilePath****',csvFilePath)
+    const data = await csvToJson.getJsonFromCsv(csvFilePath)
+
+    /*const fileName = req.params.id
+    const csvFilePath = path.join(__dirname, '../rawCSVs', fileName)
+
+    try {
+
+        const data =  await getFileData(csvFilePath)
+        res.send(data)
+    } catch (e) {
+        res.send(e)
+    }*/
+
+    //console.log(data)
+
+
+}
+//test()
+
+/**
+ * returns an institution obj with the required data
+ * to process the csv files
+ */
+async function getInstitutionData() {
+
+    try {
+        const institutionsData = await institutionsService.getInstitutionsReqData()
+
+        //console.log(institutionsData)
+        if (institutionsData) {
+
+            return institutionsData
+        }
+
+
+
+    } catch (e) {
+        return e
+    }
+
+
+}
+
+async function getFileData(savedRepoTableName) {
+}
+
+/**
+ * @param fileName
+ * Given a file name eg 'hospital_CPMC.csv', this function
+ * loads that files data and iterates over it and returns
+ * each item
+ */
+async function getDataItemPerCsvFile(fileName) {
+
+    //const fileName = 'hospital_CPMC.csv'
+    const csvFilePath = path.join(__dirname, '../../rawCSVs', fileName)
+    //console.log('*****csvFilePath****',csvFilePath)
+    try {
+        const data = await csvToJson.getJsonFromCsv(csvFilePath)
+
+        if (data) {
+
+            return data
+
+        }
+
+    } catch (e) {
+
+        return e
+    }
+
+}
+
+
+/**
+ * @param fileName
+ * Given a file name eg 'hospital_CPMC.csv', in each request
+ * this function loads the given file data and passes it onto
+ * csvDataToDb for processing, returns error or nothing if success
+ */
+async function getCsvFileItems(fileName) {
+
+    //const fileName = 'hospital_CPMC.csv'
+    const csvFilePath = path.join(__dirname, '../../rawCSVs', fileName)
+
+    try {
+        const csvItems = await csvToJson.csvDataItems(csvFilePath)
+
+        //console.log(csvItems)
+
+
+        if (csvItems){
+            // @TODO maybe pass more args here
+
+
+            return await csvDataToDb(csvItems, fileName)
+        }
+
+    } catch (e) {
+
+        return e
+    }
+
+}
+
+/**
+ * using data from each file in rawCSVs folder
+ * then take it's  id and use that to get the required
+ * matching fields from our institutions table, then use
+ * that to create procedure items
+ */
+
+async function csvDataToDb(csvDataItems, fileName) {
+    //const fileNam = 'hospital_CPMC.csv'
+
+    try {
+
+        let institution = {}
+        //console.log(fileName)
+        institution = await institutionsService.getHospitalData(fileName)
+        if(institution.itemColumnName && institution.savedRepoTableName && institution.avgPriceColumnName){
+
+            /**
+             *  validate required fields before proceeding
+             *  ie itemName, hospitalId, price and currency
+             *  @TODO not sure what to make of currency currently
+             *  below validation in that order
+             */
+            //console.log(institution)
+            //console.log(institution)
+            //console.log(dt)
+            await _.map(csvDataItems, async (dt, index) => {
+
+                if ( dt[institution.itemColumnName] && institution.rId && dt[institution.avgPriceColumnName] ) {
+
+                    /**
+                     * new procedure item to insert into procedures table
+                     */
+
+                    console.log('creating ###ITEM###', ++index)
+                    const newProcedure = {
+                        uuid: uuid() ,
+                        rId: institution.rId ,
+                        itemName: dt[institution.itemColumnName],
+                        hospitalId: institution.rId ,
+                        price: dt[institution.avgPriceColumnName],
+                        hospitalName: institution.hospitalName,
+                        avgPrice: dt[institution.avgPriceColumnName], //@TODO maybe
+                        medianPrice: dt[institution.medianPricingColumnName],
+                        // sampleSize: ,
+                        outpatientAvgPrice: dt[institution.outPatientPriceColumnName],
+                        inpatientAvgPrice:  dt[institution.inpatientPriceColumnName],
+                        revenue_code: dt[institution.categoryColumnName],
+                        //latestPriceDate: ,
+                        //firstPriceDate: ,
+                        //changeSinceLastUpdate: ,
+                        //description: ,
+                        //relatedItemsFromOthers: ,
+                        //relatedItemsFromThisLocation: ,
+                        //itemsRequiredForThis:  ,
+                        //keywords: ,
+                        country: institution.country ,
+                        currency: 'USD',
+                    }
+
+                    let newProcedureInstance = await Procedures.build(newProcedure)
+                    console.log('newProcedureInstance..........created|||*******',)
+
+                    const saved = await newProcedureInstance.save()
+
+                    console.log('Saved..............................',)
+
+                    return saved
+                }
+            })
+
+
+        }
+
+
+    } catch (e) {
+        return e
+    }
+
+}
+
+
+/**
+ * @param newProcedure
+ * This function given an procedure object  creates/populates
+ * the procedures/services table with all that information
+ */
+async function createProcedureItem(newProcedure) {
 
     await Procedures.create({
-        uuid: uuid() ,
-        rId: institution.rId ,
-        itemName: dt[institution.itemColumnName],
-        hospitalId: institution.rId ,
-        price: dt[institution.avgPriceColumnName],
-        hospitalName: institution.hospitalName,
-        avgPrice: dt[institution.avgPriceColumnName], //@TODO maybe
-        medianPrice: dt[institution.medianPricingColumnName],
+        rId: newProcedure.rId ,
+        itemName: newProcedure.itemName,
+        hospitalId: newProcedure.hospitalId,
+        price: newProcedure.price,
+        hospitalName: newProcedure.hospitalName,
+        avgPrice: newProcedure.avgPrice,
+        medianPrice: newProcedure.medianPrice,
         // sampleSize: ,
-        outpatientAvgPrice: dt[institution.outPatientPriceColumnName],
-        inpatientAvgPrice:  dt[institution.inpatientPriceColumnName],
-        revenue_code: dt[institution.categoryColumnName],
+        outpatientAvgPrice: newProcedure.outpatientAvgPrice,
+        inpatientAvgPrice:  newProcedure.inpatientAvgPrice,
+        revenue_code: newProcedure.revenue_code,
         //latestPriceDate: ,
         //firstPriceDate: ,
         //changeSinceLastUpdate: ,
@@ -26,16 +231,191 @@ async function createProcedureItem(institution, dt) {
         //relatedItemsFromThisLocation: ,
         //itemsRequiredForThis:  ,
         //keywords: ,
-        country: institution.country ,
-        //currency: ,
+        country: newProcedure.country ,
+        currency: newProcedure.country,
     }).then(async (item) => {
         console.log('Created Item ============================+++', item)
-        const data = await item.dataValues
-        return data
+        return item
+    })
+}
+
+/**
+ * returns available csv files in
+ * the csvFolder
+ */
+async function csvFileNames() {
+
+    const csvFolder = path.join(__dirname, '../../rawCSVs')
+
+    try {
+        await fs.readdir(csvFolder, async (err, files) => {
+            //console.log(files)
+            if (files) {
+
+                //return files
+
+                //const filesList = await files.filter((e) => {
+                //return path.extname(e).toLowerCase() === '.csv'
+                //});
+
+                //console.log(files)
+                return await files
+
+            }
+
+            if (err) {
+                return err
+            }
+
+        })
+    } catch (e) {
+        return e
+    }
+}
+
+//console.log('WTF!!!!!!!!!!!!!!!')
+//csvDataToDb()
+
+async function testData(data) {
+
+    _.forEach(await data, row => {
+        //console.log('dataStructure logged',row)
+
+        /**
+         * Validate required values before proceeding
+         */
+
+        if (row.rId && row.hospitalName) { // Though every row has rid
+            //console.log('fileData+++++++++++++++++++++++++++++++++END+++++++++++++++++++++++++++++++++')
+
+            // newInstitution item/Hospital
+            let newInstitution = {
+                uuid: uuid(), //string
+                rId: row.rId, //double
+                hospitalName: row.hospitalName,//string
+                city: row.city,//string
+                region: row.region,//string
+                country: row.country,//string
+                mainHospitalName: row.mainHospitalName,//STRING
+                numberBeds: row.numberBeds,//INTEGER,
+                streetAddress: row.streetAddress,//string
+                numberLocation: row.numberLocations,//int
+                ownedBy: row.ownedBy,//string
+                managedBy: row.managedBy,//string
+                keyShareholdersAndPeople: row.keyShareholdersAndPeople,//json
+                grossRevenueFiscal: row.grossRevenueFiscal,//string
+                annualReportDocs: row.annualReportDocs,//json
+                website: row.website,//string
+                currentPricingUrl: row.currentPricingUrl,//string
+                currentPricingLandingURL: row.currentPricingLandingURL,//STRING,
+                itemColumnName: row.itemColumnName,//string
+                avgPriceColumnName: row.avgPriceColumnName,//string
+                priceSampleSizeColumnName: row.priceSampleSizeColumnName,//string
+                extraColumnName: row.extraColumnName,//STRING,
+                categoryColumnName: row.categoryColumnName,//STRING,
+                medianPricingColumnName: row.medianPricingColumnName,//string
+                outPatientPriceColumnName: row.outPatientPriceColumnName,//string
+                inpatientPriceColumnName: row.inPatientPriceColumnName,//string
+                removedHeaderRowsForCSV: row.removedHeaderRowsForCSV,//int
+                longitude: row.longitude,//double
+                latitude: row.latitude,//double
+                savedRepoTableName: row.savedRepoTableName,//string
+                communityHospital: row.communityHospital,// bol
+                type: row.type,  //string
+                founded: row.founded,//data
+                siteUp: row.siteUp,//bol
+                contributor: row.contributor,
+                hasSpreadSheet: row.hasSpreadSheet,//bol
+                notes: row.notes,
+                nonProfit: row.nonProfit,//bol
+            }
+
+            //console.log('fileData+++++++++++++++++++++++++++++++++END+++++++++++++++++++++++++++++++++')
+
+            // Hospital table now
+            Institutions.findOne({
+                where: { rId: row.rId }
+            }).then(record => {
+                //console.log('record===============', record)
+                /**
+                 * if record doesn't exist, create one
+                 */
+                if (!record){
+                    // insert item in database Institutions table
+
+                    let institutionInstance = Institutions.build(
+                        newInstitution
+                    )
+
+                    institutionInstance.save().then((insertedInstitution) => {
+                        //console.log('insertedInstitution...',insertedInstitution)
+                        //console.log('fileData+++++++++++++++++++++++++++++++++END+++++++++++++++++++++++++++++++++')
+                    })
+                }
+
+                /**
+                 * if record exists update/patch data
+                 */
+                if (record){
+                    Institutions.update(
+                        {
+                            //rId: row.rid, //double
+                            //hospitalName: row.hospitalname,//string
+                            city: row.city,//string
+                            region: row.region,//string
+                            country: row.country,//string
+                            mainHospitalName: row.mainHospitalName,//STRING
+                            numberBeds: row.numberBeds,//INTEGER,
+                            streetAddress: row.streetAddress,//string
+                            numberLocation: row.numberLocations,//int
+                            ownedBy: row.ownedBy,//string
+                            managedBy: row.managedBy,//string
+                            keyShareholdersAndPeople: row.keyShareholdersAndPeople,//json
+                            grossRevenueFiscal: row.grossRevenueFiscal,//string
+                            annualReportDocs: row.annualReportDocs,//json
+                            website: row.website,//string
+                            currentPricingUrl: row.currentPricingUrl,//string
+                            currentPricingLandingURL: row.currentPricingLandingURL,//STRING,
+                            itemColumnName: row.itemColumnName,//string
+                            avgPriceColumnName: row.avgPriceColumnName,//string
+                            priceSampleSizeColumnName: row.priceSampleSizeColumnName,//string
+                            extraColumnName: row.extraColumnName,//STRING,
+                            categoryColumnName: row.categoryColumnName,//STRING,
+                            medianPricingColumnName: row.medianPricingColumnName,//string
+                            outPatientPriceColumnName: row.outPatientPriceColumnName,//string
+                            inpatientPriceColumnName: row.inPatientPriceColumnName,//string
+                            removedHeaderRowsForCSV: row.removedHeaderRowsForCSV,//int
+                            longitude: row.longitude,//double
+                            latitude: row.latitude,//double
+                            savedRepoTableName: row.savedRepoTableName,//string
+                            communityHospital: row.communityHospital,// bol
+                            type: row.type,  //string
+                            founded: row.founded,//data
+                            siteUp: row.siteUp,//bol
+                            contributor: row.contributor,
+                            hasSpreadSheet: row.hasSpreadSheet,//bol
+                            notes: row.notes,
+                            nonProfit: row.nonProfit,//bol
+                        },
+                        {
+                            where: {rId: row.rId}
+                        })
+                        .then((data) => {
+                            console.log('Updated.............', data)
+                        })
+                }
+
+            })
+
+        }
+        //console.log('fileData+++++++++++++++++++++++++++++FINISHED+++++++++++++++++++++++++++++++++')
+
     })
 }
 
 
 module.exports = {
-    createProcedureItem
+    createProcedureItem,
+    getCsvFileItems,
+    csvDataToDb,
 }

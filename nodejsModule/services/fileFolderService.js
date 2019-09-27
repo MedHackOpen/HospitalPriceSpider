@@ -33,6 +33,7 @@ async function stageFilesForProcessing(from, to) {
 
 }
 
+
 /**
  * @param dataUrl
  *
@@ -66,12 +67,15 @@ async function processCsvFile(homeUrl, fileName) {
         // const dataUrl = our epi endPoint the returns json data given a fileName(csv) + .ext
         const dataUrl = `${homeUrl}/api/csvdata/${fileName}`
 
-        //console.log('dataURL====+++++++++=====  ', dataUrl)
-
+        /**
+         * data from a local csv file given its name
+         */
         const request = await axios.get(dataUrl)
+        const csvFileData = request.data
         //console.log(request.data)
+        //console.log('request.data fileName == ',fileName)
 
-        return request.data
+        return csvFileData
 
     } catch (e) {
         return e

@@ -264,20 +264,21 @@ app.get('/api/test', async (req, res) => {
         const files = await fileFolderService.filesReadyToProcess(dataUrl)
 
 
-        const csvFileName = await files.map((item, index) => {
+        const csvFileName = await files.map( async (item, index) => {
 
             const file = {
-                fileNumber: index,
+                fileNumber: ++index, //add 1 to start counting from 1
                 name: item
             }
 
-            console.log('csvFileName|||||====|||||====', file )
+            //console.log('csvFileName|||||====|||||====', file )
+            //console.log('TotalFilesInFolder====|||||====', files.length )
+            const csvFileData = await fileFolderService.processCsvFile(homeUrl, item)
+            console.log('csvFileName|||||====|||||====', file.fileNumber )
 
             return file
         })
 
-
-        const csvFileData = await fileFolderService.processCsvFile(homeUrl, 'Gadsden Regional Medical Center_ChargeMaster_AL.csv')
 
         //res.send(files)
         res.send(csvFileName)
@@ -941,7 +942,7 @@ app.get('/api/update/institutions-from-local-spreadsheet', async (req, res) => {
                             removedHeaderRowsForCSV: row.removedHeaderRowsForCSV,//int
                             longitude: row.longitude,//double
                             latitude: row.latitude,//double
-                            savedRepoTableName: row.savedRepoTableName,//string
+                            savedRepoTableName: `${row.savedRepoTableName}.csv`,//string
                             communityHospital: row.communityHospital,// bol
                             type: row.type,  //string
                             founded: row.founded,//data
@@ -1099,6 +1100,92 @@ app.get('/api/update/institutions-from-local-spreadsheet', async (req, res) => {
         res.send(e)
     }*/
 
+
+})
+
+/**
+ * Current endpoint for loading csv data to procedures table
+ */
+app.get('/api/update/load-data-from-local-csv', async (req, res) => {
+
+    try {
+
+        // api endpoints need to communicate within the app
+
+        let homeUrl = url.format({
+            protocol: req.protocol,
+            host: req.get('host'),
+        });
+
+        // api endPoint to get the file list
+        const endPoint = '/api/local-csv-files'
+        const dataUrl = `${homeUrl}${endPoint}`
+
+        // Get files ready to process from our rawCSVs folder from the api above
+        const files = await fileFolderService.filesReadyToProcess(dataUrl)
+
+
+        /**
+         * make a single request per file to read data and write to
+         * procedures table
+         */
+        const csvFileName = await files.map( async (item, index) => {
+
+            const file = {
+                fileNumber: ++index, //add 1 to start counting from 1
+                name: item
+            }
+
+            // @TODO Make one request per file name in the directory
+            //console.log(file.name)
+
+            const csvFileData = await proceduresService.getCsvFileItems(file.name)
+            //console.log('++++++++++++++END+++file.name+++++END+++++')
+
+        })
+
+
+
+        res.send(csvFileName)
+
+
+    } catch (e) {
+
+        console.log('Error getting files')
+    }
+
+
+    // get each institution in the table
+    //_.forEach(institutions, async (institution) => {
+    //console.log('TEST!!!!', institution)
+    //console.log('================BREAK========================')
+    //console.log('===============ALL=ITEMS====================', institutions.length)
+
+    //const institutionFileName = await institutionsService.institutionFileName(institution.rId)
+    //const institutionFileName = institution.savedRepoTableName
+    //if (institutionFileName) {
+
+    /**
+     * @TODO implement logic to sort files ready for processing here
+     * run once when needed..comment when not
+     */
+    //console.log('File Name ======= |||||| ========== ',institutionFileName)
+    //res.send(institutionFileName)
+    //}
+
+    //res.send(institutions)
+
+
+    // each csv file by its file name in relation to this institution
+    //const csvFileName = institution.savedRepoTableName
+    //const dataUrl = `${homeUrl}/api/csvdata/${csvFileName}.csv` // call this endpoint within this app
+
+
+    //})
+
+    //console.log('TEST!!!!', institutions)
+    //res.send(institutions)
+    //console.log('FILE NAMES!!!!', institutionFileNames)
 
 })
 //--------------------------End of database endpoints------------------------------------------------------------------

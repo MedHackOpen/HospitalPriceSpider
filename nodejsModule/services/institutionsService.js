@@ -30,6 +30,51 @@ async function getInstitutions(){
     }
 }
 
+/**
+ * Gets institutions data and returns that, only the required
+ * fields/values for processing files
+ */
+async function getInstitutionsReqData () {
+    try {
+        const institutions = await Institutions.findAll({
+            attributes: [
+                'uuid', 'rId', 'hospitalName', 'city', 'country', 'mainHospitalName','numberBeds',
+                'streetAddress','numberLocation','itemColumnName', 'avgPriceColumnName',
+                'priceSampleSizeColumnName','outPatientPriceColumnName', 'inpatientPriceColumnName', 'extraColumnName',
+                'categoryColumnName','removedHeaderRowsForCSV','savedRepoTableName', 'notes'
+            ],
+            raw: true
+        })
+
+        return institutions
+
+    } catch (e) {
+
+        return e
+    }
+}
+
+async function getHospitalData(savedRepoTableName) {
+    try {
+        const institution = await Institutions.findOne({
+            where: { savedRepoTableName: savedRepoTableName },
+            attributes: [
+                'uuid', 'rId', 'hospitalName', 'city', 'country', 'mainHospitalName','numberBeds',
+                'streetAddress','numberLocation','itemColumnName', 'avgPriceColumnName', 'medianPricingColumnName',
+                'priceSampleSizeColumnName','outPatientPriceColumnName', 'inpatientPriceColumnName', 'extraColumnName',
+                'categoryColumnName','removedHeaderRowsForCSV','savedRepoTableName', 'notes'
+            ],
+        })
+
+        return institution.dataValues
+
+    } catch (e) {
+
+        return e
+    }
+
+}
+
 async function getInstitution(rId) {
     try {
         const institutions = await getInstitutions()
@@ -47,6 +92,21 @@ async function getInstitution(rId) {
 }
 
 
+async function institutionFileName(rId) {
+
+    try {
+        const institutions = await getInstitutions()
+        const institution = await institutions.find(i => i.rId === rId)
+
+        if (institution) {
+            return institution.savedRepoTableName
+        }
+
+    } catch (e) {
+        return e
+    }
+}
+
 async function institutionFileNames() {
     try {
         // Get file names from institutions Table
@@ -63,20 +123,6 @@ async function institutionFileNames() {
 
 }
 
-async function institutionFileName(rId) {
-
-    try {
-        const institutions = await getInstitutions()
-        const institution = await institutions.find(i => i.rId === rId)
-
-        if (institution) {
-            return institution.savedRepoTableName
-        }
-
-    } catch (e) {
-        return e
-    }
-}
 
 async function institutionsRID() {
 
@@ -95,6 +141,8 @@ async function institutionsRID() {
 
 module.exports = {
     getInstitutions,
+    getInstitutionsReqData,
+    getHospitalData,
     getInstitution,
     institutionFileNames,
     institutionFileName,
