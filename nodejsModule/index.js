@@ -1146,7 +1146,7 @@ app.get('/api/update/load-data-from-local-csv', async (req, res) => {
 
 
 
-        res.send(csvFileName)
+        res.send(files)
 
 
     } catch (e) {
@@ -1154,38 +1154,6 @@ app.get('/api/update/load-data-from-local-csv', async (req, res) => {
         console.log('Error getting files')
     }
 
-
-    // get each institution in the table
-    //_.forEach(institutions, async (institution) => {
-    //console.log('TEST!!!!', institution)
-    //console.log('================BREAK========================')
-    //console.log('===============ALL=ITEMS====================', institutions.length)
-
-    //const institutionFileName = await institutionsService.institutionFileName(institution.rId)
-    //const institutionFileName = institution.savedRepoTableName
-    //if (institutionFileName) {
-
-    /**
-     * @TODO implement logic to sort files ready for processing here
-     * run once when needed..comment when not
-     */
-    //console.log('File Name ======= |||||| ========== ',institutionFileName)
-    //res.send(institutionFileName)
-    //}
-
-    //res.send(institutions)
-
-
-    // each csv file by its file name in relation to this institution
-    //const csvFileName = institution.savedRepoTableName
-    //const dataUrl = `${homeUrl}/api/csvdata/${csvFileName}.csv` // call this endpoint within this app
-
-
-    //})
-
-    //console.log('TEST!!!!', institutions)
-    //res.send(institutions)
-    //console.log('FILE NAMES!!!!', institutionFileNames)
 
 })
 //--------------------------End of database endpoints------------------------------------------------------------------

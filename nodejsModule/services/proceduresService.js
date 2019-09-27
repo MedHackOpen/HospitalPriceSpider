@@ -111,8 +111,18 @@ async function getCsvFileItems(fileName) {
         if (csvItems){
             // @TODO maybe pass more args here
 
+            /**
+             * Break items array into smaller arrays
+             * with 30000 items each
+             */
+            const brokenItems = _.chunk(csvItems, 30000)
+            //console.log('========================================================')
+            //console.log(' *********30000 Items******* ',brokenItems)
+            //console.log(' ||*****|||| END OF BROKEN CHUNKS ||||||||****||| ')
 
-            return await csvDataToDb(csvItems, fileName)
+
+            //return await csvDataToDb(csvItems, fileName)
+            return await csvDataToDb(brokenItems, fileName)
         }
 
     } catch (e) {
@@ -129,8 +139,9 @@ async function getCsvFileItems(fileName) {
  * that to create procedure items
  */
 
-async function csvDataToDb(csvDataItems, fileName) {
+async function csvDataToDb(brokenItems, fileName) {
     //const fileNam = 'hospital_CPMC.csv'
+
 
     try {
 
@@ -148,51 +159,70 @@ async function csvDataToDb(csvDataItems, fileName) {
             //console.log(institution)
             //console.log(institution)
             //console.log(dt)
-            await _.map(csvDataItems, async (dt, index) => {
 
-                if ( dt[institution.itemColumnName] && institution.rId && dt[institution.avgPriceColumnName] ) {
+            /**
+             * loop over each broken items (arrays in the brokenItems array)
+             */
+            _.forEach(brokenItems, async (csvDataItems) => {
 
-                    /**
-                     * new procedure item to insert into procedures table
-                     */
+                await _.map(csvDataItems, async (dt, index) => {
 
-                    console.log('creating ###ITEM###', ++index)
-                    const newProcedure = {
-                        uuid: uuid() ,
-                        rId: institution.rId ,
-                        itemName: dt[institution.itemColumnName],
-                        hospitalId: institution.rId ,
-                        price: dt[institution.avgPriceColumnName],
-                        hospitalName: institution.hospitalName,
-                        avgPrice: dt[institution.avgPriceColumnName], //@TODO maybe
-                        medianPrice: dt[institution.medianPricingColumnName],
-                        // sampleSize: ,
-                        outpatientAvgPrice: dt[institution.outPatientPriceColumnName],
-                        inpatientAvgPrice:  dt[institution.inpatientPriceColumnName],
-                        revenue_code: dt[institution.categoryColumnName],
-                        //latestPriceDate: ,
-                        //firstPriceDate: ,
-                        //changeSinceLastUpdate: ,
-                        //description: ,
-                        //relatedItemsFromOthers: ,
-                        //relatedItemsFromThisLocation: ,
-                        //itemsRequiredForThis:  ,
-                        //keywords: ,
-                        country: institution.country ,
-                        currency: 'USD',
+                    if ( dt[institution.itemColumnName] && institution.rId && dt[institution.avgPriceColumnName] ) {
+
+                        //console.log('++++++++++++++++csvDataItems+++++++++++++++++++++++')
+                        //console.log('Broken arrays++++++++++++++++++',dt)
+                        //console.log('--------------------------------------------------------------')
+
+                        /**
+                         * new procedure item to insert into procedures table
+                         */
+
+                        // Run blocking per item now
+
+                        console.log('creating ###ITEM###', ++index)
+                        const newProcedure = {
+                            uuid: uuid() ,
+                            rId: institution.rId ,
+                            itemName: dt[institution.itemColumnName],
+                            hospitalId: institution.rId ,
+                            price: dt[institution.avgPriceColumnName],
+                            hospitalName: institution.hospitalName,
+                            avgPrice: dt[institution.avgPriceColumnName], //@TODO maybe
+                            medianPrice: dt[institution.medianPricingColumnName],
+                            // sampleSize: ,
+                            outpatientAvgPrice: dt[institution.outPatientPriceColumnName],
+                            inpatientAvgPrice:  dt[institution.inpatientPriceColumnName],
+                            revenue_code: dt[institution.categoryColumnName],
+                            //latestPriceDate: ,
+                            //firstPriceDate: ,
+                            //changeSinceLastUpdate: ,
+                            //description: ,
+                            //relatedItemsFromOthers: ,
+                            //relatedItemsFromThisLocation: ,
+                            //itemsRequiredForThis:  ,
+                            //keywords: ,
+                            country: institution.country ,
+                            currency: 'USD',
+                        }
+
+                        let newProcedureInstance = await Procedures.build(newProcedure)
+                        console.log('newProcedureInstance..*******..created|||*******',)
+                        if (newProcedureInstance) {
+
+                            const saved = newProcedureInstance.save()
+                                .then( (savedItem) => {
+
+                                    console.log('.........**********......Saved....**********.............',)
+
+                                    return savedItem
+                                })
+                        }
+
+
                     }
+                })
 
-                    let newProcedureInstance = await Procedures.build(newProcedure)
-                    console.log('newProcedureInstance..........created|||*******',)
-
-                    const saved = await newProcedureInstance.save()
-
-                    console.log('Saved..............................',)
-
-                    return saved
-                }
             })
-
 
         }
 

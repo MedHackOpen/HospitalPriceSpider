@@ -16,6 +16,11 @@ FOLDER STRUCTURE
 in institutions/spreadsheet)
 
 * `./missingDetails` This folder contains files with missing required fields ie `institution.itemColumnName`, `institution.avgPriceColumnName`, `institution.country`
+
+* `./notProcessed` This folder contains files that were not processed during the latest commit(@TODO check names vs ext)
+
+* `./processed` This folder contains files that were processed in the latest commit, sorted with total items count per
+successful request, check the last one ie folder (`./Done from 442,551 to`) with errors, mostly database related memory(@TODO improve on db requests)
                  
 
 CONTRIBUTING

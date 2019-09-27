@@ -42,15 +42,7 @@ configured to run on port 3007 during development ie `http://localhost:3007/`
 
 TESTING
 -------
-Currently we're testing on importing csv file(s) in relation to our institutions table(data in the spreadsheet) into the
-database, some files are not properly formatted and others can't import completely, other's are missing the required 
-values or even a matching hospital rId and we need help with that.
-
-To help test, go to `http://localhost:3007/api/load-data-from-csv` , make sure to have your database configured and your
-institutions table loaded. This endpoint is meant to process files in our `rawCSVs` folder so only file 
-`hospital_Zuckerberg San Francisco General Hospital and Trauma Center.csv` will be processed, after success you will get 
-a message output `'Data.Saved.........'` . You can test with other files and move each to a folder accordingly, ie if 
-processed, processed but not complete, and so on.
+See API ENDPOINTS BELOW
 
 
 TROUBLESHOOTING
@@ -94,12 +86,15 @@ it will return json data of the given file
  in our case database_development for dev env. 
  ##And head to the api endpoints to test and decide from here..
  
- .`/api/update-script` updates the database tables with the structure(s) defined in the models folder
+ .`/api/update-script` updates the database tables with the field structure(s) defined in the models folder
+  
+ .`/api/update/institutions-from-local-spreadsheet` This endpoint should create new or patch institutions 
+ table with data from a locally stored spreadsheet.
  
- .`/api/update/google-spreadsheets-hospital-services` given the right object, this endpoint should insert
- or patch the services table
+ . `/api/update/load-data-from-local-csv`, this endpoint should load data from csv files into procedures database
+ see README.md in the rawCSVs folder on how to process the files 
  
- .`/api/update/institutions` given the right object this endpoint should insert or patch the
- institutions table
+ .`/api/update/institutions-from-online-spreadsheet`, this endpoint should get data from a google
+ spreadsheet and create or patch the institution table with the related items from the data
  
  For developers see .nodejsModule/index.js in root dir for endpoint and maybe helpful comments

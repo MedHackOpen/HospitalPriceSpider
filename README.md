@@ -96,11 +96,11 @@ see the **README.md** in this folder
 
 . `./proposals ` project proposals in readme.md
 
-. `./rawCSVs` contains .csv files to process 
+. `./rawCSVs` contains .csv files to process(Check README.md in)
 
 . `./rawXlsxs` contains .xlsx (spreadsheets) files to process
 
-. `./SQLs` contains .sql files to process
+. `./SQLs` contains .sql files to process (check README.md in )
 
 ## Testing endpoints during development
 
