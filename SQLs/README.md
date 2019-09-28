@@ -2,4 +2,4 @@
 
 ##File names
 * institutions_latest.sql // Latest institutions items
-* procedures.sql // Latest procedures items
+* procedures.sql // Latest procedures items (too big for github)

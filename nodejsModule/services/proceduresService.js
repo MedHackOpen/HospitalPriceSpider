@@ -1,13 +1,17 @@
 const path = require('path')
 const fs = require('fs')
+const EventEmitter = require('events')
 const uuid = require('uuid/v4')
 const _ = require('lodash')
+
+
+// Event object
+const emitter = new EventEmitter()
 
 // Database/Models
 const Procedures = require('../database/models').Procedures
 
 // Services
-
 const institutionsService = require('./institutionsService')
 const csvToJson = require('./csvToJson')
 const fileFolderService = require('./fileFolderService')
@@ -133,6 +137,44 @@ async function getCsvFileItems(fileName) {
 }
 
 /**
+ * Listen to new item being created
+ */
+
+emitter.on('newProcedureItem', async (eventObject) => {
+
+
+    const item = await Procedures.create({
+        uuid: eventObject.item.uuid ,
+        rId: eventObject.item.rId ,
+        itemName: eventObject.item.itemName,
+        hospitalId: eventObject.item.hospitalId ,
+        price: eventObject.item.price,
+        hospitalName: eventObject.item.hospitalName,
+        avgPrice: eventObject.item.avgPrice, //@TODO maybe
+        medianPrice: eventObject.item.medianPrice,
+        // sampleSize: ,
+        outpatientAvgPrice: eventObject.item.outpatientAvgPrice,
+        inpatientAvgPrice:  eventObject.item.inpatientAvgPrice,
+        revenue_code: eventObject.item.revenue_code,
+        //latestPriceDate: ,
+        //firstPriceDate: ,
+        //changeSinceLastUpdate: ,
+        //description: ,
+        //relatedItemsFromOthers: ,
+        //relatedItemsFromThisLocation: ,
+        //itemsRequiredForThis:  ,
+        //keywords: ,
+        country: eventObject.item.country ,
+        currency: eventObject.item.currency,
+    })
+
+    console.log('.........**********......Saved....**********...........UUID..', item.uuid)
+
+
+    //console.log('new Procedure item created', eventObject.item)
+})
+
+/**
  * using data from each file in rawCSVs folder
  * then take it's  id and use that to get the required
  * matching fields from our institutions table, then use
@@ -170,7 +212,7 @@ async function csvDataToDb(brokenItems, fileName) {
                     if ( dt[institution.itemColumnName] && institution.rId && dt[institution.avgPriceColumnName] ) {
 
                         //console.log('++++++++++++++++csvDataItems+++++++++++++++++++++++')
-                        //console.log('Broken arrays++++++++++++++++++',dt)
+                        //console.log('Broken arrays++++++++++++++++++',dt[institution.itemColumnName])
                         //console.log('--------------------------------------------------------------')
 
                         /**
@@ -205,11 +247,15 @@ async function csvDataToDb(brokenItems, fileName) {
                             currency: 'USD',
                         }
 
-                        let newProcedureInstance = await Procedures.build(newProcedure)
+                        // send newProcedureItem event
+
+                        //return emitter.emit('newProcedureItem', { item: newProcedure })
+                        let newProcedureInstance = Procedures.build(newProcedure)
                         console.log('newProcedureInstance..*******..created|||*******',)
                         if (newProcedureInstance) {
 
-                            const saved = newProcedureInstance.save()
+                            newProcedureInstance.save()
+
                                 .then( (savedItem) => {
 
                                     console.log('.........**********......Saved....**********.............',)
@@ -217,8 +263,6 @@ async function csvDataToDb(brokenItems, fileName) {
                                     return savedItem
                                 })
                         }
-
-
                     }
                 })
 

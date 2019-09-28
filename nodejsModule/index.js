@@ -1107,6 +1107,7 @@ app.get('/api/update/institutions-from-local-spreadsheet', async (req, res) => {
  * Current endpoint for loading csv data to procedures table
  */
 app.get('/api/update/load-data-from-local-csv', async (req, res) => {
+    //console.log('++++++++++++++END+++file.name+++++END+++++')
 
     try {
 
@@ -1138,9 +1139,12 @@ app.get('/api/update/load-data-from-local-csv', async (req, res) => {
 
             // @TODO Make one request per file name in the directory
             //console.log(file.name)
+            //console.log('++++++++++++++END+++file.name+++++END+++++')
 
             const csvFileData = await proceduresService.getCsvFileItems(file.name)
-            //console.log('++++++++++++++END+++file.name+++++END+++++')
+
+            return csvFileData
+
 
         })
 
