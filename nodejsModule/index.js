@@ -46,11 +46,12 @@ async function getFileData(filePath) {
  *@TODO tests the api returns json data with fields unmatched
  */
 async function testingConvert() {
-    const csvFilePath = path.join(__dirname, '../rawCSVs','hospital_CPMC.csv')
+    const csvFilePath = path.join(__dirname, '../rawCSVs', 'hospital_CPMC.csv')
     const data = await csvToJsonService.getJsonFromCsv(csvFilePath)
 
     return data
 }
+
 //----------------------------------------------------------------------------------------------------------
 app.use(express.json())
 
@@ -71,12 +72,12 @@ app.get('/api/csv-files', async (req, res) => {
     const csvFolder = path.join(__dirname, '../rawCSVs')
 
     try {
-        fs.readdir(csvFolder,  (err, files) => {
+        fs.readdir(csvFolder, (err, files) => {
             if (err) res.send(err)
             else
-            filesList = files.filter(function(e){
-                return path.extname(e).toLowerCase() === '.csv'
-            });
+                filesList = files.filter(function (e) {
+                    return path.extname(e).toLowerCase() === '.csv'
+                });
 
             res.send(filesList)
         })
@@ -85,7 +86,6 @@ app.get('/api/csv-files', async (req, res) => {
     }
 
 })
-
 
 
 /**
@@ -98,7 +98,7 @@ app.get('/api/csvdata/:id', async (req, res) => {
 
     try {
 
-        const data =  await getFileData(csvFilePath)
+        const data = await getFileData(csvFilePath)
         res.send(data)
     } catch (e) {
         res.send(e)
@@ -115,15 +115,13 @@ app.get('/api/data/local-spread-sheets', async (req, res) => {
     const xlsxFolder = path.join(__dirname, '../rawXlsxs')
 
     try {
-        fs.readdir(xlsxFolder,  (err, files) => {
+        fs.readdir(xlsxFolder, (err, files) => {
             if (err) {
 
                 res.send(e)
-            }
+            } else
 
-            else
-
-                filesList = files.filter( (e) => {
+                filesList = files.filter((e) => {
                     return path.extname(e).toLowerCase() === '.xlsx'
                 });
 
@@ -143,7 +141,7 @@ app.get('/api/data/local-spread-sheets', async (req, res) => {
  */
 app.get('/api/data/local-xlsl-file/:id', async (req, res) => {
     const fileName = req.params.id
-    const filePath = path.join(__dirname, '../rawXlsxs',fileName)
+    const filePath = path.join(__dirname, '../rawXlsxs', fileName)
 
     try {
 
@@ -155,7 +153,6 @@ app.get('/api/data/local-xlsl-file/:id', async (req, res) => {
 
         res.send(err)
     }
-
 
 
 })
@@ -199,7 +196,7 @@ app.get('/api/data/google-spread-sheets/:id', async (req, res) => {
 })
 
 app.get('/api/test', async (req, res) => {
-    const data =  await testingConvert()
+    const data = await testingConvert()
     res.send(data)
 })
 
@@ -324,6 +321,87 @@ app.get('/api/update/institutions', async (req, res) => {
 })
 //--------------------------End of database endpoints------------------------------------------------------------------
 
+
+//--------------------------Search endpoints---------------------------------------------------------------------------
+/*Endpoint  for searching average price within a radius using
+* latitude longitude and range in miles*/
+app.get('/averageprice/location', function (req, res) {
+    var range = req.query['range'];
+    var lon = req.query['lon'];
+    var lat = req.query['lat'];
+
+    if (!req.query.range) {
+        res.send({error: "Kindly pass the range parameter in the url"});
+        return;
+    }
+    if (!req.query.lon) {
+        res.send({error: "Kindly pass the lon parameter in the url"});
+        return;
+    }
+    if (!req.query.lat) {
+        res.send({error: "Kindly pass the lat parameter in the url"});
+        return;
+    }
+
+    sequelize.query('SELECT avg(avgPrice) AS average\n' +
+        'FROM ( SELECT avgPrice FROM institutions ' +
+        '      INNER JOIN procedures ON institutions.rId = procedures.rId' +
+        '          WHERE \n' +
+        '          longitude between (:lon-:range/cos(radians(:lat))*69) \n' +
+        '          and (:lon+:range/cos(radians(:lat))*69) \n' +
+        '          and latitude between (:lat-(:range/69)) \n' +
+        '          and (:lat+(:range/69)) \n' +
+        '          and  3956 * 2 * \n' +
+        '          ASIN(SQRT( POWER(SIN((:lat - institutions.latitude)*pi()/180/2),2)\n' +
+        '          +COS(:lat*pi()/180 )*COS(institutions.latitude*pi()/180)\n' +
+        '          *POWER(SIN((:lon-institutions.longitude)*pi()/180/2),2))) \n' +
+        '           < :range) as average_temp',
+        {replacements: {range: range, lon: lon, lat: lat}, type: sequelize.QueryTypes.SELECT}
+    ).then(average => {
+        if (average[0].average) {
+            res.send(average[0])
+        } else {
+            res.send({response: "No results found"})
+        }
+    })
+});
+
+/*Endpoint  for searching costliest procedure using phrase*/
+app.get('/costliestProcedure/containingPhrase', function (req, res) {
+    if (!req.query.phrase) {
+        res.send({error: "Kindly pass the phrase parameter in the url"});
+        return;
+    }
+    var phrase = req.query['phrase'];
+    sequelize.query("SELECT itemName, MAX(price) as price FROM procedures WHERE itemName REGEXP :phrase ",
+        {replacements: {phrase: phrase}, type: sequelize.QueryTypes.SELECT}
+    ).then(procudure => {
+        if (procudure[0].itemName) {
+            res.send(procudure[0])
+        } else {
+            res.send({response: "No results found"})
+        }
+    });
+});
+
+/*Endpoint  for searching cheapest procedure using phrase*/
+app.get('/cheapestProcedure/containingPhrase', function (req, res) {
+    if (!req.query.phrase) {
+        res.send({error: "Kindly pass the phrase parameter in the url"});
+        return;
+    }
+    var phrase = req.query['phrase'];
+    sequelize.query("SELECT itemName, MIN(price) as price FROM procedures WHERE itemName REGEXP :phrase ",
+        {replacements: {phrase: phrase}, type: sequelize.QueryTypes.SELECT}
+    ).then(procudure => {
+        if (procudure[0].itemName) {
+            res.send(procudure[0])
+        } else {
+            res.send({response: "No results found"})
+        }
+    });
+});
+//--------------------------End of search endpoints--------------------------------------------------------------------
 
 const port = process.env.PORT || 3007;
 //save the server object into a variable
