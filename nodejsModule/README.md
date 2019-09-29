@@ -78,6 +78,13 @@ it will return json data of the given file
  This `/api/data/google-spread-sheets` should be the reference to use for
  end point = `/api/data/google-spread-sheets/:id`.
  
+ .`/averageprice/location?range=10000&lon=-165.37812474&lat=64.49906305` // returns average price of institutions
+ within a location. range = distance in miles, lon = the longitude, lat = the latitude.
+ 
+  .`/costliestProcedure/containingPhrase?phrase=lib` // returns costliest procedure from the database containing a phrase. phrase = name of procedure
+  
+  .`/cheapestProcedure/containingPhrase?phrase=lib` // returns cheapest procedure from the database containing a phrase. phrase = name of procedure
+  
  ### Database related endpoints
  
  #### To test these endpoints you must have mysql running in your local server on port 
