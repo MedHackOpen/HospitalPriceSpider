@@ -242,7 +242,7 @@ app.get('/api/data/google-spread-sheets/:id', async (req, res) => {
  * After that, files with errors can be forwarded to the researchers team, and
  */
 app.get('/api/test', async (req, res) => {
-<<<<<<< HEAD
+
     //const institutions = await institutionsService.getInstitutions()
     //const institutionFileNames = await institutionsService.institutionFileNames()
     try {
@@ -382,11 +382,8 @@ app.get('/api/sort-files', async (req, res) => {
 
 
     })
-
-=======
     const data = await testingConvert()
     res.send(data)
->>>>>>> develop
 })
 
 //----------------END OF------------------Sort files endpoint(s)----------------------END OF--------------------------

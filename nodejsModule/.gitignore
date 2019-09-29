@@ -3,3 +3,7 @@
 
 # application specific variables
 client_secret.json
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

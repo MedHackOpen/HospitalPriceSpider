@@ -126,7 +126,13 @@ async function getCsvFileItems(fileName) {
 
 
             //return await csvDataToDb(csvItems, fileName)
-            return await csvDataToDb(brokenItems, fileName)
+            csvDataToDb(brokenItems, fileName)
+                .then(() => {
+
+                    //console.log(brokenItems)
+
+                    return brokenItems
+                })
         }
 
     } catch (e) {
@@ -190,6 +196,8 @@ async function csvDataToDb(brokenItems, fileName) {
         let institution = {}
         //console.log(fileName)
         institution = await institutionsService.getHospitalData(fileName)
+
+        console.log(institution)
         if(institution.itemColumnName && institution.savedRepoTableName && institution.avgPriceColumnName){
 
             /**
@@ -211,9 +219,9 @@ async function csvDataToDb(brokenItems, fileName) {
 
                     if ( dt[institution.itemColumnName] && institution.rId && dt[institution.avgPriceColumnName] ) {
 
-                        //console.log('++++++++++++++++csvDataItems+++++++++++++++++++++++')
-                        //console.log('Broken arrays++++++++++++++++++',dt[institution.itemColumnName])
-                        //console.log('--------------------------------------------------------------')
+                        console.log('++++++++++++++++csvDataItems+++++++++++++++++++++++')
+                        console.log('Broken arrays++++++++++++++++++',dt[institution.itemColumnName])
+                        console.log('--------------------------------------------------------------')
 
                         /**
                          * new procedure item to insert into procedures table
