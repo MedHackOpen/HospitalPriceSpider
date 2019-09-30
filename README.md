@@ -1,9 +1,48 @@
 # MedHack Hospital Price Spider
 
-### Making public hospital pricing data *actually* machine-readable and uniform, because the hospitals are developing all kinds of tricks to complicate, evade and mislead around the topic of pricing.
+CONTENTS OF THIS FILE
+---------------------
 
-#### To run this repo in node js see README.md in ./nodejsModule folder 
+ * Introduction
+ * Testing
+ * The Idea
+ * Folder Structure
+ * Contributing
+ * Contact
 
+
+INTRODUCTION
+------------
+Making public hospital pricing data *actually* machine-readable and uniform, because the hospitals are 
+developing all kinds of tricks to complicate, evade and mislead around the topic of pricing.
+
+
+TESTING
+-------
+
+###To test on live server head to the below endpoints and what to get
+
+General EndPoints
+-----------------
+
+* `http://api.medhackopen.com` Our api home
+
+* `http://api.medhackopen.com/api/available-institutions` to view available institutions
+
+Search Endpoints
+----------------
+
+* `http://api.medhackopen.com/averageprice/location?range=10000&lon=-165.37812474&lat=64.49906305` // returns average price of institutions
+ within a location. range = distance in miles, lon = the longitude, lat = the latitude.
+ 
+* `http://api.medhackopen.com/costliestProcedure/containingPhrase?phrase=lib` // returns costliest procedure from the database containing a phrase. phrase = name of procedure
+  
+* `http://api.medhackopen.com/cheapestProcedure/containingPhrase?phrase=lib` // returns cheapest procedure from the database containing a phrase. phrase = name of procedure
+
+To run this repo in node js see README.md in ./nodejsModule folder 
+
+THE IDEA
+--------
 Since hospitals do not release their pricing data in a standardized format (but at least release it now in the US by law), this repo seeks to provide universal conversion functions, as well as raw data of hospital pricing spreadsheets/Word Docs/other formats that contain medical pricing records. The reason this repo contains the data is because pricing data changes (URL locations, content, format, as well as availability).
 
 `This is starting with US data; however, we plan to incorporate pricing for all countries eventually, and as soon as possible. America just happens to have one of the worst systems, so we're starting there.`
@@ -86,6 +125,9 @@ For Hospitals/Health Care institutions, example:
 
 
 The others are "nice-to-haves" that will make applications built on top of this much easier and will expose inconsistencies that make the medical industry what it is. The in surance companies have this data; however, they will never release it, so it's up to us. Also, this README should probably be rewritten to sound less angry at the medical industry.... Which leads us to contributions.
+
+FOLDER STRUCTURE
+----------------
 
 ## Folder structure
 

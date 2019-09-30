@@ -1243,6 +1243,15 @@ app.get('/cheapestProcedure/containingPhrase', function (req, res) {
 });
 //--------------------------End of search endpoints--------------------------------------------------------------------
 
+app.get('/api/available-institutions', async (req, res) => {
+
+    /**
+     *Get just the data we are using to process cvs
+     */
+    const institutions = await institutionsService.getInstitutionsReqData()
+
+    res.send(institutions)
+})
 const port = process.env.PORT || 3007;
 //save the server object into a variable
 var server = app.listen(port, () => {
