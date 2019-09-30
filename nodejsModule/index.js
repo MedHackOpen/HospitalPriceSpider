@@ -66,7 +66,7 @@ async function testingConvert() {
  * Serves as the homepage
  */
 app.get('/', (req, res) => {
-    res.send('Hello And welcome go to http://localhost:3007/api/csv-files , to view available csv files');
+    res.send('Welcome to MedHack Hospital Price Spider.....');
 })
 
 
