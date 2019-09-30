@@ -495,9 +495,53 @@ async function testData(data) {
     })
 }
 
+//----------------------------------------END OF PUT REQUEST + HELPER FUNCTIONS---------------------------------
+
+//----------------------------------START OF GET + HELPER METHODS ---------------------------------------------
+
+/**
+ * For testing returns only 100 items
+ */
+async function getProcedureItems() {
+
+    try {
+
+        //let items = {}
+
+        const items = await Procedures.findAll({
+            attributes: [
+                'uuid', 'rId', 'itemName', 'hospitalId', 'price', 'hospitalName', 'type', 'description',
+                'description', 'keywords', 'country', 'currency'
+            ],
+
+            raw: true,
+            limit: 100
+        })
+
+        /*if (!_.isEmpty(items)) {
+
+            items = _.chunk(items, 3000)
+
+            console.log(items)
+
+
+
+        }*/
+
+        return items
+
+
+    } catch (e) {
+
+        return e
+    }
+
+}
+//----------------------------------END OF GET + HELPER METHODS -----------------------------------------------
 
 module.exports = {
     createProcedureItem,
     getCsvFileItems,
     csvDataToDb,
+    getProcedureItems,
 }

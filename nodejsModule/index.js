@@ -1241,7 +1241,6 @@ app.get('/cheapestProcedure/containingPhrase', function (req, res) {
         }
     });
 });
-//--------------------------End of search endpoints--------------------------------------------------------------------
 
 app.get('/api/available-institutions', async (req, res) => {
 
@@ -1252,6 +1251,93 @@ app.get('/api/available-institutions', async (req, res) => {
 
     res.send(institutions)
 })
+
+/**
+ * gets all procedures (100 limit for now) from procedures service
+ * and returns
+ */
+
+app.get('/api/available-procedures', async (req, res ) => {
+
+    try {
+
+        const procedures = await proceduresService.getProcedureItems()
+
+        res.send(procedures)
+
+    } catch (e) {
+
+        res.send(e)
+    }
+
+})
+
+/**
+ * to search here got to
+ * apphomepage/api/search-procedure/med
+ * to get all procedures with the term 'med'
+ */
+
+//app.get('/api/search-procedure/:name?sortBy=location', async (req, res ) => {
+app.get('/api/search-procedure/:name', async (req, res ) => {
+
+    try {
+
+
+        const procedures = await proceduresService.getProcedureItems()
+
+        let searchName = req.params.name
+
+        if (searchName){
+
+            let filtered = procedures
+
+            // filter procedures
+            filtered = procedures.filter(p => p.itemName.toLowerCase().startsWith(searchName.toLowerCase()))
+
+            if (!_.isEmpty(filtered)) {
+
+                const data = {
+                    message: `Search results for term (${searchName}).. below..`,
+                    results: filtered
+                }
+
+                res.send(data)
+            }
+
+            if (_.isEmpty(filtered)) {
+
+                res.send(`**0** search results for term (${searchName})  !!!!!`)
+
+            }
+        }
+
+        /*
+
+        if (!searchName)
+            filtered = {
+                message: 'Please enter a search name in the url like BREATHING CIRCUIT',
+                data: procedures
+            }
+            res.send(filtered)*/
+
+        /**
+         * eg http://localhost:3007/api/search-procedure/x-ray?sortBy=location for
+         * x-ray procedure and location
+         */
+        /*let location = req.query
+
+        if (location)
+            res.send(location)
+        //res.send(procedures)*/
+    } catch (e) {
+
+        res.send(e)
+    }
+
+})
+
+//--------------------------End of search endpoints--------------------------------------------------------------------
 const port = process.env.PORT || 3007;
 //save the server object into a variable
 var server = app.listen(port, () => {

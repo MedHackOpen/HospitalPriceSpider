@@ -25,12 +25,16 @@ TESTING
 General EndPoints
 -----------------
 
-* `http://api.medhackopen.com` Our api home
+* `http://api.medhackopen.com` Our app homepage
 
 * `http://api.medhackopen.com/api/available-institutions` to view available institutions
 
+* `http://api.medhackopen.com/api/available-procedures` to view available procedures (limit 100 currently)
+
 Search Endpoints
 ----------------
+
+* `http://api.medhackopen.com/api/search-procedure/:name` to search procedures by name eg med, BREATHING ... 
 
 * `http://api.medhackopen.com/averageprice/location?range=10000&lon=-165.37812474&lat=64.49906305` // returns average price of institutions
  within a location. range = distance in miles, lon = the longitude, lat = the latitude.
