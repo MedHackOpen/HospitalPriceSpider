@@ -24,24 +24,25 @@ TESTING
 
 General EndPoints
 -----------------
+[here](https://github.com/MedHackOpen/HospitalPriceSpider/wiki)
 
-* `http://api.medhackopen.com` Our app homepage
+* `[http://api.medhackopen.com](http://api.medhackopen.com)` Our app homepage
 
-* `http://api.medhackopen.com/api/available-institutions` to view available institutions
+* `[http://api.medhackopen.com/api/available-institutions](http://api.medhackopen.com/api/available-institutions)` to view available institutions
 
-* `http://api.medhackopen.com/api/available-procedures` to view available procedures (limit 100 currently)
+* `[http://api.medhackopen.com/api/available-procedures](http://api.medhackopen.com/api/available-procedures)` to view available procedures (limit 100 currently)
 
 Search Endpoints
 ----------------
 
-* `http://api.medhackopen.com/api/search-procedure/:name` to search procedures by name eg med, BREATHING ... 
+* `[http://api.medhackopen.com/api/search-procedure/:name](http://api.medhackopen.com/api/search-procedure/:name)` to search procedures by name eg med, BREATHING ... 
 
-* `http://api.medhackopen.com/averageprice/location?range=10000&lon=-165.37812474&lat=64.49906305` // returns average price of institutions
+* `[http://api.medhackopen.com/averageprice/location?range=10000&lon=-165.37812474&lat=64.49906305](http://api.medhackopen.com/averageprice/location?range=10000&lon=-165.37812474&lat=64.49906305)` // returns average price of institutions
  within a location. range = distance in miles, lon = the longitude, lat = the latitude.
  
-* `http://api.medhackopen.com/costliestProcedure/containingPhrase?phrase=lib` // returns costliest procedure from the database containing a phrase. phrase = name of procedure
+* `[http://api.medhackopen.com/costliestProcedure/containingPhrase?phrase=lib](http://api.medhackopen.com/costliestProcedure/containingPhrase?phrase=lib)` // returns costliest procedure from the database containing a phrase. phrase = name of procedure
   
-* `http://api.medhackopen.com/cheapestProcedure/containingPhrase?phrase=lib` // returns cheapest procedure from the database containing a phrase. phrase = name of procedure
+* `[http://api.medhackopen.com/cheapestProcedure/containingPhrase?phrase=lib](http://api.medhackopen.com/cheapestProcedure/containingPhrase?phrase=lib)` // returns cheapest procedure from the database containing a phrase. phrase = name of procedure
 
 To run this repo in node js see README.md in ./nodejsModule folder 
 
