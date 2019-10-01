@@ -1,0 +1,250 @@
+# ************************************************************
+# Sequel Pro SQL dump
+# Version 4541
+#
+# http://www.sequelpro.com/
+# https://github.com/sequelpro/sequelpro
+#
+# Host: ec2-3-16-161-198.us-east-2.compute.amazonaws.com (MySQL 5.7.25-0ubuntu0.16.04.2)
+# Database: x2
+# Generation Time: 2019-10-01 03:56:20 +0000
+# ************************************************************
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+
+# Dump of table medhealthcarenetworks
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `medhealthcarenetworks`;
+
+CREATE TABLE `medhealthcarenetworks` (
+  `rId` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `timestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `name` varchar(400) DEFAULT NULL,
+  `country` varchar(50) DEFAULT NULL,
+  `hqFullAddress` varchar(600) DEFAULT NULL,
+  `alias` varchar(400) DEFAULT NULL,
+  `notes` varchar(1000) DEFAULT NULL,
+  `approved` varchar(20) DEFAULT 'false',
+  PRIMARY KEY (`rId`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+LOCK TABLES `medhealthcarenetworks` WRITE;
+/*!40000 ALTER TABLE `medhealthcarenetworks` DISABLE KEYS */;
+
+INSERT INTO `medhealthcarenetworks` (`rId`, `timestamp`, `name`, `country`, `hqFullAddress`, `alias`, `notes`, `approved`)
+VALUES
+	(65,'2019-10-01 03:15:46','AdventHealth','US',NULL,NULL,NULL,'true'),
+	(66,'2019-10-01 03:15:46','Alameda Health System','US',NULL,NULL,NULL,'true'),
+	(67,'2019-10-01 03:15:46','Adventist Health International','US',NULL,NULL,NULL,'true'),
+	(68,'2019-10-01 03:15:46','Abrazo Community Health Network','US',NULL,NULL,NULL,'true'),
+	(69,'2019-10-01 03:15:47','Adventist Health','US',NULL,NULL,NULL,'true'),
+	(70,'2019-10-01 03:15:47','Adventist HealthCare','US',NULL,NULL,NULL,'true'),
+	(71,'2019-10-01 03:15:47','Aria-Jefferson Health','US',NULL,NULL,NULL,'true'),
+	(72,'2019-10-01 03:15:47','Albert Einstein Healthcare Network','US',NULL,NULL,NULL,'true'),
+	(73,'2019-10-01 03:15:47','Allegheny Health Network','US',NULL,NULL,NULL,'true'),
+	(74,'2019-10-01 03:15:47','Allina Health','US',NULL,NULL,NULL,'true'),
+	(75,'2019-10-01 03:15:47','AtlantiCare','US',NULL,NULL,NULL,'true'),
+	(76,'2019-10-01 03:15:47','Atrium Health','US',NULL,NULL,NULL,'true'),
+	(77,'2019-10-01 03:15:47','Banner Health','US',NULL,NULL,NULL,'true'),
+	(78,'2019-10-01 03:15:47','Aurora Health Care','US',NULL,NULL,NULL,'true'),
+	(79,'2019-10-01 03:15:47','Baptist Health','US',NULL,NULL,NULL,'true'),
+	(80,'2019-10-01 03:15:47','Baptist Health System','US',NULL,NULL,NULL,'true'),
+	(81,'2019-10-01 03:15:47','Baystate Health','US',NULL,NULL,NULL,'true'),
+	(82,'2019-10-01 03:15:47','Beaumont Health','US',NULL,NULL,NULL,'true'),
+	(83,'2019-10-01 03:15:47','Bellin Health','US',NULL,NULL,NULL,'true'),
+	(84,'2019-10-01 03:15:47','Benefis Health System','US',NULL,NULL,NULL,'true'),
+	(85,'2019-10-01 03:15:47','Billings Clinic','US',NULL,NULL,NULL,'true'),
+	(86,'2019-10-01 03:15:48','Blanchard Valley Health System','US',NULL,NULL,NULL,'true'),
+	(87,'2019-10-01 03:15:48','Bon Secours Charity Health System','US',NULL,NULL,NULL,'true'),
+	(88,'2019-10-01 03:15:48','Bon Secours Health System (USA)','US',NULL,NULL,NULL,'true'),
+	(89,'2019-10-01 03:15:48','Broward Health','US',NULL,NULL,NULL,'true'),
+	(90,'2019-10-01 03:15:48','Bryan Health','US',NULL,NULL,NULL,'true'),
+	(91,'2019-10-01 03:15:48','Care New England','US',NULL,NULL,NULL,'true'),
+	(92,'2019-10-01 03:15:48','Cambridge Health Alliance','US',NULL,NULL,NULL,'true'),
+	(93,'2019-10-01 03:15:48','Caritas Christi Health Care','US',NULL,NULL,NULL,'true'),
+	(94,'2019-10-01 03:15:48','Carondelet Health Network','US',NULL,NULL,NULL,'true'),
+	(95,'2019-10-01 03:15:48','Catholic Health','US',NULL,NULL,NULL,'true'),
+	(96,'2019-10-01 03:15:48','Catholic Health Initiatives','US',NULL,NULL,NULL,'true'),
+	(97,'2019-10-01 03:15:48','Centegra Health System','US',NULL,NULL,NULL,'true'),
+	(98,'2019-10-01 03:15:48','Center for Emergency Medicine of Western Pennsylvania','US',NULL,NULL,NULL,'true'),
+	(99,'2019-10-01 03:15:48','Centinela Freeman HealthSystem','US',NULL,NULL,NULL,'true'),
+	(100,'2019-10-01 03:15:48','Children’s Minnesota','US',NULL,NULL,NULL,'true'),
+	(101,'2019-10-01 03:15:48','Christiana Care Health System','US',NULL,NULL,NULL,'true'),
+	(102,'2019-10-01 03:15:48','CHRISTUS Health','US',NULL,NULL,NULL,'true'),
+	(103,'2019-10-01 03:15:49','Community Health Systems','US',NULL,NULL,NULL,'true'),
+	(104,'2019-10-01 03:15:49','CHRISTUS Trinity Mother Frances Health System','US',NULL,NULL,NULL,'true'),
+	(105,'2019-10-01 03:15:49','Cone Health','US',NULL,NULL,NULL,'true'),
+	(106,'2019-10-01 03:15:49','Conemaugh Health System','US',NULL,NULL,NULL,'true'),
+	(107,'2019-10-01 03:15:49','Covenant Health System','US',NULL,NULL,NULL,'true'),
+	(108,'2019-10-01 03:15:49','Covenant Health Systems','US',NULL,NULL,NULL,'true'),
+	(109,'2019-10-01 03:15:49','CoxHealth','US',NULL,NULL,NULL,'true'),
+	(110,'2019-10-01 03:15:49','Crozer-Keystone Health System','US',NULL,NULL,NULL,'true'),
+	(111,'2019-10-01 03:15:49','Detroit Medical Center','US',NULL,NULL,NULL,'true'),
+	(112,'2019-10-01 03:15:49','Dublin Methodist Hospital','US',NULL,NULL,NULL,'true'),
+	(113,'2019-10-01 03:15:49','Dignity Health','US',NULL,NULL,NULL,'true'),
+	(114,'2019-10-01 03:15:49','Duke University Health System','US',NULL,NULL,NULL,'true'),
+	(115,'2019-10-01 03:15:49','Eleanor Slater Hospital','US',NULL,NULL,NULL,'true'),
+	(116,'2019-10-01 03:15:49','Essentia Health','US',NULL,NULL,NULL,'true'),
+	(117,'2019-10-01 03:15:49','Excela Health','US',NULL,NULL,NULL,'true'),
+	(118,'2019-10-01 03:15:49','Fairview Health Services','US',NULL,NULL,NULL,'true'),
+	(119,'2019-10-01 03:15:49','Geisinger Health System','US',NULL,NULL,NULL,'true'),
+	(120,'2019-10-01 03:15:50','Genesis Health System','US',NULL,NULL,NULL,'true'),
+	(121,'2019-10-01 03:15:50','Gerber Memorial Health Services','US',NULL,NULL,NULL,'true'),
+	(122,'2019-10-01 03:15:50','Grant Medical Center','US',NULL,NULL,NULL,'true'),
+	(123,'2019-10-01 03:15:50','Gundersen Health System','US',NULL,NULL,NULL,'true'),
+	(124,'2019-10-01 03:15:50','Gwinnett Medical Center','US',NULL,NULL,NULL,'true'),
+	(125,'2019-10-01 03:15:50','Harris Health System','US',NULL,NULL,NULL,'true'),
+	(126,'2019-10-01 03:15:50','Hawaii Pacific Health','US',NULL,NULL,NULL,'true'),
+	(127,'2019-10-01 03:15:50','Health First','US',NULL,NULL,NULL,'true'),
+	(128,'2019-10-01 03:15:50','Encompass Health','US',NULL,NULL,NULL,'true'),
+	(129,'2019-10-01 03:15:50','Henry Ford Health System','US',NULL,NULL,NULL,'true'),
+	(130,'2019-10-01 03:15:50','HealthEast Care System','US',NULL,NULL,NULL,'true'),
+	(131,'2019-10-01 03:15:50','HCA Healthcare','US',NULL,NULL,NULL,'true'),
+	(132,'2019-10-01 03:15:50','Hospital Sisters Health System','US',NULL,NULL,NULL,'true'),
+	(133,'2019-10-01 03:15:50','Humana','US',NULL,NULL,NULL,'true'),
+	(134,'2019-10-01 03:15:50','Indian Health Service','US',NULL,NULL,NULL,'true'),
+	(135,'2019-10-01 03:15:50','Indiana University Health','US',NULL,NULL,NULL,'true'),
+	(136,'2019-10-01 03:15:50','Inspira Health Network','US',NULL,NULL,NULL,'true'),
+	(137,'2019-10-01 03:15:51','Intermountain Healthcare','US',NULL,NULL,NULL,'true'),
+	(138,'2019-10-01 03:15:51','John Muir Health','US',NULL,NULL,NULL,'true'),
+	(139,'2019-10-01 03:15:51','JPS Health Network','US',NULL,NULL,NULL,'true'),
+	(140,'2019-10-01 03:15:51','Kaiser Permanente','US',NULL,NULL,NULL,'true'),
+	(141,'2019-10-01 03:15:51','Kaleida Health','US',NULL,NULL,NULL,'true'),
+	(142,'2019-10-01 03:15:51','Kessler Institute for Rehabilitation','US',NULL,NULL,NULL,'true'),
+	(143,'2019-10-01 03:15:51','Kettering Health Network','US',NULL,NULL,NULL,'true'),
+	(144,'2019-10-01 03:15:51','Kindred Healthcare','US',NULL,NULL,NULL,'true'),
+	(145,'2019-10-01 03:15:51','Lake Health','US',NULL,NULL,NULL,'true'),
+	(146,'2019-10-01 03:15:51','Lakewood Health System','US',NULL,NULL,NULL,'true'),
+	(147,'2019-10-01 03:15:51','Legacy Health','US',NULL,NULL,NULL,'true'),
+	(148,'2019-10-01 03:15:51','LifeBridge Health','US',NULL,NULL,NULL,'true'),
+	(149,'2019-10-01 03:15:51','LifePoint Health','US',NULL,NULL,NULL,'true'),
+	(150,'2019-10-01 03:15:51','Lima Memorial Health System','US',NULL,NULL,NULL,'true'),
+	(151,'2019-10-01 03:15:51','Los Angeles County Health Agency','US',NULL,NULL,NULL,'true'),
+	(152,'2019-10-01 03:15:51','Los Angeles County Department of Health Services','US',NULL,NULL,NULL,'true'),
+	(153,'2019-10-01 03:15:51','Lutheran Health Network','US',NULL,NULL,NULL,'true'),
+	(154,'2019-10-01 03:15:52','McGaw Medical Center','US',NULL,NULL,NULL,'true'),
+	(155,'2019-10-01 03:15:52','Main Line Health','US',NULL,NULL,NULL,'true'),
+	(156,'2019-10-01 03:15:52','Marine Hospital Service','US',NULL,NULL,NULL,'true'),
+	(157,'2019-10-01 03:15:52','McLeod Health','US',NULL,NULL,NULL,'true'),
+	(158,'2019-10-01 03:15:52','McLaren Health Care Corporation','US',NULL,NULL,NULL,'true'),
+	(159,'2019-10-01 03:15:52','Marshfield Clinic','US',NULL,NULL,NULL,'true'),
+	(160,'2019-10-01 03:15:52','MedCath Corp.','US',NULL,NULL,NULL,'true'),
+	(161,'2019-10-01 03:15:52','Medical Center of Louisiana at New Orleans','US',NULL,NULL,NULL,'true'),
+	(162,'2019-10-01 03:15:52','MedStar Health','US',NULL,NULL,NULL,'true'),
+	(163,'2019-10-01 03:15:52','Memorial Hermann Health System','US',NULL,NULL,NULL,'true'),
+	(164,'2019-10-01 03:15:52','Mercy (healthcare organization)','US',NULL,NULL,NULL,'true'),
+	(165,'2019-10-01 03:15:52','Mercy Health','US',NULL,NULL,NULL,'true'),
+	(166,'2019-10-01 03:15:52','Mercy Health (Michigan)','US',NULL,NULL,NULL,'true'),
+	(167,'2019-10-01 03:15:52','Mercy Health Partners','US',NULL,NULL,NULL,'true'),
+	(168,'2019-10-01 03:15:52','Mercy Medical Center (Springfield, Massachusetts)','US',NULL,NULL,NULL,'true'),
+	(169,'2019-10-01 03:15:52','MidMichigan Health','US',NULL,NULL,NULL,'true'),
+	(170,'2019-10-01 03:15:53','Mission Health System','US',NULL,NULL,NULL,'true'),
+	(171,'2019-10-01 03:15:53','Mount Carmel Health System','US',NULL,NULL,NULL,'true'),
+	(172,'2019-10-01 03:15:53','Mount Carmel West','US',NULL,NULL,NULL,'true'),
+	(173,'2019-10-01 03:15:53','Mount Sinai Health System','US',NULL,NULL,NULL,'true'),
+	(174,'2019-10-01 03:15:53','NCH Healthcare System','US',NULL,NULL,NULL,'true'),
+	(175,'2019-10-01 03:15:53','NewYork–Presbyterian Healthcare System','US',NULL,NULL,NULL,'true'),
+	(176,'2019-10-01 03:15:53','Noble Health Alliance','US',NULL,NULL,NULL,'true'),
+	(177,'2019-10-01 03:15:53','NorthShore University HealthSystem','US',NULL,NULL,NULL,'true'),
+	(178,'2019-10-01 03:15:53','Northwell Health','US',NULL,NULL,NULL,'true'),
+	(179,'2019-10-01 03:15:53','Oakwood Health System','US',NULL,NULL,NULL,'true'),
+	(180,'2019-10-01 03:15:53','Novant Health','US',NULL,NULL,NULL,'true'),
+	(181,'2019-10-01 03:15:53','Orlando Health','US',NULL,NULL,NULL,'true'),
+	(182,'2019-10-01 03:15:53','OSF HealthCare','US',NULL,NULL,NULL,'true'),
+	(183,'2019-10-01 03:15:53','OU Medicine','US',NULL,NULL,NULL,'true'),
+	(184,'2019-10-01 03:15:53','Ozarks Community Hospital','US',NULL,NULL,NULL,'true'),
+	(185,'2019-10-01 03:15:53','Parkland Health ','US',NULL,NULL,NULL,'true'),
+	(186,'2019-10-01 03:15:53','Parkview Health','US',NULL,NULL,NULL,'true'),
+	(187,'2019-10-01 03:15:53','Partners HealthCare','US',NULL,NULL,NULL,'true'),
+	(188,'2019-10-01 03:15:54','PeaceHealth','US',NULL,NULL,NULL,'true'),
+	(189,'2019-10-01 03:15:54','Pennsylvania State Hospitals','US',NULL,NULL,NULL,'true'),
+	(190,'2019-10-01 03:15:54','Premier Health Partners','US',NULL,NULL,NULL,'true'),
+	(191,'2019-10-01 03:15:54','Presbyterian Healthcare Services','US',NULL,NULL,NULL,'true'),
+	(192,'2019-10-01 03:15:54','Presence Health','US',NULL,NULL,NULL,'true'),
+	(193,'2019-10-01 03:15:54','Prime Healthcare Services','US',NULL,NULL,NULL,'true'),
+	(194,'2019-10-01 03:15:54','Prisma Health Upstate','US',NULL,NULL,NULL,'true'),
+	(195,'2019-10-01 03:15:54','ProMedica','US',NULL,NULL,NULL,'true'),
+	(196,'2019-10-01 03:15:54','Providence Health ','US',NULL,NULL,NULL,'true'),
+	(197,'2019-10-01 03:15:54','Providence Hospital (Columbia, South Carolina)','US',NULL,NULL,NULL,'true'),
+	(198,'2019-10-01 03:15:54','Psychiatric Solutions','US',NULL,NULL,NULL,'true'),
+	(199,'2019-10-01 03:15:54','Providence St. Joseph Health','US',NULL,NULL,NULL,'true'),
+	(200,'2019-10-01 03:15:54','Renown Health','US',NULL,NULL,NULL,'true'),
+	(201,'2019-10-01 03:15:54','Riverside Health System','US',NULL,NULL,NULL,'true'),
+	(202,'2019-10-01 03:15:54','RWJBarnabas Health','US',NULL,NULL,NULL,'true'),
+	(203,'2019-10-01 03:15:54','Riverside Medical Center','US',NULL,NULL,NULL,'true'),
+	(204,'2019-10-01 03:15:55','Saint Elizabeth Community Hospital','US',NULL,NULL,NULL,'true'),
+	(205,'2019-10-01 03:15:55','Saint Joseph Mercy Health System','US',NULL,NULL,NULL,'true'),
+	(206,'2019-10-01 03:15:55','Samaritan Health Services','US',NULL,NULL,NULL,'true'),
+	(207,'2019-10-01 03:15:55','Schuylkill Regional Medical Center','US',NULL,NULL,NULL,'true'),
+	(208,'2019-10-01 03:15:55','Baylor Scott ','US',NULL,NULL,NULL,'true'),
+	(209,'2019-10-01 03:15:55','Sentara Healthcare','US',NULL,NULL,NULL,'true'),
+	(210,'2019-10-01 03:15:55','Seton Healthcare Family','US',NULL,NULL,NULL,'true'),
+	(211,'2019-10-01 03:15:55','Sharon Regional Health System','US',NULL,NULL,NULL,'true'),
+	(212,'2019-10-01 03:15:55','Sharp HealthCare','US',NULL,NULL,NULL,'true'),
+	(213,'2019-10-01 03:15:55','Shriners Hospitals for Children','US',NULL,NULL,NULL,'true'),
+	(214,'2019-10-01 03:15:55','Skagit Regional Health','US',NULL,NULL,NULL,'true'),
+	(215,'2019-10-01 03:15:55','Southcoast Health System','US',NULL,NULL,NULL,'true'),
+	(216,'2019-10-01 03:15:55','Sparrow Health System','US',NULL,NULL,NULL,'true'),
+	(217,'2019-10-01 03:15:55','Spectrum Health','US',NULL,NULL,NULL,'true'),
+	(218,'2019-10-01 03:15:55','SSM Health','US',NULL,NULL,NULL,'true'),
+	(219,'2019-10-01 03:15:56','St. Charles Health System','US',NULL,NULL,NULL,'true'),
+	(220,'2019-10-01 03:15:56','St. Elizabeth Healthcare (Kentucky)','US',NULL,NULL,NULL,'true'),
+	(221,'2019-10-01 03:15:56','Steward Health Care System','US',NULL,NULL,NULL,'true'),
+	(222,'2019-10-01 03:15:56','Summa Health System','US',NULL,NULL,NULL,'true'),
+	(223,'2019-10-01 03:15:56','Sunland Hospital','US',NULL,NULL,NULL,'true'),
+	(224,'2019-10-01 03:15:56','Sutter Health','US',NULL,NULL,NULL,'true'),
+	(225,'2019-10-01 03:15:56','Swedish Medical Center','US',NULL,NULL,NULL,'true'),
+	(226,'2019-10-01 03:15:56','Tallahassee Memorial HealthCare','US',NULL,NULL,NULL,'true'),
+	(227,'2019-10-01 03:15:56','Timeline of the United States Public Health Service Commissioned Corps','US',NULL,NULL,NULL,'true'),
+	(228,'2019-10-01 03:15:56','Triad Hospitals','US',NULL,NULL,NULL,'true'),
+	(229,'2019-10-01 03:15:56','TriHealth','US',NULL,NULL,NULL,'true'),
+	(230,'2019-10-01 03:15:56','Trinity Health (Livonia, Michigan)','US',NULL,NULL,NULL,'true'),
+	(231,'2019-10-01 03:15:56','Trinity Health (Minot, North Dakota)','US',NULL,NULL,NULL,'true'),
+	(232,'2019-10-01 03:15:57','Ty Cobb Healthcare System','US',NULL,NULL,NULL,'true'),
+	(233,'2019-10-01 03:15:57','Tuality Healthcare','US',NULL,NULL,NULL,'true'),
+	(234,'2019-10-01 03:15:57','UC Davis Medical Center','US',NULL,NULL,NULL,'true'),
+	(235,'2019-10-01 03:15:57','U.S. HealthWorks','US',NULL,NULL,NULL,'true'),
+	(236,'2019-10-01 03:15:57','UCLA Health','US',NULL,NULL,NULL,'true'),
+	(237,'2019-10-01 03:15:57','UC San Diego Health','US',NULL,NULL,NULL,'true'),
+	(238,'2019-10-01 03:15:57','UCSF Medical Center','US',NULL,NULL,NULL,'true'),
+	(239,'2019-10-01 03:15:57','UMass Memorial Health Care','US',NULL,NULL,NULL,'true'),
+	(240,'2019-10-01 03:15:57','UNC Health Care','US',NULL,NULL,NULL,'true'),
+	(241,'2019-10-01 03:15:57','United Health Services','US',NULL,NULL,NULL,'true'),
+	(242,'2019-10-01 03:15:57','UnityPoint Health','US',NULL,NULL,NULL,'true'),
+	(243,'2019-10-01 03:15:57','Universal Health Services','US',NULL,NULL,NULL,'true'),
+	(244,'2019-10-01 03:15:57','University of Chicago Medical Center','US',NULL,NULL,NULL,'true'),
+	(245,'2019-10-01 03:15:57','University of Florida Health','US',NULL,NULL,NULL,'true'),
+	(246,'2019-10-01 03:15:58','University of Maryland Medical System','US',NULL,NULL,NULL,'true'),
+	(247,'2019-10-01 03:15:58','Michigan Medicine','US',NULL,NULL,NULL,'true'),
+	(248,'2019-10-01 03:15:58','University of Missouri Health Care','US',NULL,NULL,NULL,'true'),
+	(249,'2019-10-01 03:15:58','University of Pennsylvania Health System','US',NULL,NULL,NULL,'true'),
+	(250,'2019-10-01 03:15:58','University of Pittsburgh Medical Center','US',NULL,NULL,NULL,'true'),
+	(251,'2019-10-01 03:15:58','USCIPP','US',NULL,NULL,NULL,'true'),
+	(252,'2019-10-01 03:15:58','University of Texas Medical Branch','US',NULL,NULL,NULL,'true'),
+	(253,'2019-10-01 03:15:58','VA Boston Healthcare System','US',NULL,NULL,NULL,'true'),
+	(254,'2019-10-01 03:15:58','VA New York Harbor Healthcare System','US',NULL,NULL,NULL,'true'),
+	(255,'2019-10-01 03:15:58','Tenet Healthcare','US',NULL,NULL,NULL,'true'),
+	(256,'2019-10-01 03:15:58','Vanderbilt University Medical Center','US',NULL,NULL,NULL,'true'),
+	(257,'2019-10-01 03:15:58','VA Palo Alto Health Care System','US',NULL,NULL,NULL,'true'),
+	(258,'2019-10-01 03:15:58','Vanguard Health Systems','US',NULL,NULL,NULL,'true');
+
+/*!40000 ALTER TABLE `medhealthcarenetworks` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

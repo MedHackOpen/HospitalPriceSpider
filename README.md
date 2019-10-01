@@ -20,7 +20,7 @@ developing all kinds of tricks to complicate, evade and mislead around the topic
 TESTING
 -------
 
-###To test on live server head to the below endpoints and what to get
+###To test see below endpoints
 
 General EndPoints
 -----------------
