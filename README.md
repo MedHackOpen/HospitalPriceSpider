@@ -40,8 +40,6 @@ Search Endpoints
  within a location. range = distance in miles, lon = the longitude, lat = the latitude.
  
 * [http://api.medhackopen.com/costliestProcedure/containingPhrase?phrase=lib](http://api.medhackopen.com/costliestProcedure/containingPhrase?phrase=lib) // returns costliest procedure from the database containing a phrase. phrase = name of procedure
-  
-* [http://api.medhackopen.com/cheapestProcedure/containingPhrase?phrase=lib](http://api.medhackopen.com/cheapestProcedure/containingPhrase?phrase=lib) // returns cheapest procedure from the database containing a phrase. phrase = name of procedure
 
 To run this repo in node js see README.md in ./nodejsModule folder 
 
