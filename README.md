@@ -34,7 +34,7 @@ General EndPoints
 Search Endpoints
 ----------------
 
-* [http://api.medhackopen.com/api/search-procedure/:name](http://api.medhackopen.com/api/search-procedure/:name) to search procedures by name eg med, BREATHING ... 
+* [http://api.medhackopen.com/api/search-procedure/:name](http://api.medhackopen.com/api/search-procedure/:name) to search procedures by name eg leg, GAUZE, NEEDLE  ... 
 
 * [http://api.medhackopen.com/averageprice/location?range=10000&lon=-165.37812474&lat=64.49906305](http://api.medhackopen.com/averageprice/location?range=10000&lon=-165.37812474&lat=64.49906305) // returns average price of institutions
  within a location. range = distance in miles, lon = the longitude, lat = the latitude.

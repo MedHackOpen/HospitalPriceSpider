@@ -1286,28 +1286,26 @@ app.get('/api/search-procedure/:name', async (req, res ) => {
 
         const procedures = await proceduresService.getProcedureItems()
 
-        let searchName = req.params.name
+        if (req.params.name){
 
-        if (searchName){
-
-            let filtered = procedures
+            let searchName = req.params.name
 
             // filter procedures
-            filtered = procedures.filter(p => p.itemName.toLowerCase().startsWith(searchName.toLowerCase()))
+            let filtered = procedures.filter(p => p.itemName.toLowerCase().startsWith(searchName.toLowerCase()))
 
-            if (!_.isEmpty(filtered)) {
+            if (filtered) {
 
                 const data = {
-                    message: `Search results for term (${searchName}).. below..`,
+                    message: `Search results for term (${searchName}), = ${filtered.length};  below..`,
                     results: filtered
                 }
 
-                res.send(data)
+                await res.send(data)
             }
 
-            if (_.isEmpty(filtered)) {
+            if (!filtered) {
 
-                res.send(`**0** search results for term (${searchName})  !!!!!`)
+                await res.send(`** search results = ${filtered.length},for term (${searchName})  !!!**`)
 
             }
         }
