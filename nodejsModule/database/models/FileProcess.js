@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
     procedureItems: DataTypes.STRING,
     itemsIn: DataTypes.STRING,
     progress: DataTypes.STRING
-  }, {});
+  }, {tableName: 'fileprocess'}, {});
   FileProcess.associate = function(models) {
     // associations can be defined here
   };

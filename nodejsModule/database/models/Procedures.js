@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
     keywords: DataTypes.JSON,
     country: DataTypes.STRING,
     currency: DataTypes.STRING
-  }, {});
+  }, {tableName: 'procedures'}, {});
     Procedures.associate = function(models) {
     // associations can be defined here
   };

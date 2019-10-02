@@ -39,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
     hasSpreadSheet: DataTypes.STRING,////should be bol
     notes: DataTypes.STRING, //should be bol
     nonProfit: DataTypes.STRING,
-  }, {});
+  }, {tableName: 'institutions'} ,{});
   Institutions.associate = function(models) {
     // associations can be defined here
   };
