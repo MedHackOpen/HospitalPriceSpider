@@ -1,0 +1,3 @@
+# Ignore files larger that 10 MBs
+hospital_yale_newhaven.csv
+hospital_CPMC.csv
