@@ -37,14 +37,28 @@ async function getInstitutions(){
 async function getInstitutionsReqData () {
     try {
         const institutions = await Institutions.findAll({
+
             attributes: [
                 'uuid', 'rId', 'hospitalName', 'city', 'country', 'mainHospitalName','numberBeds',
                 'streetAddress','numberLocation','itemColumnName', 'avgPriceColumnName',
                 'priceSampleSizeColumnName','outPatientPriceColumnName', 'inpatientPriceColumnName', 'extraColumnName',
-                'categoryColumnName','removedHeaderRowsForCSV','savedRepoTableName', 'notes'
+                'categoryColumnName','removedHeaderRowsForCSV','savedRepoTableName', 'notes', 'hasSpreadSheet'
             ],
+            //attributes: [ 'uuid', 'rId', 'itemColumnName', 'avgPriceColumnName', 'savedRepoTableName', 'hasSpreadSheet' ],
+
+            where: {
+                hasSpreadSheet: 1,
+                //-*s01211avedRepoTableName: !_.isNil(), // any below has a value means this must have a value too
+                //itemColumnName: !_.isEmpty(),
+                //avgPriceColumnName: !_.isEmpty(),  // Not empty
+            },
+
             raw: true
         })
+
+
+        //console.log(institutions)
+
 
         return institutions
 
@@ -138,6 +152,7 @@ async function institutionsRID() {
 
 //------END OF---------Getting Data from the database (institution) and processing it---------------------
 
+getInstitutionsReqData()
 
 module.exports = {
     getInstitutions,

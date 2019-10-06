@@ -895,20 +895,30 @@ app.get('/api/update/institutions-from-local-spreadsheet', async (req, res) => {
     const spreadSheetFileName = 'Hospital Database'
     const dataUrl = `${homeUrl}/api/data/local-xlsl-file/${spreadSheetFileName}.xlsx`
 
+
     try {
 
         await axios.get(dataUrl)
             .then( async (fileData) => {
                 //console.log('fileData++++++++++++++++++++++++++++++++++++',await fileData.data)
                 _.forEach(await fileData.data[0], row => {
-                    //console.log('dataStructure logged',row)
 
-                    /**
-                     * Validate required values before proceeding
-                     */
+
+                      //Validate required values before proceeding
 
                     if (row.rId && row.hospitalName) { // Though every row has rid
+                        //console.log('dataStructure logged',row)
                         //console.log('fileData+++++++++++++++++++++++++++++++++END+++++++++++++++++++++++++++++++++')
+
+                        // remove .csv from filename (string)
+                        let pattern = /.csv/gi
+
+                        let savedRepoTableName = row.savedRepoTableName
+                        savedRepoTableName = savedRepoTableName.replace(pattern, '')
+
+                        // remove spaces at the end and beginning of the filename
+                        savedRepoTableName = savedRepoTableName.trim(savedRepoTableName)
+
 
                         // newInstitution item/Hospital
                         let newInstitution = {
@@ -941,7 +951,7 @@ app.get('/api/update/institutions-from-local-spreadsheet', async (req, res) => {
                             removedHeaderRowsForCSV: row.removedHeaderRowsForCSV,//int
                             longitude: row.longitude,//double
                             latitude: row.latitude,//double
-                            savedRepoTableName: `${row.savedRepoTableName}.csv`,//string
+                            savedRepoTableName,//string
                             communityHospital: row.communityHospital,// bol
                             type: row.type,  //string
                             founded: row.founded,//data
@@ -957,11 +967,10 @@ app.get('/api/update/institutions-from-local-spreadsheet', async (req, res) => {
                         // Hospital table now
                         Institutions.findOne({
                             where: { rId: row.rId }
+
                         }).then(record => {
                             //console.log('record===============', record)
-                            /**
-                             * if record doesn't exist, create one
-                             */
+                            // if record doesn't exist, create one
                             if (!record){
                                 // insert item in database Institutions table
 
@@ -975,9 +984,8 @@ app.get('/api/update/institutions-from-local-spreadsheet', async (req, res) => {
                                 })
                             }
 
-                            /**
-                             * if record exists update/patch data
-                             */
+                            // if record exists update/patch data
+
                             if (record){
                                 Institutions.update(
                                     {
@@ -1009,7 +1017,7 @@ app.get('/api/update/institutions-from-local-spreadsheet', async (req, res) => {
                                         removedHeaderRowsForCSV: row.removedHeaderRowsForCSV,//int
                                         longitude: row.longitude,//double
                                         latitude: row.latitude,//double
-                                        savedRepoTableName: row.savedRepoTableName,//string
+                                        savedRepoTableName,//string
                                         communityHospital: row.communityHospital,// bol
                                         type: row.type,  //string
                                         founded: row.founded,//data
@@ -1041,63 +1049,6 @@ app.get('/api/update/institutions-from-local-spreadsheet', async (req, res) => {
 
         res.send(e)
     }
-    /*
-    const dummyInstitution = [
-        {hospitalName: 'hospital Name 01', website: 'www.hospitalname.com'},
-        {hospitalName: 'hospital Name 02', website: 'www.hospitalname2.com'},
-        {hospitalName: 'hospital Name 03', website: 'www.hospitalname3.com'},
-        {hospitalName: 'hospital Name 04', website: 'www.hospitalname4.com'},
-        {hospitalName: 'hospital Name 05', website: 'www.hospitalname5.com'},
-    ]
-
-    try {
-        _.forEach(dummyInstitution, (institution) => {
-            // insert items in database Institutions table
-            let newInstitution = {
-                uuid: uuid(), //string
-                rId: 'Test!!', //double
-                hospitalName: 'Test!!',//string
-                city: 'Test!!',//string
-                region: 'Test!!',//string
-                country: 'Test!!',//string
-                streetAddress: 'Test!!',//string
-                numberLocation: 'Test!!',//int
-                ownedBy: 'Test!!',//string
-                managedBy: 'Test!!',//string
-                keyShareholdersAndPeople: 'Test!!',//json
-                grossRevenueFiscal: 'Test!!',//double
-                annualReportDocs: 'Test!!',//json
-                website: 'Test!!',//string
-                currentPricingUrl: 'Test!!',//string
-                itemColumnName: 'Test!!',//string
-                avgPriceColumnName: 'Test!!',//string
-                priceSampleSizeColumnName: 'Test!!',//string
-                medianPricingColumnName: 'Test!!',//string
-                outPatientPriceColumnName: 'Test!!',//string
-                inpatientPriceColumnName: 'Test!!',//string
-                removedHeaderRowsForCSV: 'Test!!',//int
-                longitude: 'Test!!',//double
-                latitude: 'Test!!',//double
-                founded: 'Test!!',//data
-                type: 'Test!!',  //string
-                nonProfit: 'Test!!',//bol
-                communityHospital: 'Test!!', // bol
-                savedRepoTableName: 'Test!!' // string
-            }
-
-            let institutionInstance = Institutions.build(
-                newInstitution
-            )
-
-            institutionInstance.save().then((insertedInstitution) => {
-                //console.log('insertedInstitution...',insertedInstitution)
-            })
-        })
-
-        res.send(dummyInstitution)  // we may send the inserted object(s) instead of the raw spreadsheet
-    } catch (e) {
-        res.send(e)
-    }*/
 
 
 })
