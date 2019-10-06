@@ -78,6 +78,8 @@ app.get('/', (req, res) => {
 app.get('/api/csv-files', async (req, res) => {
     const csvFolder = path.join(__dirname, '../rawCSVs')
 
+    let filesList = []
+
     try {
         fs.readdir(csvFolder, (err, files) => {
             if (err) res.send(err)
@@ -102,6 +104,8 @@ app.get('/api/csv-files', async (req, res) => {
 app.get('/api/local-csv-files', async (req, res) => {
     const csvFolder = path.join(__dirname, '../rawCSVs')
 
+    let filesList = []
+
     try {
         await fs.readdir(csvFolder,  (err, files) => {
             if (err) res.send(err)
@@ -111,6 +115,7 @@ app.get('/api/local-csv-files', async (req, res) => {
                 });
 
             res.send(filesList)
+
         })
     } catch (e) {
         res.send(e)
@@ -145,6 +150,8 @@ app.get('/api/data/local-spread-sheets', async (req, res) => {
 
     // path to the local folder
     const xlsxFolder = path.join(__dirname, '../rawXlsxs')
+
+    let filesList = []
 
     try {
         fs.readdir(xlsxFolder, (err, files) => {
@@ -291,28 +298,28 @@ app.get('/api/test', async (req, res) => {
 
     // get each institution in the table
     //_.forEach(institutions, async (institution) => {
-        //console.log('TEST!!!!', institution)
-        //console.log('================BREAK========================')
-        //console.log('===============ALL=ITEMS====================', institutions.length)
+    //console.log('TEST!!!!', institution)
+    //console.log('================BREAK========================')
+    //console.log('===============ALL=ITEMS====================', institutions.length)
 
-        //const institutionFileName = await institutionsService.institutionFileName(institution.rId)
-        //const institutionFileName = institution.savedRepoTableName
-        //if (institutionFileName) {
+    //const institutionFileName = await institutionsService.institutionFileName(institution.rId)
+    //const institutionFileName = institution.savedRepoTableName
+    //if (institutionFileName) {
 
-            /**
-             * @TODO implement logic to sort files ready for processing here
-             * run once when needed..comment when not
-             */
-            //console.log('File Name ======= |||||| ========== ',institutionFileName)
-            //res.send(institutionFileName)
-        //}
+    /**
+     * @TODO implement logic to sort files ready for processing here
+     * run once when needed..comment when not
+     */
+    //console.log('File Name ======= |||||| ========== ',institutionFileName)
+    //res.send(institutionFileName)
+    //}
 
-        //res.send(institutions)
+    //res.send(institutions)
 
 
-        // each csv file by its file name in relation to this institution
-        //const csvFileName = institution.savedRepoTableName
-        //const dataUrl = `${homeUrl}/api/csvdata/${csvFileName}.csv` // call this endpoint within this app
+    // each csv file by its file name in relation to this institution
+    //const csvFileName = institution.savedRepoTableName
+    //const dataUrl = `${homeUrl}/api/csvdata/${csvFileName}.csv` // call this endpoint within this app
 
 
     //})
@@ -449,7 +456,7 @@ app.get('/api/load-data-from-csv', async (req, res) => {
     const fileNames = await Institutions.findAll({}).map(item => item.get('savedRepoTableName'))
     const institutions = await Institutions.findAll({}).map(item => item.get({ plain: true }))
 
-   await _.forEach(institutions,async (institution) => {
+    await _.forEach(institutions,async (institution) => {
 
         /**
          *  Check the required fields before proceeding
@@ -946,7 +953,7 @@ app.get('/api/update/institutions-from-local-spreadsheet', async (req, res) => {
                 _.forEach(await fileData.data[0], row => {
 
 
-                      //Validate required values before proceeding
+                    //Validate required values before proceeding
 
                     if (row.rId && row.hospitalName) { // Though every row has rid
                         //console.log('dataStructure logged',row)

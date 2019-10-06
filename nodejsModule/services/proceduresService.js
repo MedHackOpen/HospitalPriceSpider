@@ -106,18 +106,31 @@ async function getCsvFileItems(fileName) {
     //const fileNameTest = 'hospital_CPMC.csv'
     const csvFilePath = path.join(__dirname, '../../rawCSVs', fileName)
 
-    console.log('***fileName *** ==', fileName)
+    //console.log('***fileName *** ==', fileName)
 
     try {
 
         const csvItems = await csvToJson.csvDataItems(csvFilePath)
 
-        console.log(csvItems)
+        _.map(csvItems, async (item) => { // send per item for db processing
 
-        return csvItems
+            //console.log('********items******START********')
+            //console.log(item)
+            //console.log('*******items*******END*********')
+
+            // @TODO maybe pass more args here
 
 
-        /*if (csvItems){
+            //return await csvDataToDb(csvItems, fileName)
+            const database = await csvDataToDb(item, fileName)
+
+            return database
+        })
+
+
+        /*
+
+        if (csvItems){
             // @TODO maybe pass more args here
 
             // Break items array into smaller arrays with 30000 items each
@@ -186,11 +199,27 @@ emitter.on('newProcedureItem', async (eventObject) => {
  * that to create procedure items
  */
 
-async function csvDataToDb(brokenItems, fileName) {
+async function csvDataToDb(item, fileName) {
     //const fileNam = 'hospital_CPMC.csv'
 
+    console.log(item, fileName)
 
     try {
+
+        // Get the institution data in relation to file name
+        // institution from database
+        let institution = {}
+        //console.log(fileName)
+        institution = await institutionsService.getHospitalData(fileName)
+
+        console.log(institution)
+
+    } catch (e) {
+
+        return e
+    }
+
+    /*try {
 
         let institution = {}
         //console.log(fileName)
@@ -199,19 +228,14 @@ async function csvDataToDb(brokenItems, fileName) {
         console.log(institution)
         if(institution.itemColumnName && institution.savedRepoTableName && institution.avgPriceColumnName){
 
-            /**
-             *  validate required fields before proceeding
-             *  ie itemName, hospitalId, price and currency
-             *  @TODO not sure what to make of currency currently
-             *  below validation in that order
-             */
+            // validate required fields before proceeding ie itemName, hospitalId, price and currency
+            // @TODO not sure what to make of currency currently
+            // below validation in that order
             //console.log(institution)
             //console.log(institution)
             //console.log(dt)
 
-            /**
-             * loop over each broken items (arrays in the brokenItems array)
-             */
+            // loop over each broken items (arrays in the brokenItems array)
             _.forEach(brokenItems, async (csvDataItems) => {
 
                 await _.map(csvDataItems, async (dt, index) => {
@@ -221,10 +245,7 @@ async function csvDataToDb(brokenItems, fileName) {
                         console.log('++++++++++++++++csvDataItems+++++++++++++++++++++++')
                         console.log('Broken arrays++++++++++++++++++',dt[institution.itemColumnName])
                         console.log('--------------------------------------------------------------')
-
-                        /**
-                         * new procedure item to insert into procedures table
-                         */
+                        // new procedure item to insert into procedures table
 
                         // Run blocking per item now
 
@@ -280,7 +301,7 @@ async function csvDataToDb(brokenItems, fileName) {
 
     } catch (e) {
         return e
-    }
+    }*/
 
 }
 
