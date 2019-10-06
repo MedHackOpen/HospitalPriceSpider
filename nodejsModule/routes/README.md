@@ -1,0 +1,1 @@
+### This directory contains our app routes definitions, each classified according to the type endpoints it contains

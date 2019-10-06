@@ -68,19 +68,26 @@ async function getInstitutionsReqData () {
     }
 }
 
+/**
+ * @param savedRepoTableName
+ */
 async function getHospitalData(savedRepoTableName) {
     try {
         const institution = await Institutions.findOne({
+
             where: { savedRepoTableName: savedRepoTableName },
+
             attributes: [
                 'uuid', 'rId', 'hospitalName', 'city', 'country', 'mainHospitalName','numberBeds',
                 'streetAddress','numberLocation','itemColumnName', 'avgPriceColumnName', 'medianPricingColumnName',
                 'priceSampleSizeColumnName','outPatientPriceColumnName', 'inpatientPriceColumnName', 'extraColumnName',
                 'categoryColumnName','removedHeaderRowsForCSV','savedRepoTableName', 'notes'
             ],
+
+            raw: true
         })
 
-        return institution.dataValues
+        return institution
 
     } catch (e) {
 

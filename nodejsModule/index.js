@@ -1129,7 +1129,7 @@ app.get('/api/update/load-data-from-local-csv', async (req, res) => {
 
         // make a single request per file to read data and write to procedures table
 
-        await files.map( async (item, index) => {
+        await _.map(files, async (item, index) => {
 
             const file = {
                 fileNumber: ++index, //add 1 to start counting from 1

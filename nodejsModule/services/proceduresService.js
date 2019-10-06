@@ -1,3 +1,5 @@
+'use strict'
+
 const path = require('path')
 const fs = require('fs')
 const EventEmitter = require('events')
@@ -103,7 +105,18 @@ async function getDataItemPerCsvFile(fileName) {
  */
 async function getCsvFileItems(fileName) {
 
-    //const fileNameTest = 'hospital_CPMC.csv'
+
+    // Remove the .csv from fileName before requesting for the institution (database)
+    // remove .csv from filename (string)
+    let pattern = /.csv/gi
+
+    let savedRepoTableName = fileName
+    savedRepoTableName = savedRepoTableName.replace(pattern, '') // remove .csv
+
+    // get institution data per req per file
+    const institution = await institutionsService.getHospitalData(savedRepoTableName)
+
+    // define path for the csv file
     const csvFilePath = path.join(__dirname, '../../rawCSVs', fileName)
 
     //console.log('***fileName *** ==', fileName)
@@ -112,17 +125,17 @@ async function getCsvFileItems(fileName) {
 
         const csvItems = await csvToJson.csvDataItems(csvFilePath)
 
+        let data = {}
+
         _.map(csvItems, async (item) => { // send per item for db processing
 
-            //console.log('********items******START********')
-            //console.log(item)
-            //console.log('*******items*******END*********')
+            data = {
+                item,
+                fileName,
+            }
 
-            // @TODO maybe pass more args here
 
-
-            //return await csvDataToDb(csvItems, fileName)
-            const database = await csvDataToDb(item, fileName)
+            const database = await csvDataToDb(data, institution)
 
             return database
         })
@@ -193,133 +206,26 @@ emitter.on('newProcedureItem', async (eventObject) => {
 })
 
 /**
- * using data from each file in rawCSVs folder
- * then take it's  id and use that to get the required
- * matching fields from our institutions table, then use
- * that to create procedure items
- */
-
-async function csvDataToDb(item, fileName) {
-    //const fileNam = 'hospital_CPMC.csv'
-
-    console.log(item, fileName)
-
-    try {
-
-        // Get the institution data in relation to file name
-        // institution from database
-        let institution = {}
-        //console.log(fileName)
-        institution = await institutionsService.getHospitalData(fileName)
-
-        console.log(institution)
-
-    } catch (e) {
-
-        return e
-    }
-
-    /*try {
-
-        let institution = {}
-        //console.log(fileName)
-        institution = await institutionsService.getHospitalData(fileName)
-
-        console.log(institution)
-        if(institution.itemColumnName && institution.savedRepoTableName && institution.avgPriceColumnName){
-
-            // validate required fields before proceeding ie itemName, hospitalId, price and currency
-            // @TODO not sure what to make of currency currently
-            // below validation in that order
-            //console.log(institution)
-            //console.log(institution)
-            //console.log(dt)
-
-            // loop over each broken items (arrays in the brokenItems array)
-            _.forEach(brokenItems, async (csvDataItems) => {
-
-                await _.map(csvDataItems, async (dt, index) => {
-
-                    if ( dt[institution.itemColumnName] && institution.rId && dt[institution.avgPriceColumnName] ) {
-
-                        console.log('++++++++++++++++csvDataItems+++++++++++++++++++++++')
-                        console.log('Broken arrays++++++++++++++++++',dt[institution.itemColumnName])
-                        console.log('--------------------------------------------------------------')
-                        // new procedure item to insert into procedures table
-
-                        // Run blocking per item now
-
-                        console.log('creating ###ITEM###', ++index)
-                        const newProcedure = {
-                            uuid: uuid() ,
-                            rId: institution.rId ,
-                            itemName: dt[institution.itemColumnName],
-                            hospitalId: institution.rId ,
-                            price: dt[institution.avgPriceColumnName],
-                            hospitalName: institution.hospitalName,
-                            avgPrice: dt[institution.avgPriceColumnName], //@TODO maybe
-                            medianPrice: dt[institution.medianPricingColumnName],
-                            // sampleSize: ,
-                            outpatientAvgPrice: dt[institution.outPatientPriceColumnName],
-                            inpatientAvgPrice:  dt[institution.inpatientPriceColumnName],
-                            revenue_code: dt[institution.categoryColumnName],
-                            //latestPriceDate: ,
-                            //firstPriceDate: ,
-                            //changeSinceLastUpdate: ,
-                            //description: ,
-                            //relatedItemsFromOthers: ,
-                            //relatedItemsFromThisLocation: ,
-                            //itemsRequiredForThis:  ,
-                            //keywords: ,
-                            country: institution.country ,
-                            currency: 'USD',
-                        }
-
-                        // send newProcedureItem event
-
-                        //return emitter.emit('newProcedureItem', { item: newProcedure })
-                        let newProcedureInstance = Procedures.build(newProcedure)
-                        console.log('newProcedureInstance..*******..created|||*******',)
-                        if (newProcedureInstance) {
-
-                            newProcedureInstance.save()
-
-                                .then( (savedItem) => {
-
-                                    console.log('.........**********......Saved....**********.............',)
-
-                                    return savedItem
-                                })
-                        }
-                    }
-                })
-
-            })
-
-        }
-
-
-    } catch (e) {
-        return e
-    }*/
-
-}
-
-
-/**
  * @param newProcedure
  * This function given an procedure object  creates/populates
  * the procedures/services table with all that information
  */
 async function createProcedureItem(newProcedure) {
 
-    await Procedures.create({
+    console.log('newProcedure...Buiild', newProcedure.itemName)
+    console.log('**************newProcedure************END******************************')
+
+    //const savedProcedure = procedureInstance.save()
+
+    //return savedProcedure
+    const item = await Procedures.create({
+        uuid: newProcedure.uuid ,
         rId: newProcedure.rId ,
         itemName: newProcedure.itemName,
-        hospitalId: newProcedure.hospitalId,
+        hospitalId: newProcedure.hospitalId ,
         price: newProcedure.price,
         hospitalName: newProcedure.hospitalName,
-        avgPrice: newProcedure.avgPrice,
+        avgPrice: newProcedure.avgPrice, //@TODO maybe
         medianPrice: newProcedure.medianPrice,
         // sampleSize: ,
         outpatientAvgPrice: newProcedure.outpatientAvgPrice,
@@ -334,12 +240,86 @@ async function createProcedureItem(newProcedure) {
         //itemsRequiredForThis:  ,
         //keywords: ,
         country: newProcedure.country ,
-        currency: newProcedure.country,
-    }).then(async (item) => {
-        console.log('Created Item ============================+++', item)
-        return item
+        currency: newProcedure.currency
     })
+
+    console.log('.........**********......Saved....**********...........UUID..',)
+
+    console.log('savedProcedure...',await item.dataValues.itemName)
+    console.log('ITEM++++++++++++++ITEM+++++++++++++++++++DATABASE++++++++++++++++++++ITEM+++++++++++++')
+
+    return await item
 }
+
+
+/**
+ * using data from each file in rawCSVs folder
+ * then take it's  id and use that to get the required
+ * matching fields from our institutions table, then use
+ * that to create procedure items
+ */
+
+async function csvDataToDb(data, institution) {
+
+
+    const { item : dt } = data
+
+
+
+    try {
+
+        if ( institution.itemColumnName && institution.savedRepoTableName && institution.avgPriceColumnName ) {
+
+            // validate required fields before proceeding ie itemName, hospitalId, price and currency
+            // @TODO not sure what to make of currency currently
+            // below validation in that order
+            //console.log(institution)
+            //console.log(data.item)
+            if ( dt[institution.itemColumnName] && institution.rId && dt[institution.avgPriceColumnName]  ) {
+
+
+                // create a procedure item to put to database
+                const newProcedure = {
+                    uuid: uuid() ,
+                    rId: institution.rId ,
+                    itemName: dt[institution.itemColumnName],
+                    hospitalId: institution.rId ,
+                    price: dt[institution.avgPriceColumnName],
+                    hospitalName: institution.hospitalName,
+                    avgPrice: dt[institution.avgPriceColumnName], //@TODO maybe
+                    medianPrice: dt[institution.medianPricingColumnName],
+                    // sampleSize: ,
+                    outpatientAvgPrice: dt[institution.outPatientPriceColumnName],
+                    inpatientAvgPrice:  dt[institution.inpatientPriceColumnName],
+                    revenue_code: dt[institution.categoryColumnName],
+                    //latestPriceDate: ,
+                    //firstPriceDate: ,
+                    //changeSinceLastUpdate: ,
+                    //description: ,
+                    //relatedItemsFromOthers: ,
+                    //relatedItemsFromThisLocation: ,
+                    //itemsRequiredForThis:  ,
+                    //keywords: ,
+                    country: institution.country ,
+                    currency: 'USD',
+                }
+
+                 await createProcedureItem(newProcedure)
+
+
+                return newProcedure
+
+            }
+
+        }
+
+    } catch (e) {
+
+        return e
+    }
+
+}
+
 
 /**
  * returns available csv files in
