@@ -99,41 +99,40 @@ async function getDataItemPerCsvFile(fileName) {
  * @param fileName
  * Given a file name eg 'hospital_CPMC.csv', in each request
  * this function loads the given file data and passes it onto
- * csvDataToDb for processing, returns error or nothing if success
+ * csvDataToDb for processing
  */
 async function getCsvFileItems(fileName) {
 
-    //const fileName = 'hospital_CPMC.csv'
+    //const fileNameTest = 'hospital_CPMC.csv'
     const csvFilePath = path.join(__dirname, '../../rawCSVs', fileName)
 
+    console.log('***fileName *** ==', fileName)
+
     try {
+
         const csvItems = await csvToJson.csvDataItems(csvFilePath)
 
-        //console.log(csvItems)
+        console.log(csvItems)
+
+        return csvItems
 
 
-        if (csvItems){
+        /*if (csvItems){
             // @TODO maybe pass more args here
 
-            /**
-             * Break items array into smaller arrays
-             * with 30000 items each
-             */
+            // Break items array into smaller arrays with 30000 items each
+
             const brokenItems = _.chunk(csvItems, 30000)
-            //console.log('========================================================')
-            //console.log(' *********30000 Items******* ',brokenItems)
-            //console.log(' ||*****|||| END OF BROKEN CHUNKS ||||||||****||| ')
 
 
             //return await csvDataToDb(csvItems, fileName)
-            csvDataToDb(brokenItems, fileName)
+            await csvDataToDb(brokenItems, fileName)
                 .then(() => {
 
-                    //console.log(brokenItems)
 
                     return brokenItems
                 })
-        }
+        }*/
 
     } catch (e) {
 

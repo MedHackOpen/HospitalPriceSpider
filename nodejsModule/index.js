@@ -1,3 +1,4 @@
+'use strict'
 /**
  * Servers as the express server
  */
@@ -328,51 +329,92 @@ app.get('/api/test', async (req, res) => {
  * In relation to the file names in the institutions database table
  *  (institution.savedRepoTableName), we compare that with our local
  *  folders and move the files that are in database to a folder
- *  ready for processing. This endpoint should move files in './rawCSVs/unSortedFiles' into
- *  './rawCSVs' folder
- *  @TODO log files that are missing maybe
+ *  ready for processing.
+ *  See defined dir paths below
  */
 app.get('/api/sort-files', async (req, res) => {
 
-    const institutions = await institutionsService.getInstitutions()
+    const institutions = await institutionsService.getInstitutionsReqData()
 
     // get each institution in the table
-    _.forEach(institutions, async (institution) => {
+    _.map(institutions, async (institution) => {
 
         // institution file name as saved in the institution table
         const institutionFileName = institution.savedRepoTableName
+
         if (institutionFileName) {
+
+
             try {
 
-                //@TODO implement logic to sort files ready for processing here
-                //console.log('File Name ======= |||||| ========== ',institutionFileName)
+                // logic to sort files ready for processing below
+
                 const ext = '.csv' // moving .csv files
                 const fileName = `${institutionFileName}${ext}`//'csvFileName.csv'
-                const dirPath = '../rawCSVs/unSortedFiles/'
+
+
+
+                const dirPath = '../rawCSVs/unSortedFiles/' // Location unsorted files
+
                 const destPath = '../rawCSVs/'
                 const from = `${dirPath}${fileName}`
                 const to = `${destPath}${fileName}`
-                //console.log('from=======',dirPath)
-                //console.log('to++++++++++++',destPath)
                 await fileFolderService.stageFilesForProcessing(from, to)
 
                 /**
                  * From the readme.md in the root of this repo (defined required fields),
                  * we move files without the
-                 * required fields to another folder for those details to be accurate/available
+                 * required fields to other folders for those details to be accurate/available
                  * Required fields for all are itemName, hospitalId, currency and price.
                  * use country to get currency
                  */
-                if (!institution.itemColumnName || !institution.avgPriceColumnName || !institution.country ) {
 
-                    const dirPath = '../rawCSVs/' // remove file from above folder, move to ./missingDetails
-                    const destPath = '../rawCSVs/missingDetails/'
+                if (!institution.itemColumnName ) {
+
+                    // Missing itemColumnName
+
+                    const dirPath = '../rawCSVs/' // remove file from above folder, move to ./missingItemColumn
+                    const destPath = '../rawCSVs/missingItemColumn/'
                     const from = `${dirPath}${fileName}`
                     const to = `${destPath}${fileName}`
                     await fileFolderService.stageFilesForProcessing(from, to)
                 }
 
-                res.send('Files..sorting............')
+                if (!institution.country) {
+
+                    // Missing Country
+
+                    const dirPath = '../rawCSVs/' // remove file from above folder, move to ./missingCountry
+                    const destPath = '../rawCSVs/missingCountry/'
+                    const from = `${dirPath}${fileName}`
+                    const to = `${destPath}${fileName}`
+                    await fileFolderService.stageFilesForProcessing(from, to)
+                }
+
+                if (!institution.avgPriceColumnName ) {
+
+                    // Missing avgPriceColumnName
+
+                    const dirPath = '../rawCSVs/' // remove file from above folder, move to ./missingPriceColumn
+                    const destPath = '../rawCSVs/missingPriceColumn/'
+                    const from = `${dirPath}${fileName}`
+                    const to = `${destPath}${fileName}`
+                    await fileFolderService.stageFilesForProcessing(from, to)
+                }
+
+                if (institution.removedHeaderRowsForCSV >= 1) {
+
+                    // Has removed header rows // to to a folder for later processing
+
+                    const dirPath = '../rawCSVs/' // remove file from above folder, move to ./hasRemovedHeaderRows
+                    const destPath = '../rawCSVs/hasRemovedHeaderRows/'
+                    const from = `${dirPath}${fileName}`
+                    const to = `${destPath}${fileName}`
+                    await fileFolderService.stageFilesForProcessing(from, to)
+
+                }
+
+                res.send('Files..Sorted............')
 
             } catch (e) {
                 console.log(e)
@@ -914,7 +956,7 @@ app.get('/api/update/institutions-from-local-spreadsheet', async (req, res) => {
                         let pattern = /.csv/gi
 
                         let savedRepoTableName = row.savedRepoTableName
-                        savedRepoTableName = savedRepoTableName.replace(pattern, '')
+                        savedRepoTableName = savedRepoTableName.replace(pattern, '') // remove .csv
 
                         // remove spaces at the end and beginning of the filename
                         savedRepoTableName = savedRepoTableName.trim(savedRepoTableName)
@@ -1072,24 +1114,23 @@ app.get('/api/update/load-data-from-local-csv', async (req, res) => {
         const endPoint = '/api/local-csv-files'
         const dataUrl = `${homeUrl}${endPoint}`
 
+
         // Get files ready to process from our rawCSVs folder from the api above
+
         const files = await fileFolderService.filesReadyToProcess(dataUrl)
 
 
-        /**
-         * make a single request per file to read data and write to
-         * procedures table
-         */
-        const csvFileName = await files.map( async (item, index) => {
+        // make a single request per file to read data and write to procedures table
+
+        await files.map( async (item, index) => {
 
             const file = {
                 fileNumber: ++index, //add 1 to start counting from 1
                 name: item
             }
 
-            // @TODO Make one request per file name in the directory
-            //console.log(file.name)
-            //console.log('++++++++++++++END+++file.name+++++END+++++')
+            // send file.name, for processing
+            //console.log(file)
 
             const csvFileData = await proceduresService.getCsvFileItems(file.name)
 
