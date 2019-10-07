@@ -43,9 +43,11 @@ const proceduresService = require('./services/proceduresService')
  * helper function for converting
  * csv to json give path
  */
-async function getFileData(filePath) {
+async function getFileData(filePath, removedHeaderRows) {
+    
 
-    const data = await csvToJsonService.getJsonFromCsv(filePath)
+    const data = await csvToJsonService.getJsonFromCsv(filePath, removedHeaderRows)
+
 
     return data
 }
@@ -133,9 +135,21 @@ app.get('/api/csvdata/:id', async (req, res) => {
     const fileName = req.params.id
     const csvFilePath = path.join(__dirname, '../rawCSVs', fileName)
 
+    // Remove the .csv from fileName before requesting for the institution (database)
+    // remove .csv from filename (string)
+    let pattern = /.csv/gi
+
+    let savedRepoTableName = fileName
+    savedRepoTableName = savedRepoTableName.replace(pattern, '') // remove .csv
+
+    // get institution data per req per file
+    const institution = await institutionsService.getHospitalData(savedRepoTableName)
+
     try {
 
-        const data = await getFileData(csvFilePath)
+        const data = await getFileData(csvFilePath, institution.removedHeaderRowsForCSV)
+
+        //console.log(data)
         res.send(data)
     } catch (e) {
         res.send(e)
@@ -239,6 +253,7 @@ app.get('/api/data/google-spread-sheets/:id', async (req, res) => {
 
 })
 
+//-----------------------------START OF TESTING ENDPOINTS-------------------------------------------------------------
 /**
  * this endpoint is used for testing
  * Current testing on moving imported files with all records into their folders
@@ -329,6 +344,38 @@ app.get('/api/test', async (req, res) => {
     //console.log('FILE NAMES!!!!', institutionFileNames)
 
 })
+
+/**
+ * Given a file name, this endpoint searches our institutions table and
+ * returns the institutions data related to that file
+ */
+app.get('/api/institution-data/:filename', async (req, res) => {
+
+    const fileName = req.params.filename
+    const institution = await institutionsService.getHospitalData(fileName)
+
+    let data = {}
+     if (!_.isEmpty(institution)) {
+
+         data = {
+             message: `Data for institution related to ${fileName}.csv`,
+             institution
+         }
+         res.send(data)
+     }
+
+     if (_.isEmpty(institution)) {
+         data = {
+             message: `No institution related to ${fileName}`,
+             institution
+         }
+
+         res.send(data)
+     }
+})
+
+
+//-----------------------------START OF TESTING ENDPOINTS-------------------------------------------------------------
 
 //------------------START----------Sort files endpoint(s)---------------------------START-----------------------------
 

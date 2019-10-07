@@ -116,6 +116,7 @@ async function getCsvFileItems(fileName) {
     // get institution data per req per file
     const institution = await institutionsService.getHospitalData(savedRepoTableName)
 
+
     // define path for the csv file
     const csvFilePath = path.join(__dirname, '../../rawCSVs', fileName)
 
@@ -123,9 +124,12 @@ async function getCsvFileItems(fileName) {
 
     try {
 
-        const csvItems = await csvToJson.csvDataItems(csvFilePath)
+        // pass here removed headers is any
+
+        const csvItems = await csvToJson.csvDataItems(csvFilePath, institution.removedHeaderRowsForCSV)
 
         let data = {}
+
 
         _.map(csvItems, async (item) => { // send per item for db processing
 
@@ -133,6 +137,7 @@ async function getCsvFileItems(fileName) {
                 item,
                 fileName,
             }
+
 
 
             const database = await csvDataToDb(data, institution)
@@ -263,6 +268,8 @@ async function csvDataToDb(data, institution) {
 
 
     const { item : dt } = data
+
+    //console.log(institution, data)
 
 
 

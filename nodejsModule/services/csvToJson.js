@@ -21,19 +21,42 @@ function getCsvFiles(csvFolder) {
 }
 
 /**
+ *
+ * @param filePath
+ * @param removedHeaderRows
+ *
  * Return Json raw data give filePath
  */
-async function getJsonFromCsv(filePath){
+async function getJsonFromCsv(filePath, removedHeaderRows ){
     try {
 
-        const data = await csvToJsonV2().fromFile(filePath)
+        let data = await csvToJsonV2().fromFile(filePath)
 
 
-        if (data) {
+        // if header is greater than default , remove the headers and return
+        if (removedHeaderRows >= 1) {
 
-            //console.log('Raw data', data)
+            // Remove header rows from data object
+            data = _.filter(data, (index, key) => {
+
+
+                if ( key >= removedHeaderRows ){
+
+                    return data
+                }
+
+
+            })
+
+            //console.log(data)
+
             return data
         }
+
+        else
+            return data
+
+
 
     } catch (e) {
 
@@ -47,10 +70,11 @@ async function getJsonFromCsv(filePath){
     }
 }
 
-async function csvDataItems(filePath) {
+async function csvDataItems(filePath, removedHeaderRows) {
     try {
 
-        const data = await getJsonFromCsv(filePath)
+        const data = await getJsonFromCsv(filePath, removedHeaderRows)
+
 
         if (data) {
             return data
