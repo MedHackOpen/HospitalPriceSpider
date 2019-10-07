@@ -37,10 +37,10 @@ async function getJsonFromCsv(filePath, removedHeaderRows ){
         if (removedHeaderRows >= 1) {
 
             // Remove header rows from data object
-            data = _.filter(data, (index, key) => {
+            data = _.filter(data, (item, index) => {
 
 
-                if ( key >= removedHeaderRows ){
+                if ( index >= removedHeaderRows ){
 
                     return data
                 }
