@@ -21,7 +21,7 @@ module.exports = {
         type: Sequelize.DOUBLE
       },
       price: {
-        type: Sequelize.STRING
+        type: Sequelize.JSON
       },
       hospitalName: {
         type: Sequelize.STRING

@@ -285,7 +285,7 @@ async function csvDataToDb(data, institution) {
                     uuid: uuid() ,
                     rId: institution.rId ,
                     hospitalId: institution.rId,
-                    avgPrice: {},
+                    hospitalName: institution.hospitalName,
                     // sampleSize: ,
                     //latestPriceDate: ,
                     //firstPriceDate: ,
@@ -303,15 +303,14 @@ async function csvDataToDb(data, institution) {
                 if ( dt[institution.itemColumnName] && institution.rId && dt[institution.avgPriceColumnName]  ){
 
                     let price = {
-                        value: dt[institution.avgPriceColumnName],
+                        value:  dt[institution.avgPriceColumnName],
                         otherValues: {},
                     }
 
                     // create a procedure item to put to database
                     newProcedure = {
                         itemName: dt[institution.itemColumnName],
-                        price: dt[institution.avgPriceColumnName],
-                        hospitalName: institution.hospitalName,
+                        price,
                         avgPrice: dt[institution.avgPriceColumnName], //@TODO maybe
                         medianPrice: dt[institution.medianPricingColumnName],
                         outpatientAvgPrice: dt[institution.outPatientPriceColumnName],
@@ -326,7 +325,19 @@ async function csvDataToDb(data, institution) {
                 // if no price or procedure name, search for one in every csv item
                 if (institution.rId && !dt[institution.itemColumnName] || !dt[institution.avgPriceColumnName] ) {
 
+                    let value = _.map(dt, (item, index) => {
+
+                        return item
+                    })
+
+                    // From here probably some assumptions
+                    // phrases with the word hospital doesn't rep a procedure name
+                    // any number starting with $ or is equal to or greater than 5 will be treated a price number
+                    // all numbers that pass the above will be included in the price item array @TODO, do better HERE!!
+
                     console.log('*****TEST DATA ****',dt)
+                    console.log('*****VALUE****',value)
+                    console.log(newProcedure,'||||||||||||||||||||||||')
 
                 }
             }
