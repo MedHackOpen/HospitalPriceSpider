@@ -1,5 +1,7 @@
-const GoogleSpreadsheet = require('google-spreadsheet')
+'use strict'
+
 const { promisify } = require('util')
+const GoogleSpreadsheet = require('google-spreadsheet')
 const _ = require('lodash')
 /**
  * Should return the data in the rows

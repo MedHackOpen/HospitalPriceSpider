@@ -1,3 +1,5 @@
+'use strict'
+
 const fs = require('fs')
 const _ = require('lodash')
 const csvToJsonV2=require("csvtojson/v2");
@@ -32,9 +34,9 @@ async function getJsonFromCsv(filePath, removedHeaderRows ){
 
         let data = await csvToJsonV2().fromFile(filePath)
 
-
         // if header is greater than default , remove the headers and return
         if (removedHeaderRows >= 1) {
+
 
             // Remove header rows from data object
             data = _.filter(data, (item, index) => {
@@ -76,10 +78,7 @@ async function csvDataItems(filePath, removedHeaderRows) {
         const data = await getJsonFromCsv(filePath, removedHeaderRows)
 
 
-        if (data) {
-            return data
-        }
-
+        return data
 
     } catch (e) {
 

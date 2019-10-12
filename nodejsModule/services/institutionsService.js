@@ -1,3 +1,5 @@
+'use strict'
+
 const _ = require('lodash')
 // Database
 const Institutions = require('../database/models').Institutions

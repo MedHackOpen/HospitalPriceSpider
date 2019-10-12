@@ -266,39 +266,27 @@ async function createProcedureItem(newProcedure) {
 
 async function csvDataToDb(data, institution) {
 
-
     const { item : dt } = data
 
-    //console.log(institution, data)
+
+    if (dt) {
 
 
+        try {
 
-    try {
+            if ( institution.itemColumnName && institution.savedRepoTableName && institution.avgPriceColumnName ) {
 
-        if ( institution.itemColumnName && institution.savedRepoTableName && institution.avgPriceColumnName ) {
-
-            // validate required fields before proceeding ie itemName, hospitalId, price and currency
-            // @TODO not sure what to make of currency currently
-            // below validation in that order
-            //console.log(institution)
-            //console.log(data.item)
-            if ( dt[institution.itemColumnName] && institution.rId && dt[institution.avgPriceColumnName]  ) {
-
-
-                // create a procedure item to put to database
-                const newProcedure = {
+                // validate required fields before proceeding ie itemName, hospitalId, price and currency
+                // @TODO not sure what to make of currency currently
+                // below validation in that order
+                //console.log(institution)
+                //console.log(data.item)
+                let newProcedure = {
                     uuid: uuid() ,
                     rId: institution.rId ,
-                    itemName: dt[institution.itemColumnName],
-                    hospitalId: institution.rId ,
-                    price: dt[institution.avgPriceColumnName],
-                    hospitalName: institution.hospitalName,
-                    avgPrice: dt[institution.avgPriceColumnName], //@TODO maybe
-                    medianPrice: dt[institution.medianPricingColumnName],
+                    hospitalId: institution.rId,
+                    avgPrice: {},
                     // sampleSize: ,
-                    outpatientAvgPrice: dt[institution.outPatientPriceColumnName],
-                    inpatientAvgPrice:  dt[institution.inpatientPriceColumnName],
-                    revenue_code: dt[institution.categoryColumnName],
                     //latestPriceDate: ,
                     //firstPriceDate: ,
                     //changeSinceLastUpdate: ,
@@ -311,18 +299,51 @@ async function csvDataToDb(data, institution) {
                     currency: 'USD',
                 }
 
-                 await createProcedureItem(newProcedure)
 
+                if ( dt[institution.itemColumnName] && institution.rId && dt[institution.avgPriceColumnName]  ){
 
-                return newProcedure
+                    let price = {
+                        value: dt[institution.avgPriceColumnName],
+                        otherValues: {},
+                    }
 
+                    // create a procedure item to put to database
+                    newProcedure = {
+                        itemName: dt[institution.itemColumnName],
+                        price: dt[institution.avgPriceColumnName],
+                        hospitalName: institution.hospitalName,
+                        avgPrice: dt[institution.avgPriceColumnName], //@TODO maybe
+                        medianPrice: dt[institution.medianPricingColumnName],
+                        outpatientAvgPrice: dt[institution.outPatientPriceColumnName],
+                        inpatientAvgPrice:  dt[institution.inpatientPriceColumnName],
+                        revenue_code: dt[institution.categoryColumnName],
+                    }
+
+                    await createProcedureItem(newProcedure)
+                }
+
+                // If we miss the data with the values from database, generate our own values with values from csv files
+                // if no price or procedure name, search for one in every csv item
+                if (institution.rId && !dt[institution.itemColumnName] || !dt[institution.avgPriceColumnName] ) {
+
+                    console.log('*****TEST DATA ****',dt)
+
+                }
             }
 
+            if (institution.savedRepoTableName && !institution.itemColumnName && !institution.avgPriceColumnName ) {
+
+                console.log('Some fields need human data', institution.savedRepoTableName )
+            }
+
+
+            //return newProcedure
+
+        } catch (e) {
+
+            return e
         }
 
-    } catch (e) {
-
-        return e
     }
 
 }
