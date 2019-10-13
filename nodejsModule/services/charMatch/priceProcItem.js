@@ -25,16 +25,17 @@ async function matchItem (data) {
 
             // Pattern for price and other price like fields
             // all numbers plus commas, greater than or equal to 5
-            let pricePattern = /[0-9]/
+            //let pricePattern = /[0-9]/
 
-            let price = item.match(pricePattern) ? item : null
+            //let price = item.match(pricePattern) ? item : null
+            let price = 10
 
 
             if (procedure && price){
 
                 //console.log('*****VALUE****',procedure)
                 //console.log(newProcedure,'||||||||||||||||||||||||')
-                price = price.replace(/[^0-9\.]+/g, "") // remove text from price
+                //price = price.replace(/[^0-9\.]+/g, "") // remove text from price
 
 
                 const genericData = {
