@@ -5,7 +5,6 @@
 const path = require('path')
 const fs = require('fs')
 const url = require('url')
-const Joi = require('@hapi/joi')
 const express = require('express')
 const axios = require('axios')
 const uuid = require('uuid/v4')

@@ -17,6 +17,7 @@ const Procedures = require('../database/models').Procedures
 const institutionsService = require('./institutionsService')
 const csvToJson = require('./csvToJson')
 const fileFolderService = require('./fileFolderService')
+const priceProcItem = require('./charMatch/priceProcItem')
 
 async function test() {
 
@@ -325,19 +326,38 @@ async function csvDataToDb(data, institution) {
                 // if no price or procedure name, search for one in every csv item
                 if (institution.rId && !dt[institution.itemColumnName] || !dt[institution.avgPriceColumnName] ) {
 
-                    let value = _.map(dt, (item, index) => {
+                    /*const item = _.map(dt, (item, index) => {
+                        // From here probably some assumptions
+                        // phrases with the word hospital doesn't rep a procedure name
+                        // any number starting with $ or is equal to or greater than 5 will be treated a price number
+                        // all numbers that pass the above will be included in the price item array @TODO, do better HERE!!
 
-                        return item
+                        // Pattern for procedure phrase/name
+                        let procedurePattern = /[A-Z]/gi
+
+                        // Pattern for price and other price like fields
+                        let pricePattern = /.csv/gi
+
+                        let price = 10
+
+                        let procedure = item.match(procedurePattern)
+
+                        //console.log('*****TEST DATA ****', item)
+                        //console.log('*****VALUE****',procedure)
+                        //console.log(newProcedure,'||||||||||||||||||||||||')
+                        data = {
+                            procedure,
+                            price,
+                        }
+
+                        return data
                     })
 
-                    // From here probably some assumptions
-                    // phrases with the word hospital doesn't rep a procedure name
-                    // any number starting with $ or is equal to or greater than 5 will be treated a price number
-                    // all numbers that pass the above will be included in the price item array @TODO, do better HERE!!
+                    console.log('*****VALUE****',item)*/
+                    const data = await priceProcItem.csvGenericItem(dt)
 
-                    console.log('*****TEST DATA ****',dt)
-                    console.log('*****VALUE****',value)
-                    console.log(newProcedure,'||||||||||||||||||||||||')
+                    //console.log('|||||||VALUE||||||||||',data)
+
 
                 }
             }
