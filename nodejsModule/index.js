@@ -68,7 +68,48 @@ async function testingConvert() {
  * Serves as the homepage
  */
 app.get('/', (req, res) => {
-    res.send('Welcome to MedHack Hospital Price Spider.....');
+    const CsvProcessor = require('./services/csvProcessor');
+    const $processor = new CsvProcessor();
+    //var $fullpath = $csvPath + '\\' + $filename+".csv";
+    var $fullpath = 'C:\\xampp\\htdocs\\HospitalPriceSpider\\rawCSVs\\BethesdaHospital_ChargeMaster_AU.csv';
+    var $dd = $processor.getFileHeader($fullpath);
+    console.log($dd);
+    if($dd!==undefined){
+        try{
+            var $h = $processor.cleanUpHeader($dd.header);
+            console.log($h);
+            //LOG THE COLUMN MAP
+            var $hmap = $processor.colMapping($h);
+            //console.log($hmap);
+            if(($hmap.itemName.length>0) && ($hmap.price.length>0)){
+
+                var $c = parseInt($dd.hline);
+                while($c<$dd.content.length){
+                    var $row = $dd.content[$c];
+                    var $i = $hmap.price[0];
+                    //change into object
+                    var $robject = $row.split(',');
+                    var $trow = {
+                        //'rId':$a.rId,
+                        'price':$robject[$hmap.price[0]],
+                        'itemname':$robject[$hmap.itemName[0]],
+                    };
+                    $records++;
+                    console.log($trow);
+                    //console.log($row[$hmap.price[0]]);
+                    $c++;
+                }
+            }
+        }
+        catch ($e) {
+            $h = null;
+            //console.log($e);
+        }
+    }
+    else {
+        console.log("File not found");
+    }
+    //res.send('Welcome to MedHack Hospital Price Spider.....');
 })
 
 
