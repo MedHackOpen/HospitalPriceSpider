@@ -1,7 +1,8 @@
 'use strict'
 
 const axios = require('axios')
-const moveFile = require('move-file');
+const moveFile = require('move-file')
+const _ = require('lodash')
 
 /**
  * @param from
@@ -72,10 +73,29 @@ async function processCsvFile(homeUrl, fileName) {
         /**
          * data from a local csv file given its name
          */
+
         const request = await axios.get(dataUrl)
+
+        // currently during testing we're getting data
+        // from the two files in a rawCSVs folder
+
         const csvFileData = request.data
+
         //console.log(request.data)
         //console.log('request.data fileName == ',fileName)
+
+        // map data items below and create a new item
+        const newItem = _.map(request.data, (item, index) => {
+
+            // array values now contain procedure and price ,decide which
+            let rawItem = Object.values(item)
+
+            console.log(rawItem)
+            console.log(index)
+            console.log('++++++++++++++++++++++')
+
+        })
+        
 
         return csvFileData
 
