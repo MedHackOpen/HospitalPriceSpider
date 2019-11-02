@@ -85,19 +85,19 @@ async function processCsvFile(homeUrl, fileName) {
         //console.log('request.data fileName == ',fileName)
 
         // map data items below and create a new item
-        var $alldata = [];
+        let $alldata = [];
         const newItem = _.map(request.data, (item, index) => {
 
             // array values now contain procedure and price ,decide which
             let rawItem = Object.values(item);
 
-            var $counter=0;
-            var $t = [];
+            let $counter=0;
+            let $t = [];
             rawItem.forEach(($v,$i)=>{
                 //console.log($v);
                 isPrice($v)
                 if(isPrice($v)) {
-                    var $x = $v.replace(/[^0-9\.]+/g, '');
+                    let $x = $v.replace(/[^0-9\.]+/g, '');
                     $t['price'+$counter]=$x;
                 }
                 if(isItemName($v)){
@@ -106,10 +106,16 @@ async function processCsvFile(homeUrl, fileName) {
                 $counter++;
             });
             //console.log($t);
+            // TODO check if item contains both procedure and price before returning, discard anything else
             $alldata.push($t);
             /**/
             console.log('++++++++++++++++++++++');
+
         });
+
+        console.log($alldata)
+
+
         return $alldata;
         //return csvFileData
 
@@ -125,11 +131,11 @@ async function processCsvFile(homeUrl, fileName) {
  * @returns {boolean}
  */
 function isPrice($col){
-    var rgx = /^[^a-zA-Z]+$/;
-    var $t = $col.match(rgx);
+    let rgx = /^[^a-zA-Z]+$/;
+    let $t = $col.match(rgx);
     if($t === null){
-        var rgx2 = /[\$]/;
-        var $tt = $col.match(rgx2);
+        let rgx2 = /[\$]/;
+        let $tt = $col.match(rgx2);
         if($tt === null){
             return false
         }
@@ -149,8 +155,8 @@ function isPrice($col){
  * @returns {boolean}
  */
 function isItemName($col){
-    var rgx = /^[^\$]+$/;
-    var $t = $col.match(rgx);
+    let rgx = /^[^\$]+$/;
+    let $t = $col.match(rgx);
     if($t === null){
         return false
     }
