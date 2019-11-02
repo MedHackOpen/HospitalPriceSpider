@@ -85,22 +85,77 @@ async function processCsvFile(homeUrl, fileName) {
         //console.log('request.data fileName == ',fileName)
 
         // map data items below and create a new item
+        var $alldata = [];
         const newItem = _.map(request.data, (item, index) => {
 
             // array values now contain procedure and price ,decide which
-            let rawItem = Object.values(item)
+            let rawItem = Object.values(item);
 
-            console.log(rawItem)
-            console.log(index)
-            console.log('++++++++++++++++++++++')
-
-        })
-        
-
-        return csvFileData
+            var $counter=0;
+            var $t = [];
+            rawItem.forEach(($v,$i)=>{
+                //console.log($v);
+                isPrice($v)
+                if(isPrice($v)) {
+                    var $x = $v.replace(/[^0-9\.]+/g, '');
+                    $t['price'+$counter]=$x;
+                }
+                if(isItemName($v)){
+                    $t['service'+$counter]=$v;
+                }
+                $counter++;
+            });
+            //console.log($t);
+            $alldata.push($t);
+            /**/
+            console.log('++++++++++++++++++++++');
+        });
+        return $alldata;
+        //return csvFileData
 
     } catch (e) {
         return e
+    }
+}
+
+/**
+ * Check if column has price information using RegEx
+ *
+ * @param $col
+ * @returns {boolean}
+ */
+function isPrice($col){
+    var rgx = /^[^a-zA-Z]+$/;
+    var $t = $col.match(rgx);
+    if($t === null){
+        var rgx2 = /[\$]/;
+        var $tt = $col.match(rgx2);
+        if($tt === null){
+            return false
+        }
+        else{
+            return true;
+        }
+    }
+    else{
+        return true;
+    }
+}
+
+/**
+ * Check if column has service/procedure information using RegEx
+ *
+ * @param $col
+ * @returns {boolean}
+ */
+function isItemName($col){
+    var rgx = /^[^\$]+$/;
+    var $t = $col.match(rgx);
+    if($t === null){
+        return false
+    }
+    else{
+        return true;
     }
 }
 
