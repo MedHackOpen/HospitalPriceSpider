@@ -30,6 +30,7 @@ app.use(cors())
 
 // import local services
 const csvToJsonService = require('./services/csvToJson');
+const csvProcessor = require('./services/CsvProcessor');
 const xlsxToJson = require('./services/spreadsheetToJson')
 const googleSheets = require('./services/spreadsheetGoogleApi')
 const institutionsService = require('./services/institutionsService')
@@ -184,12 +185,20 @@ app.get('/api/csvdata/:id', async (req, res) => {
 
     // get institution data per req per file
     const institution = await institutionsService.getHospitalData(savedRepoTableName)
+    // if the file has not match in the institution's table, determine the header row using different logic
+
+    if(institution==null){
+        let $cp = new csvProcessor();
+        var $e = $cp.getFileHeader(csvFilePath);
+        var $headerRow = $e.hline;
+    }
+    else{
+        var $headerRow = institution.removedHeaderRowsForCSV;
+    }
 
     try {
 
-        const data = await getFileData(csvFilePath, institution.removedHeaderRowsForCSV)
-
-        //console.log(data)
+        const data = await getFileData(csvFilePath, $headerRow)
         res.send(data)
     } catch (e) {
         res.send(e)
@@ -305,46 +314,35 @@ app.get('/api/data/google-spread-sheets/:id', async (req, res) => {
  * After that, files with errors can be forwarded to the researchers team, and
  */
 app.get('/api/test', async (req, res) => {
-
     //const institutions = await institutionsService.getInstitutions()
     //const institutionFileNames = await institutionsService.institutionFileNames()
     try {
-
         // api endpoints need to communicate within the app
         // req data from '/api/data/google-spread-sheets/:id'
         let homeUrl = url.format({
             protocol: req.protocol,
             host: req.get('host'),
         });
-
         // api endPoint to get the file list
         const endPoint = '/api/local-csv-files'
         const dataUrl = `${homeUrl}${endPoint}`
-
+        //console.log('data link:'+dataUrl)
         // Get files ready to process from our rawCSVs folder from the api above
         const files = await fileFolderService.filesReadyToProcess(dataUrl)
 
-
         const csvFileName = await files.map( async (item, index) => {
-
             const file = {
                 fileNumber: ++index, //add 1 to start counting from 1
                 name: item
             }
-
             //console.log('csvFileName|||||====|||||====', file )
             //console.log('TotalFilesInFolder====|||||====', files.length )
             const csvFileData = await fileFolderService.processCsvFile(homeUrl, item)
-            console.log('csvFileName|||||====|||||====', file.fileNumber )
-
+            console.log('csvFileName||||===||||===',file.name+"||"+file.fileNumber)
             return file
-        })
-
-
+        });
         //res.send(files)
         res.send(csvFileName)
-
-
     } catch (e) {
 
         console.log('Error getting files')
@@ -382,7 +380,6 @@ app.get('/api/test', async (req, res) => {
     //console.log('TEST!!!!', institutions)
     //res.send(institutions)
     //console.log('FILE NAMES!!!!', institutionFileNames)
-
 })
 
 /**

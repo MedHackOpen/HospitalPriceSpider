@@ -66,59 +66,85 @@ async function filesReadyToProcess(dataUrl) {
  */
 async function processCsvFile(homeUrl, fileName) {
     try {
-
         // const dataUrl = our epi endPoint the returns json data given a fileName(csv) + .ext
         const dataUrl = `${homeUrl}/api/csvdata/${fileName}`
-
         /**
          * data from a local csv file given its name
          */
-
         const request = await axios.get(dataUrl)
-
         // currently during testing we're getting data
         // from the two files in a rawCSVs folder
-
         const csvFileData = request.data
-
-        //console.log(request.data)
-        //console.log('request.data fileName == ',fileName)
-
+        //console.log(csvFileData.length);
         // map data items below and create a new item
         let $alldata = [];
         const newItem = _.map(request.data, (item, index) => {
-
             // array values now contain procedure and price ,decide which
             let rawItem = Object.values(item);
+            let header = Object.keys(item);
 
-            let $counter=0;
-            let $t = [];
-            rawItem.forEach(($v,$i)=>{
-                //console.log($v);
-                isPrice($v)
-                if(isPrice($v)) {
-                    let $x = $v.replace(/[^0-9\.]+/g, '');
-                    $t['price'+$counter]=$x;
+            if(header.length==1){
+                var $c = /[,]/.test(header[0]);
+                if( $c ){
+                    var $hobj = header[0].split(',');
                 }
-                if(isItemName($v)){
-                    $t['service'+$counter]=$v;
+            }
+
+            if(rawItem.length==1){
+                var $d = /[,]/.test(rawItem[0]);
+                if( $d ) {
+                    var $hobjct = header[0].split(',');
+                    var $dobj = rawItem[0].split(',');
+                    console.log($hobjct);
+                    //GET PRICE COL INDEX
+                    priceCheck($hobjct);
+                    let $counter=0;
+                    let $t = [];
+                    $dobj.forEach(($v,$i)=>{
+                        //console.log($v);
+                        /*
+                        isPrice($v)
+                        if(isPrice($v)) {
+                            let $x = $v.replace(/[^0-9\.]+/g, '');
+                            $t['price'+$counter]=$x;
+                        }
+                        if(isItemName($v)){
+                            $t['service'+$counter]=$v;
+                        }
+                        $counter++;
+                        */
+                    });
+                    /**/
+                    //console.log($t);
+                    $alldata.push($t);
                 }
-                $counter++;
-            });
-            //console.log($t);
+            }
+            else{
+
+                console.log("File not processed");
+                console.log(header);
+                /**
+                let $counter=0;
+                let $t = [];
+                rawItem.forEach(($v,$i)=>{
+                    isPrice($v)
+                    if(isPrice($v)) {
+                        let $x = $v.replace(/[^0-9\.]+/g, '');
+                        $t['price'+$counter]=$x;
+                    }
+                    if(isItemName($v)){
+                        $t['service'+$counter]=$v;
+                    }
+                    $counter++;
+                });
+                **/
+                //$alldata.push($t);
+            }
             // TODO check if item contains both procedure and price before returning, discard anything else
-            $alldata.push($t);
-            /**/
-            console.log('++++++++++++++++++++++');
-
         });
-
-        console.log($alldata)
-
-
+        //console.log($alldata)
         return $alldata;
         //return csvFileData
-
     } catch (e) {
         return e
     }
@@ -146,6 +172,20 @@ function isPrice($col){
     else{
         return true;
     }
+}
+
+function priceCheck($colList){
+    var $indexId = 0;
+    $colList.forEach(($a,$b)=>{
+        //console.log($a);
+        var $searchstring =new RegExp("price|charge$|chg$|amount$|amnt$|^amt$|fee|cost|payment/");
+        var $c = $searchstring.test($col);
+        if($c){
+            console.log($col);
+            // console.log($c);
+        }
+     });
+
 }
 
 /**

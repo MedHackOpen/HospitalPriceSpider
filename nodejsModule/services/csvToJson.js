@@ -31,7 +31,6 @@ function getCsvFiles(csvFolder) {
  */
 async function getJsonFromCsv(filePath, removedHeaderRows ){
     try {
-
         let data = await csvToJsonV2().fromFile(filePath)
 
         // if header is greater than default , remove the headers and return
@@ -40,7 +39,6 @@ async function getJsonFromCsv(filePath, removedHeaderRows ){
 
             // Remove header rows from data object
             data = _.filter(data, (item, index) => {
-
 
                 if ( index >= removedHeaderRows ){
 

@@ -60,7 +60,7 @@ module.exports = class CsvProcessor {
             };
             return $f;
         }catch ($e) {
-            //console.log($e);
+            console.log($e);
         }
 
     }
