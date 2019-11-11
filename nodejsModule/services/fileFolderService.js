@@ -120,9 +120,9 @@ async function processCsvFile(homeUrl, fileName) {
                 }
             }
             else{
-
-                console.log("File not processed");
-                console.log(header);
+                //console.log(header);
+                var $f = priceCheck(header);
+                console.log($f);
                 /**
                 let $counter=0;
                 let $t = [];
@@ -177,13 +177,20 @@ function isPrice($col){
 function priceCheck($colList){
     var $indexId = 0;
     $colList.forEach(($a,$b)=>{
-        //console.log($a);
+        var $aa = $a.trim();
+        var $aaa = $aa.toLowerCase();
         var $searchstring =new RegExp("price|charge$|chg$|amount$|amnt$|^amt$|fee|cost|payment/");
-        var $c = $searchstring.test($col);
-        if($c){
-            console.log($col);
-            // console.log($c);
+        var $c = $searchstring.test($aaa);
+        /**/
+        if($c==true){
+            console.log($b);
+            return $b;
         }
+        else{
+            return null;
+        }
+
+        /**/
      });
 
 }
