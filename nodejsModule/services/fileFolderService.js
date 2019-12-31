@@ -115,7 +115,7 @@ async function processCsvFile(homeUrl, fileName) {
                         */
                     });
                     /**/
-                    //console.log($t);
+                    console.log($t);
                     $alldata.push($t);
                 }
             }

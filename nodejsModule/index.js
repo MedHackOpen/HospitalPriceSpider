@@ -4,6 +4,7 @@
  */
 const path = require('path')
 const fs = require('fs')
+let events = require('events')
 const url = require('url')
 const express = require('express')
 const axios = require('axios')
@@ -11,6 +12,9 @@ const uuid = require('uuid/v4')
 const _ = require('lodash')
 const cors = require('cors')
 const app = express()
+
+
+let eventEmitter = new events.EventEmitter()
 
 //Database
 const sequelize = require('./database/models').sequelize
@@ -36,6 +40,9 @@ const googleSheets = require('./services/spreadsheetGoogleApi')
 const institutionsService = require('./services/institutionsService')
 const fileFolderService = require('./services/fileFolderService')
 const proceduresService = require('./services/proceduresService')
+
+// character data match service
+const InitDataMatch = require('./services/charMatch/InitDataMatch')
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -69,7 +76,7 @@ async function testingConvert() {
  * Serves as the homepage
  */
 app.get('/', (req, res) => {
-    const CsvProcessor = require('./services/csvProcessor');
+    /*const CsvProcessor = require('./services/csvProcessor');
     const $processor = new CsvProcessor();
     //var $fullpath = $csvPath + '\\' + $filename+".csv";
     var $fullpath = 'C:\\xampp\\htdocs\\HospitalPriceSpider\\rawCSVs\\BethesdaHospital_ChargeMaster_AU.csv';
@@ -109,8 +116,43 @@ app.get('/', (req, res) => {
     }
     else {
         console.log("File not found");
+    }*/
+    res.send('Welcome to MedHack Hospital Price Spider.....');
+})
+
+
+// Loops through files (csv) in folders (named)
+// identifying procedure name and price(s) values
+// and posting that to the procedures table
+// also sort files into folders with each type of
+// algorithm used to identify each field for further
+// cleaning the output
+// if you want to contribute from here check __dirname,/services/charMatch folder
+
+
+app.get('/api/match-field-data', async (req, res, next) => {
+
+    try {
+
+        let data = await InitDataMatch.initCharacterDataMatch()
+
+        if (data) res.send(data)
+
+        if (!data) res.send('+++++++Folder might be empty of csv files++++++')
+
+        /*console.log('++++++++++MOVING AGAIN  what what+++++++++')
+        console.log('++++++++++MOVING AGAIN  what what+++++++++')
+        console.log(data)
+        console.log('++++++++++MOVING AGAIN  what what+++++++++')
+        console.log('++++++++++MOVING AGAIN  what what+++++++++')*/
+        next()
+
+
+    } catch (e) {
+
+
+        res.send(e)
     }
-    //res.send('Welcome to MedHack Hospital Price Spider.....');
 })
 
 
