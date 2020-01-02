@@ -5,48 +5,26 @@ const _ = require('lodash')
 // see what it returns and takes as an argument
 function exampleDataMatch(args) {
 
-    const { data, filePath, folder } = args // this is what you always get form the args object pass
+    const { data, filePath } = args
 
-    const testData = data.map((dt, index) => {
+    let refinedItem = {}
+    let price = {}
+    let procedureName = ''
 
-
-
-        let refinedItem = {}
-        let price = {}
-        let procedureName = ''
-        return Object.entries(dt).forEach(([key,value])=>{
-            //console.log(`${key}:${value}`)
-            if (key === 'Price') price = value
-
-            if (key === 'Description') procedureName = value
-
-            refinedItem = {
-                price: price,
-                procedureName: procedureName
-            }
-
-            /*console.log('!!!!!!!!!!!!!!!!!!!!!!DATA||||||||||||||||||||||')
-            console.log('!!!!!!!!!!!!!!!!!!!!!!DATA||||||||||||||||||||||')
-            console.log('!!!!!!!!!!!!!!!!!!!!!!DATA||||||||||||||||||||||')
-            console.log('!!!!!!!!!!!!!!!!!!!!!!DATA||||||||||||||||||||||')
-            console.log(refinedItem)
-            console.log('************************************************')
-            console.log('************************************************')
-            console.log('************************************************')*/
-
-            return refinedItem
-        })
-
-    })
-
-    console.log('!!!!!!!!!!!!!!!!!!!!!!DATA||||||||||||||||||||||')
-    console.log('!!!!!!!!!!!!!!!!!!!!!!DATA||||||||||||||||||||||')
-    console.log('!!!!!!!!!!!!!!!!!!!!!!DATA||||||||||||||||||||||')
-    console.log('!!!!!!!!!!!!!!!!!!!!!!DATA||||||||||||||||||||||')
-    console.log(testData)
     console.log('************************************************')
+    console.log(data)
     console.log('************************************************')
-    console.log('************************************************')
+
+
+    for (let [key, value] of Object.entries(data)) {
+        console.log(`${key}: ${value}`)
+
+        // match field here and post to db, move file somewhere else
+        // TODO!!!
+    }
+
+
+
 
     return args
 }
@@ -60,58 +38,36 @@ function exampleDataMatch(args) {
 // TODO find a better way still to do what this file does
 function matchItemData(args) {
 
-    const { data, filePath, folder } = args
+    const { data, filePath } = args
 
-    //let dt = {}
+    data.map(item => {
 
+        let data = {
+            data: item, // give key
+            filePath: filePath // give key
+        }
 
-    const testData = data.map((dt) => {
-        // pass each object for processing
-         return Object.entries(dt)
+        return exampleDataMatch(data)
     })
-
-    console.log('!!!!!!!!!!!!!!!!!!!!!!DATA||||||||||||||||||||||')
-    console.log('!!!!!!!!!!!!!!!!!!!!!!DATA||||||||||||||||||||||')
-    console.log('!!!!!!!!!!!!!!!!!!!!!!DATA||||||||||||||||||||||')
-    console.log('!!!!!!!!!!!!!!!!!!!!!!DATA||||||||||||||||||||||')
-    console.log(testData)
-    console.log('************************************************')
-    console.log('************************************************')
-    console.log('************************************************')
-
-    return data
-
-
-
 
 }
 // get data and send to listener
 function initListenToConversion(args) {
 
 
-    const {csvJson, filePath  } = args
+    const { csvJson, filePath  } = args
 
     let jsonData = csvJson.filter(dt => dt)
 
-    /*console.log('!!!!!!!!!!!!!!!!!!!!!!DATA||||||||||||||||||||||')
-    console.log('!!!!!!!!!!!!!!!!!!!!!!DATA||||||||||||||||||||||')
-    console.log('!!!!!!!!!!!!!!!!!!!!!!DATA||||||||||||||||||||||')
-    console.log('!!!!!!!!!!!!!!!!!!!!!!DATA||||||||||||||||||||||')
-    console.log(jsonData)
-    console.log('************************************************')
-    console.log('************************************************')
-    console.log('************************************************')*/
 
     let data = {
         data: jsonData,
         filePath: filePath,
-        folder: 'FOLDER_NAME' // foldername to move file to
     }
 
-    const dt = matchItemData(data)
+    matchItemData(data)
 
-
-    return dt
+    return data
 }
 
 module.exports = {
