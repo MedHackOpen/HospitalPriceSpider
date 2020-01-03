@@ -142,11 +142,11 @@ app.get('/api/match-field-data', async (req, res, next) => {
 
         if (!data) res.send('+++++++Folder might be empty of csv files++++++')
 
-        console.log('++++++++++MOVING AGAIN  what what+++++++++')
+        /*console.log('++++++++++MOVING AGAIN  what what+++++++++')
         console.log('++++++++++MOVING AGAIN  what what+++++++++')
         console.log(filePath)
         console.log('++++++++++MOVING AGAIN  what what+++++++++')
-        console.log('++++++++++MOVING AGAIN  what what+++++++++')
+        console.log('++++++++++MOVING AGAIN  what what+++++++++')*/
         //next()
 
 

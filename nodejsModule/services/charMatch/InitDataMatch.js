@@ -3,8 +3,6 @@
 const fs = require('fs')
 const path = require('path')
 const util = require('util')
-let events = require('events')
-let eventEmitter = new events.EventEmitter()
 
 // services
 const SortFile = require('./SortFile')
@@ -13,6 +11,7 @@ const jsonRowDataProcessor = require('./Processors/index')
 
 const folderToSort = path.join(__dirname, '../../../rawCSVs/filesToSort')
 
+// get csv file to process from 'unsortedFolder'
 async function getCsvFile() {
 
     const readdir = util.promisify(fs.readdir)
@@ -41,15 +40,10 @@ async function getCsvFile() {
     }
 }
 
+// Initiate character match processes
 async function initCharacterDataMatch() {
 
     let fileName = await getCsvFile() // file name
-
-    /*console.log(fileName)
-    console.log(fileName)
-    console.log(fileName)
-    console.log(fileName)
-    console.log('!!!!!!!!!!!!!!!!!!!!!!fileName||||||||||||||||||||||')*/
 
     let data = {
         message: 'no csv file in folder',
@@ -99,6 +93,7 @@ async function initCharacterDataMatch() {
             to: to
         }
 
+        // get data from the just moved file
         const csvData = await csvToJson.getJsonFromCsv(to)
 
         // send csv data to another listener as well as file name/path

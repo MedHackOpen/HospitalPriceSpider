@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "description": "Data price comparison between hospitals",
   "main": "index.js",
-  "author": "Nick Tests",
+  "author": "Medhack TM",
   "license": "MIT",
   "scripts": {
     "start": "node --max-old-space-size=6076 index.js",
     "test": "./node_modules/.bin/mocha 'tests/**/*.js' "
   },
   "engines": {
-    "node": "10.16.2"
+    "node": "^10.16.2 || ^12.14.0"
   },
   "directories": {
     "test": "tests"

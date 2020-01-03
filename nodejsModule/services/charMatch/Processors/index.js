@@ -1,5 +1,7 @@
 'use strict'
-const _ = require('lodash')
+
+// Algorithm services
+const ByKeyName = require('../Algorithms/ByKeyName')
 
 // Example data match also
 // see what it returns and takes as an argument
@@ -42,12 +44,24 @@ function matchItemData(args) {
 
     data.map(item => {
 
+        let refined = {}
+
         let data = {
             data: item, // give key
             filePath: filePath // give key
         }
 
-        return exampleDataMatch(data)
+        /*let refined = exampleDataMatch(data)
+
+        console.log('||||||||||||||||||refined|||||||||||||||||||||')
+        console.log(refined)
+        console.log('||||||||||||||||||refined|||||||||||||||||||||')*/
+
+        refined = ByKeyName.ifItem(data)
+
+        console.log('||||||||||||||||||refined|||||||||||||||||||||')
+        console.log(refined)
+        console.log('||||||||||||||||||refined|||||||||||||||||||||')
     })
 
 }
