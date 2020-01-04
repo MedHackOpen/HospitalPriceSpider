@@ -21,7 +21,7 @@ async function getInstitutionByFileName(fileName){
 // here we process data gotten from this.reportItem(args) below
 // choose what to do with the files as well us log as much to
 // the relevant tables for easier debugging later
-function prepareDataForDatabase(args){
+async function prepareDataForDatabase(args){
     const { args: obj, institution } = args
     const { data, refinedData: rf, filePath, name, index, totalItems } = obj
 
@@ -34,16 +34,68 @@ function prepareDataForDatabase(args){
     let priceValue = price.map(p => p.value) // price value
     let priceKey = price.map(p => p.key) // prive key
 
-    console.log('|||||||||||||||||||---REFINED ---ITEM!!!!!!!!!!!!|||||||||||||||||||')
-    console.log(filePath)
-    console.log(procedureName)
-    console.log(procedureKey)
-    console.log(priceValue)
-    console.log(priceKey)
-    console.log(institution)
-    console.log('|||||||||||||||||||---REFINED ---ITEM!!!!!!!!!!!!|||||||||||||||||||')
+    // institution data as related to this procedure's data
+    let institutionDt = {}
+    institution.map((item) => {
+        institutionDt = {
+            uuid: item.uuid,
+            rId: item.rId,
+            hospitalName: item.hospitalName,
+            city: item.city,
+            country: item.country,
+            mainHospitalName: item.mainHospitalName,
+            numberBeds: item.numberBeds,
+            streetAddress: item.streetAddress,
+            numberLocation: item.numberLocation,
+            itemColumnName: item.itemColumnName,
+            avgPriceColumnName: item.avgPriceColumnName,
+            priceSampleSizeColumnName: item.priceSampleSizeColumnName,
+            outPatientPriceColumnName: item.outPatientPriceColumnName,
+            inpatientPriceColumnName: item.inpatientPriceColumnName,
+            extraColumnName: item.extraColumnName,
+            categoryColumnName: item.categoryColumnName,
+            removedHeaderRowsForCSV: item.removedHeaderRowsForCSV,
+            savedRepoTableName: item.savedRepoTableName,
+            notes: item.notes,
+            hasSpreadSheet: item.hasSpreadSheet
+        }
+    })
 
-    const dt = ProcedureDbService.createNewProcedureEntry(args)
+
+    // Check if we got a priceValue, procedureName and the institution data related
+    // to this file(csv filePath passed), if yes proceed to create a new procedure item,
+    // if no institution data, move the file to a folder for later reviews,
+    // if no priceValue and it's corresponding procedure name, wait for
+    // the last index to move the file else where.
+    // NOTE: due to removed headers and some other rows in the cvs file being empty or not
+    // containing all the required data items, files that return 0 matched price and it's
+    // procedure name are considered to be unprocessed by the name of the passed
+    // algorithm file, else processed
+    let processed = {}
+
+    let dataToDb = {
+        institution,
+        institutionDt,
+        procedureName,
+        procedureKey,
+        priceValue,
+        priceKey,
+        index,
+        totalItems
+    }
+    // compare index and totalItems before repeating the file read data processes
+    // make sure the last index (item) has passed through
+    //console.log(procedureName)
+    //console.log(priceValue)
+    //console.log('++++++++++++processed++++++')
+    processed = await ProcedureDbService.createNewProcedureEntry(dataToDb)
+
+    // processed object returns if processed or if not
+    // choose what to do with this info
+
+    /*console.log('++++++++++++processed++++++')
+    console.log(processed)
+    console.log('++++++++++++processed into DB++++++')*/
 
 }
 
@@ -53,15 +105,14 @@ async function reportItem(args){
 
     let fileExt = /.csv/i
     let fileName = path.parse(filePath).base
-    fileName = fileName.replace(fileExt, '') // remove ext
+    fileName = fileName.replace(fileExt, '') // remove .ext from name
     let institution = await getInstitutionByFileName(fileName)
-    institution.filter(i => i)
     let dt = {
         args,
         institution
     }
 
-    prepareDataForDatabase(dt)
+    await prepareDataForDatabase(dt)
 }
 
 module.exports = {

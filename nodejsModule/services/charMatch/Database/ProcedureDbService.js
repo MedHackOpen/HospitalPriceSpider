@@ -12,37 +12,62 @@ sequelize.sync()
         //console.log(database)
     })
 
-function createNewProcedureEntry(args){
+
+async function createNewProcedureEntry(args){
 
     try {
 
-        /*console.log(args)
-        console.log('//////////////////////////////args////////////////////////////')*/
+        const { institution, institutionDt, procedureName, procedureKey, priceValue, priceKey, index, totalItems } = args
 
-        /*Procedures.create({
-            uuid: uuid() ,
-            rId: newProcedure.rId ,
-            itemName: newProcedure.itemName,
-            hospitalId: newProcedure.hospitalId ,
-            price: newProcedure.price,
-            hospitalName: newProcedure.hospitalName,
-            avgPrice: newProcedure.avgPrice, //@TODO maybe
-            medianPrice: newProcedure.medianPrice,
-            // sampleSize: ,
-            outpatientAvgPrice: newProcedure.outpatientAvgPrice,
-            inpatientAvgPrice:  newProcedure.inpatientAvgPrice,
-            revenue_code: newProcedure.revenue_code,
-            //latestPriceDate: ,
-            //firstPriceDate: ,
-            //changeSinceLastUpdate: ,
-            //description: ,
-            //relatedItemsFromOthers: ,
-            //relatedItemsFromThisLocation: ,
-            //itemsRequiredForThis:  ,
-            //keywords: ,
-            country: newProcedure.country ,
-            currency: newProcedure.currency
-        })*/
+        let created = {
+            created: 'no-data',
+            institutionDt,
+            index,
+            totalItems,
+        }
+
+        if(procedureName[0] && priceValue[0] && institution){
+
+            let newProcedure = Procedures.build({
+                uuid: uuid() ,
+                rId: institutionDt.rId ,
+                itemName: procedureName[0],
+                hospitalId: institutionDt.rId ,
+                price: priceValue[0],
+                hospitalName: institutionDt.hospitalName,
+                avgPrice: priceValue[0], //@TODO maybe
+                //medianPrice: institutionDt.medianPrice,
+                // sampleSize: ,
+                //outpatientAvgPrice: institutionDt.outpatientAvgPrice,
+                //inpatientAvgPrice:  institutionDt.inpatientAvgPrice,
+                //revenue_code: institutionDt.revenue_code,
+                //latestPriceDate: ,
+                //firstPriceDate: ,
+                //changeSinceLastUpdate: ,
+                //description: ,
+                //relatedItemsFromOthers: ,
+                //relatedItemsFromThisLocation: ,
+                //itemsRequiredForThis:  ,
+                //keywords: ,
+                country: institutionDt.country ,
+                //currency: institutionDt.currency TODO set by country
+            })
+
+            created = await newProcedure.save()
+
+            created = created.dataValues
+
+            created = {
+                created,
+                institutionDt,
+                index,
+                totalItems
+            }
+
+            return created
+        } else return created // just without the newly added procedure
+
+
     } catch (e) {
 
         return e

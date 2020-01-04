@@ -15,7 +15,6 @@ function ifPrice(key, value) {
     let price = null
     price = key.toLowerCase()
     price = price.includes('charge') ||
-        price.includes('charge amount') ||
         price.includes('amount') ||
         price.includes('amnt') ||
         price.includes('amt') ||
@@ -48,10 +47,15 @@ function ifProcedure(key, value) {
     procedure = key.toLowerCase()
     procedure = procedure.includes('description') ||
         procedure.includes('drg') ||
-        procedure.includes('procedure')
+        procedure.includes('procedure') ||
+        procedure.includes('billing description')
 
         ? value
         : null
+
+    // refine further
+    let anotherKey = key.toLowerCase()
+    if(anotherKey.includes('code')) procedure = null // if key contains the word code, return null too
 
     return procedure
 }
@@ -64,6 +68,9 @@ function ifItem(data) {
 
     for (let [key, value] of Object.entries(data)) {
 
+        // item contains a key and a value
+        // key for field name eg amt or description
+        // value either the price value or the procedure/DRG name
         itemData = {
             key,
             value
@@ -93,18 +100,11 @@ function ifItem(data) {
 function matchValues(args) {
 
     const { data, filePath, index, totalItems } = args
-    let refinedData = ifItem(data)
 
-    /*console.log('****************RAW ++ DATA@@@@@@@@********************')
+    console.log('****************data*****************')
     console.log(data)
-    console.log('**************RAW ++ DATA@@@@@@@@@@*******************')
-
-    console.log('|||||||||||||||||||---REFINED ---ITEM!!!!!!!!!!!|||||||||||||||||||')
-    //console.log(`${procedure} : ${price}`)
-    console.log(refinedData)
-    console.log(filePath)
-    console.log('|||||||||||||||||||---REFINED ---ITEM!!!!!!!!!!!!|||||||||||||||||||')*/
-
+    console.log('****************data*************************')
+    let refinedData = ifItem(data)
     // return five objects for now
     let dt = {
         data, // raw json data from csv file
@@ -115,11 +115,9 @@ function matchValues(args) {
         totalItems// the total number of items after the csv is converted to json
     }
 
+    // pass your data to post to database and sort the file (cvs) that owns this data
     return Report.rawReportData(dt)
 
-
-
-    //return item
 
 }
 

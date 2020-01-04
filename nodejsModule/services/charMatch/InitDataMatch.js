@@ -107,19 +107,9 @@ async function initCharacterDataMatch() {
 
 
 
-        /*console.log('!!!!!!!!!!!!!!!!!!!!!!DATA||||||||||||||||||||||')
-        console.log('!!!!!!!!!!!!!!!!!!!!!!DATA||||||||||||||||||||||')
-        console.log('!!!!!!!!!!!!!!!!!!!!!!DATA||||||||||||||||||||||')
-        console.log('!!!!!!!!!!!!!!!!!!!!!!DATA||||||||||||||||||||||')
-        console.log(processor)
-        console.log('!!!!!!!!!!!!!!!!!!!!!!DATA||||||||||||||||||||||')
-        console.log('!!!!!!!!!!!!!!!!!!!!!!DATA||||||||||||||||||||||')
-        console.log('!!!!!!!!!!!!!!!!!!!!!!DATA||||||||||||||||||||||')*/
         // after processor// move file to algo folder
 
         await initCharacterDataMatch() // repeat again
-
-        //return data
         return processor
 
 
