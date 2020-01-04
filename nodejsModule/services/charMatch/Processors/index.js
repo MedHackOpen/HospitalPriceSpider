@@ -42,18 +42,18 @@ function matchItemData(args) {
 
     const { data, filePath } = args
 
-    data.map(item => {
+    data.map((item, index) => {
 
-        let refined = {}
-
-        let data = {
+        let dt = {
             data: item, // give key
-            filePath: filePath // give key
+            index,
+            filePath, // give key
+            totalItems: data.length // we need total items and index to move the file when done
         }
 
         // TODO do better
         // pass data to your service below
-        ByKeyName.matchValues(data)
+        ByKeyName.matchValues(dt)
     })
 
 }

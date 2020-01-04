@@ -28,6 +28,16 @@ function ifPrice(key, value) {
         ? value // return value
         : null // else no price to match
 
+    // refine further
+    let anotherKey = key.toLowerCase()
+    if(anotherKey.includes('code') || anotherKey.includes('charge description')) price = null // like charge code not being price
+
+    // check if value is a string
+    if (value.match(/a-z/i)) price = null
+
+    // if value starts with $ price === value
+    if (value.startsWith('$')) price = value
+
     return price
 }
 
@@ -82,7 +92,7 @@ function ifItem(data) {
 //result item
 function matchValues(args) {
 
-    const { data, filePath } = args
+    const { data, filePath, index, totalItems } = args
     let refinedData = ifItem(data)
 
     /*console.log('****************RAW ++ DATA@@@@@@@@********************')
@@ -92,14 +102,17 @@ function matchValues(args) {
     console.log('|||||||||||||||||||---REFINED ---ITEM!!!!!!!!!!!|||||||||||||||||||')
     //console.log(`${procedure} : ${price}`)
     console.log(refinedData)
+    console.log(filePath)
     console.log('|||||||||||||||||||---REFINED ---ITEM!!!!!!!!!!!!|||||||||||||||||||')*/
 
-    // return four objects for now
+    // return five objects for now
     let dt = {
         data, // raw json data from csv file
         refinedData, // data processed by this algo
         filePath, // path of the csv file that owns this data
         name, // name of this file or module that's refining/processing the data
+        index, // index of the item in array
+        totalItems// the total number of items after the csv is converted to json
     }
 
     return Report.rawReportData(dt)

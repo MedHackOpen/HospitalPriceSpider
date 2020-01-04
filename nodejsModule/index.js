@@ -823,9 +823,9 @@ app.get('/api/load-data-from-csv', async (req, res) => {
  * added
  */
 
-async function updateDatabase() {
+function updateDatabase() {
     try {
-        await sequelize.sync()
+        sequelize.sync()
             .then((database) => {
                 //console.log(database)
                 return database

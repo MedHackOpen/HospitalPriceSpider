@@ -1,4 +1,7 @@
 'use strict'
+
+// Bridge services
+const ReportDbBridge = require('../Bridge/ReportDbBridge')
 // This file receives data after it has been passed through
 // functions(modules) that determine which is the price, or
 // procedure key and it's corresponding value
@@ -8,16 +11,16 @@
 function rawReportData(args) {
 
     const {
-        data,
-        refinedData,
-        filePath,
-        name,
+        data, // raw data of json item
+        refinedData, // procedure and it's price data
+        filePath, // path of the processed file
+        name, // name of the algorithm module/file
+        index, // index of the item in array
+        totalItems, // the total number of items after the csv is converted to json
     } = args
 
-    console.log('|||||||||||||||||||---REFINED ---ITEM!!!!!!!!!!!|||||||||||||||||||')
-    //console.log(`${procedure} : ${price}`)
-    console.log(args)
-    console.log('|||||||||||||||||||---REFINED ---ITEM!!!!!!!!!!!!|||||||||||||||||||')
+
+    const dt = ReportDbBridge.reportItem(args)
 
 }
 
