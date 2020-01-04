@@ -51,17 +51,9 @@ function matchItemData(args) {
             filePath: filePath // give key
         }
 
-        /*let refined = exampleDataMatch(data)
-
-        console.log('||||||||||||||||||refined|||||||||||||||||||||')
-        console.log(refined)
-        console.log('||||||||||||||||||refined|||||||||||||||||||||')*/
-
-        refined = ByKeyName.ifItem(data)
-
-        console.log('||||||||||||||||||refined|||||||||||||||||||||')
-        console.log(refined)
-        console.log('||||||||||||||||||refined|||||||||||||||||||||')
+        // TODO do better
+        // pass data to your service below
+        ByKeyName.matchValues(data)
     })
 
 }
@@ -79,7 +71,8 @@ function initListenToConversion(args) {
         filePath: filePath,
     }
 
-    matchItemData(data)
+    let dt = matchItemData(data)
+    // TODO do better
 
     return data
 }

@@ -1,5 +1,6 @@
 'use strict'
-
+// service to pass our refined data and other information
+const Report = require('../Processors/Report')
 // eg DRG Description || Description for procedure name
 // and Avg Chg || Charge || Price || CHARGE AMOUNT for the price value.
 
@@ -8,57 +9,107 @@
 // will be moved to a folder named after this file
 
 const name = 'ByKeyName'
-let price = null
-let procedureName = null
-let item = {
-    price,
-    procedureName
-}
 
 //ifPrice
 function ifPrice(key, value) {
-    console.log(`${key}: ${value}`)
+    let price = null
+    price = key.toLowerCase()
+    price = price.includes('charge') ||
+        price.includes('charge amount') ||
+        price.includes('amount') ||
+        price.includes('amnt') ||
+        price.includes('amt') ||
+        price.includes('price') ||
+        price.includes('fee') ||
+        price.includes('cost') ||
+        price.includes('payment') ||
+        price.includes('avg chg')
+
+        ? value // return value
+        : null // else no price to match
+
+    return price
 }
 
 //ifProcedure
 function ifProcedure(key, value) {
-    console.log(`${key}: ${value}`)
+    let procedure = ''
+
+    procedure = key.toLowerCase()
+    procedure = procedure.includes('description') ||
+        procedure.includes('drg') ||
+        procedure.includes('procedure')
+
+        ? value
+        : null
+
+    return procedure
 }
 
-
-//result item
-function ifItem(args) {
-
-    const { data, filePath } = args
-
-    /*console.log('************************************************')
-    console.log(data)
-    console.log('************************************************')*/
-
+function ifItem(data) {
+    let item = {}
+    let price = []
+    let procedure = []
+    let itemData = {}
 
     for (let [key, value] of Object.entries(data)) {
-        console.log('************************************************')
-        procedureName = ifProcedure(key, value)
-        price = ifPrice(key, value)
-        console.log('************************************************')
-        //console.log(`${key}: ${value}`)
 
+        itemData = {
+            key,
+            value
+        }
 
-        // match field here and post to db, move file somewhere else
-        // TODO!!!
+        if (ifProcedure(key, value)) procedure.push(itemData)
+        if (ifPrice(key, value)) price.push(itemData)
+
     }
 
-    let refined = {}
+    // match field here and return the values with key for confirmation
 
-    refined = {
-        procedure: 'procedureName',
-        price: 'Testing price'
+
+
+    item = {
+        procedure,
+        price,
     }
 
-    return refined
+
+
+    return JSON.stringify(item)
+
+}
+
+//result item
+function matchValues(args) {
+
+    const { data, filePath } = args
+    let refinedData = ifItem(data)
+
+    /*console.log('****************RAW ++ DATA@@@@@@@@********************')
+    console.log(data)
+    console.log('**************RAW ++ DATA@@@@@@@@@@*******************')
+
+    console.log('|||||||||||||||||||---REFINED ---ITEM!!!!!!!!!!!|||||||||||||||||||')
+    //console.log(`${procedure} : ${price}`)
+    console.log(refinedData)
+    console.log('|||||||||||||||||||---REFINED ---ITEM!!!!!!!!!!!!|||||||||||||||||||')*/
+
+    // return four objects for now
+    let dt = {
+        data, // raw json data from csv file
+        refinedData, // data processed by this algo
+        filePath, // path of the csv file that owns this data
+        name, // name of this file or module that's refining/processing the data
+    }
+
+    return Report.rawReportData(dt)
+
+
+
+    //return item
 
 }
 
 module.exports = {
-    ifItem
+    matchValues
 }
