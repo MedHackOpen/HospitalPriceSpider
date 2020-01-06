@@ -9,6 +9,7 @@ const path = require('path')
 // and repeat the process again with another file
 
 const LogDbService = require('../Database/LogDbService')
+const SortFile = require('../SortFile')
 
 let missed = 0 // count missed
 let recorded = 0 // count recorded items matched by this name file name eg const name = 'ByKeyName' in Algorithms folder
@@ -23,6 +24,19 @@ async function sendNewLogsData(args) {
     recorded = price && itemName ? ++recorded : recorded
 
     let finished = Math.floor(recorded + missed) === totalItems ? 'FINISHED' : 'NOT-FINISHED'
+
+    let fileName = path.parse(filePath).base
+
+    let from = path.join(__dirname, '../../../../rawCSVs/FilesBeingSorted', fileName)
+
+    console.log('****************PROCESSING!!!! DATA START*****************')
+    console.log(`RECORDED : ${recorded}`)
+    console.log(`MISSED : ${missed}`)
+    console.log(`file path : ${filePath}`)
+    console.log(index)
+    console.log(totalItems)
+    console.log(args)
+    console.log('****************PROCESSING !!!! DATA END*************************')
 
 
     if (finished === 'FINISHED') {
@@ -48,23 +62,38 @@ async function sendNewLogsData(args) {
 
 
         const log = await LogDbService.createNewLogEntry(logItem)
+
+        let to = ''
+
+        if (recorded > 0 && institutionDt ) to = path.join(__dirname, '../../../../rawCSVs/ProcessedFiles',processedBy, fileName)
+        if (!institutionDt && created === 'no-data') to = path.join(__dirname, '../../../../rawCSVs/ProcessedFiles/',processedBy, 'MissingInstitutionData', fileName)
+        if (recorded === 0) to = path.join(__dirname, '../../../../rawCSVs/NonProcessedFiles', fileName)
+        // TODO refine files without institution data
+
         console.log('********************* DONE FOR FILE !!!*********************')
         console.log(filename)
         console.log('********************* CALLING AGAIN FOR ANOTHER FILE !!!*********************')
         console.log('********************* DONE FOR FILE !!!*********************')
         console.log(filename)
+        console.log(from)
+        console.log(to)
         console.log(log)
         console.log('********************* CALLING AGAIN FOR ANOTHER FILE !!!*********************')
         console.log('||||||||||||DONE ALL TOTAL ITEMS ||||||||||||||')
-        /*from = path.join(__dirname, '../../../rawCSVs/FilesBeingSorted', fileName)
-        if (itemsMatched > 0 && thisHospitalName !== null && hospitalrId !== null) to = path.join(__dirname, '../../../rawCSVs/ProcessedFiles/', algorithmFile, '/', fileName)
-        if (thisHospitalName === null || hospitalrId === null) to = path.join(__dirname, '../../../rawCSVs/ProcessedFiles/', algorithmFile, '/MissingInstitutionData/', fileName)
-        if (itemsMatched === 0) to = path.join(__dirname, '../../../rawCSVs/NonProcessedFiles/', fileName)
+        // move file here instead
 
-        await SortFile.moveFileTo(from, to)*/
-        // move file now
 
-        return log
+        return await SortFile.moveFileTo(from, to)
+
+
+        //return log
+    }
+
+    if (institutionDt && created === 'no-data'){
+
+        let to = path.join(__dirname, '../../../../rawCSVs/NonProcessedFiles', fileName)
+
+        return await SortFile.moveFileTo(from, to)
     }
 
 

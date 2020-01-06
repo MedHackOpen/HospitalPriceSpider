@@ -39,15 +39,11 @@ async function prepareDataForDatabase(args){
     let procedureKey = procedure.map(p => p.key) // procedure key
     let priceValue = price.map(p => p.value) // price value
     let priceKey = price.map(p => p.key) // prive key
+    procedureName = procedureName[0] // 1st item if many
+    procedureKey = procedureKey[0]
+    priceValue = priceValue[0]
+    priceKey = priceKey[0]
 
-    console.log('****************REFINED DT*****************')
-    console.log(procedureName)
-    console.log(procedureKey)
-    console.log('=======procedure========')
-    console.log(priceValue)
-    console.log(priceKey)
-    console.log('==========price========')
-    console.log('****************REFINED DT*************************')
 
     // institution data as related to this procedure's data
     let institutionDt = {}

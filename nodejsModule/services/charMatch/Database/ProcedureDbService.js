@@ -24,22 +24,22 @@ async function createNewProcedureEntry(args){
             institutionDt,
             filePath,
             name,
-            procedureKey: procedureKey[0],
-            priceKey: priceKey[0],
+            procedureKey,
+            priceKey,
             index,
             totalItems,
         }
 
-        if(procedureName[0] && priceValue[0] && institutionDt.rId && institutionDt.hospitalName){
+        if(procedureName && priceValue && institutionDt.rId && institutionDt.hospitalName){
 
             let newProcedure = Procedures.build({
                 uuid: uuid() ,
                 rId: institutionDt.rId ,
-                itemName: procedureName[0],
+                itemName: procedureName,
                 hospitalId: institutionDt.rId ,
-                price: priceValue[0],
+                price: priceValue,
                 hospitalName: institutionDt.hospitalName,
-                avgPrice: priceValue[0], //@TODO maybe
+                avgPrice: priceValue, //@TODO maybe
                 //medianPrice: institutionDt.medianPrice,
                 // sampleSize: ,
                 //outpatientAvgPrice: institutionDt.outpatientAvgPrice,
@@ -66,8 +66,8 @@ async function createNewProcedureEntry(args){
                 institutionDt,
                 filePath,
                 name,
-                procedureKey: procedureKey[0],
-                priceKey: priceKey[0],
+                procedureKey,
+                priceKey,
                 index,
                 totalItems
             }

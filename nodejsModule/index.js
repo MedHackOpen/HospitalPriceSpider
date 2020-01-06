@@ -129,18 +129,16 @@ app.get('/', (req, res) => {
 // cleaning the output
 // if you want to contribute from here check __dirname,/services/charMatch folder
 
-
 app.get('/api/match-field-data', async (req, res, next) => {
 
     try {
 
         let data = await InitDataMatch.initCharacterDataMatch()
 
-        const { csvJson, filePath } = data
 
-        if (data) res.send(data)
+        if (!data) return res.send('+++++++Folder might be empty of csv files++++++')
 
-        if (!data) res.send('+++++++Folder might be empty of csv files++++++')
+        return res.send(data)
 
         /*console.log('++++++++++MOVING AGAIN  what what+++++++++')
         console.log('++++++++++MOVING AGAIN  what what+++++++++')
@@ -153,7 +151,7 @@ app.get('/api/match-field-data', async (req, res, next) => {
     } catch (e) {
 
 
-        res.send(e)
+        return res.send(e)
     }
 })
 
