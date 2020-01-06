@@ -32,7 +32,7 @@ function ifPrice(key, value) {
     if(anotherKey.includes('code') || anotherKey.includes('charge description')) price = null // like charge code not being price
 
     // check if value is a string
-    if (value.match(/a-z/i)) price = null
+    //if (value.match(/a-z/i)) price = null
 
     // if value starts with $ price === value
     if (value.startsWith('$')) price = value
@@ -101,9 +101,9 @@ function matchValues(args) {
 
     const { data, filePath, index, totalItems } = args
 
-    console.log('****************data*****************')
+    /*console.log('****************data*****************')
     console.log(data)
-    console.log('****************data*************************')
+    console.log('****************data*************************')*/
     let refinedData = ifItem(data)
     // return five objects for now
     let dt = {

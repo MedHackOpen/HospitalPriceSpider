@@ -1,7 +1,6 @@
 // converts csv files dat to json data object and returns
 // depends on https://www.npmjs.com/package/csvtojson for added flexibility
 'use strict'
-const _ = require('lodash')
 const csvToJsonV2=require("csvtojson/v2");
 
 
@@ -17,7 +16,7 @@ async function getJsonFromCsv(filePath, removedHeaderRows = 0 ){
         let data = await csvToJsonV2().fromFile(filePath)
 
         // if header is greater than default , remove the headers and return
-        if (removedHeaderRows >= 1) {
+        /*if (removedHeaderRows >= 1) {
 
 
             // Remove header rows from data object
@@ -35,7 +34,10 @@ async function getJsonFromCsv(filePath, removedHeaderRows = 0 ){
         }
 
         else
-            return data
+            return data*/
+        data = data.filter(dt => dt)
+
+        return data
 
 
 

@@ -40,15 +40,15 @@ function exampleDataMatch(args) {
 // TODO find a better way still to do what this file does
 function matchItemData(args) {
 
-    const { data, filePath } = args
+    const { jsonData, filePath } = args
 
-    data.map((item, index) => {
+    jsonData.map((item, index) => {
 
         let dt = {
             data: item, // give key
             index,
             filePath, // give key
-            totalItems: data.length // we need total items and index to move the file when done
+            totalItems: jsonData.length // we need total items and index to move the file when done
         }
 
         // TODO do better
@@ -67,14 +67,12 @@ function initListenToConversion(args) {
 
 
     let data = {
-        data: jsonData,
-        filePath: filePath,
+        jsonData,
+        filePath,
     }
 
-    let dt = matchItemData(data)
-    // TODO do better
+    matchItemData(data)
 
-    return data
 }
 
 module.exports = {

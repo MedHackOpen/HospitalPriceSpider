@@ -5,6 +5,9 @@ const path = require('path')
 const ProcedureDbService = require('../Database/ProcedureDbService')
 const InstitutionDbService = require('../Database/InstitutionDbService')
 
+// Services
+const LogDbBridge = require('./LogDbBridge')
+
 // institutions from database below
 const institutions = InstitutionDbService.getInstitutions()
 //let institution = {}
@@ -22,10 +25,13 @@ async function getInstitutionByFileName(fileName){
 // choose what to do with the files as well us log as much to
 // the relevant tables for easier debugging later
 async function prepareDataForDatabase(args){
+
     const { args: obj, institution } = args
     const { data, refinedData: rf, filePath, name, index, totalItems } = obj
 
     let refinedData = JSON.parse(rf)
+
+
 
     const { procedure, price } = refinedData
 
@@ -33,6 +39,15 @@ async function prepareDataForDatabase(args){
     let procedureKey = procedure.map(p => p.key) // procedure key
     let priceValue = price.map(p => p.value) // price value
     let priceKey = price.map(p => p.key) // prive key
+
+    console.log('****************REFINED DT*****************')
+    console.log(procedureName)
+    console.log(procedureKey)
+    console.log('=======procedure========')
+    console.log(priceValue)
+    console.log(priceKey)
+    console.log('==========price========')
+    console.log('****************REFINED DT*************************')
 
     // institution data as related to this procedure's data
     let institutionDt = {}
@@ -76,6 +91,8 @@ async function prepareDataForDatabase(args){
     let dataToDb = {
         institution,
         institutionDt,
+        filePath,
+        name,
         procedureName,
         procedureKey,
         priceValue,
@@ -85,17 +102,15 @@ async function prepareDataForDatabase(args){
     }
     // compare index and totalItems before repeating the file read data processes
     // make sure the last index (item) has passed through
-    //console.log(procedureName)
-    //console.log(priceValue)
-    //console.log('++++++++++++processed++++++')
     processed = await ProcedureDbService.createNewProcedureEntry(dataToDb)
 
-    // processed object returns if processed or if not
+
+    // processed object returns if procedures records were created or not
     // choose what to do with this info
 
-    /*console.log('++++++++++++processed++++++')
-    console.log(processed)
-    console.log('++++++++++++processed into DB++++++')*/
+    await LogDbBridge.sendNewLogsData(processed)
+
+    return processed
 
 }
 
@@ -109,7 +124,7 @@ async function reportItem(args){
     let institution = await getInstitutionByFileName(fileName)
     let dt = {
         args,
-        institution
+        institution // this file name info in the institutions table
     }
 
     await prepareDataForDatabase(dt)

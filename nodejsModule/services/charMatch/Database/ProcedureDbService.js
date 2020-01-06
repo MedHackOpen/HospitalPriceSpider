@@ -17,16 +17,20 @@ async function createNewProcedureEntry(args){
 
     try {
 
-        const { institution, institutionDt, procedureName, procedureKey, priceValue, priceKey, index, totalItems } = args
+        const { institution, institutionDt, filePath, name, procedureName, procedureKey, priceValue, priceKey, index, totalItems } = args
 
-        let created = {
+        let item = {
             created: 'no-data',
             institutionDt,
+            filePath,
+            name,
+            procedureKey: procedureKey[0],
+            priceKey: priceKey[0],
             index,
             totalItems,
         }
 
-        if(procedureName[0] && priceValue[0] && institution){
+        if(procedureName[0] && priceValue[0] && institutionDt.rId && institutionDt.hospitalName){
 
             let newProcedure = Procedures.build({
                 uuid: uuid() ,
@@ -53,19 +57,23 @@ async function createNewProcedureEntry(args){
                 //currency: institutionDt.currency TODO set by country
             })
 
-            created = await newProcedure.save()
+            let created = await newProcedure.save()
 
             created = created.dataValues
 
-            created = {
+            item = {
                 created,
                 institutionDt,
+                filePath,
+                name,
+                procedureKey: procedureKey[0],
+                priceKey: priceKey[0],
                 index,
                 totalItems
             }
 
-            return created
-        } else return created // just without the newly added procedure
+            return item
+        } else return item // just without the newly added procedure
 
 
     } catch (e) {
