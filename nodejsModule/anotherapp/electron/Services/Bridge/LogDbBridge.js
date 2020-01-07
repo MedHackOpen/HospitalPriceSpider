@@ -11,46 +11,45 @@ const path = require('path')
 const LogDbService = require('../Database/LogDbService')
 //const SortFile = require('../SortFile')
 
-let missed = 0 // count missed
-let recorded = 0 // count recorded items matched by this name file name eg const name = 'ByKeyName' in Algorithms folder
 async function sendNewLogsData(args) {
 
-    const { created,  institutionDt, filePath, name: processedBy, procedureKey, priceKey, index, totalItems } = args
-    const { price, rId, hospitalName, itemName } = created // count created items (recorded)
 
+    const {
+        created,
+        institutionDt,
+        fileName,
+        name: processedBy,
+        procedureKey,
+        priceKey,
+        index,
+        totalItems,
+        missed,
+        recorded
+    } = args
 
-    missed = created === 'no-data' ? ++missed : missed
+    const { price, rId: hrID, hospitalName: hstName, itemName } = created // count created items (recorded)
 
-    recorded = price && itemName ? ++recorded : recorded
+    let rId = created.rId ? hrID : null
+    let hospitalName = created.hospitalName ? hstName : null
+
 
     let finished = Math.floor(recorded + missed) === totalItems ? 'FINISHED' : 'NOT-FINISHED'
+    //let finished = Math.floor(index + 1 ) === totalItems ? 'FINISHED' : 'NOT-FINISHED'
 
-    let fileName = path.parse(filePath).base
-
-    let from = path.join(__dirname, '../../../../rawCSVs/FilesBeingSorted', fileName)
-
-    console.log('****************PROCESSING!!!! DATA START*****************')
-    console.log(`RECORDED : ${recorded}`)
-    console.log(`MISSED : ${missed}`)
-    console.log(`file path : ${filePath}`)
-    console.log(index)
-    console.log(totalItems)
-    console.log(args)
-    console.log('****************PROCESSING !!!! DATA END*************************')
-
+    //let from = path.join(__dirname, '../../../../rawCSVs/FilesBeingSorted', fileName)
 
     if (finished === 'FINISHED') {
 
-        let fileExt = /.csv/i
-        let filename = path.parse(filePath).base
-        filename = filename.replace(fileExt, '') // remove .ext from name
+        //let fileExt = /.csv/i
+        //let filename = path.parse(filePath).base
+        //filename = filename.replace(fileExt, '') // remove .ext from name
 
 
         let logItem = {
             recorded,
             missed,
             //finished,
-            filename,
+            filename: fileName,
             processedBy,
             procedureKey,
             priceKey,
@@ -63,9 +62,12 @@ async function sendNewLogsData(args) {
 
         const log = await LogDbService.createNewLogEntry(logItem)
 
-        let to = ''
 
-        if (recorded > 0 && institutionDt ) to = path.join(__dirname, '../../../../rawCSVs/ProcessedFiles',processedBy, fileName)
+        return { log, message: '---------LOG RETURNED-----------------'}
+
+        //let to = ''
+
+        /*if (recorded > 0 && institutionDt ) to = path.join(__dirname, '../../../../rawCSVs/ProcessedFiles',processedBy, fileName)
         if (!institutionDt && created === 'no-data') to = path.join(__dirname, '../../../../rawCSVs/ProcessedFiles/',processedBy, 'MissingInstitutionData', fileName)
         if (recorded === 0) to = path.join(__dirname, '../../../../rawCSVs/NonProcessedFiles', fileName)
         // TODO refine files without institution data
@@ -86,15 +88,15 @@ async function sendNewLogsData(args) {
         //return await SortFile.moveFileTo(from, to)
 
 
-        //return log
+        //return log*/
     }
 
-    if (institutionDt && created === 'no-data'){
+    /*if (institutionDt && created === 'no-data'){
 
         let to = path.join(__dirname, '../../../../rawCSVs/NonProcessedFiles', fileName)
 
         //return await SortFile.moveFileTo(from, to)
-    }
+    }*/
 
 
 }

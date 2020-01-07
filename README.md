@@ -136,6 +136,7 @@ FOLDER STRUCTURE
 .`./browserJS` testing stuff
 
 .`./nodejsModule` contains nodejs app(s) to convert file formats and output that data via an api endpoint for others to consume
+. `./nodejsModule/anotherapp`: contains another nodejs app the helps us better process all csv sulmutenously.
 see the **README.md** in this folder
 
 . `./proposals ` project proposals in readme.md
@@ -151,7 +152,7 @@ see the **README.md** in this folder
 Refer to **README.md** in ./nodejsFolder or wiki documentation [here](https://github.com/MedHackOpen/HospitalPriceSpider/wiki)
 
 ## Contributions 
-
+* Work need in folder `./nodejsModule/anotherapp`, price, procedure pair detection from csv files.
 We welcome pull requests, issues, and other contributions. This README could use a lot of work, as well as the converter code to get to our shared goal of making the world a better place. Please send pull requests to the `develop` branch.
 
 ## Contact

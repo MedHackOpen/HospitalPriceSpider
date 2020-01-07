@@ -26,36 +26,31 @@ async function getInstitutionByFileName(fileName){
 async function prepareDataForDatabase(args){
 
     const { data, institution } = args
-    const { type, refined, currentFile: fileName, index, totalItems } = data
+    const { type, refined, currentFile: fileName, index, totalItems, missed, recorded, name } = data
 
-    let refinedData = JSON.parse(refined.refined)
+
+    let refinedData = {}
+    refinedData = JSON.parse(refined)
 
     const { procedure, price } = refinedData
     // TODO do better below
-    let procedureName = procedure.map(p => p.value)// procedure value
-    let procedureKey = procedure.map(p => p.key) // procedure key
-    let priceValue = price.map(p => p.value) // price value
-    let priceKey = price.map(p => p.key) // prive key
-    procedureName = procedureName[0] // 1st item if many
-    procedureKey = procedureKey[0]
-    priceValue = priceValue[0]
-    priceKey = priceKey[0]
+    let procedureName = null
+    let procedureKey = null
+    let priceValue = null
+    let priceKey = null
+    if(procedure.length !== 0) {
+        procedureName= procedure.map(p => p.value)// procedure value
+        procedureKey = procedure.map(p => p.key) // procedure key
+        procedureName = procedureName[0] // 1st item if many
+        procedureKey = procedureKey[0]
+    }
 
-
-    //console.log(procedureName)
-    //console.log(procedureKey)
-    //console.log(priceValue)
-    //console.log(priceKey)
-    console.log(institution)
-    console.log('|||||||||||||| ARGS!! |||||||||||||||')
-
-    return args
-
-    /*const { args: obj, institution } = args
-    const { data, refinedData: rf, filePath, name, index, totalItems } = obj
-
-    let refinedData = JSON.parse(rf)
-
+    if(price.length !== 0) {
+        priceValue = price.map(p => p.value) // price value
+        priceKey = price.map(p => p.key) // prive key
+        priceValue = priceValue[0]
+        priceKey = priceKey[0]
+    }
 
     // institution data as related to this procedure's data
     let institutionDt = {}
@@ -84,47 +79,44 @@ async function prepareDataForDatabase(args){
         }
     })
 
-
-    // Check if we got a priceValue, procedureName and the institution data related
-    // to this file(csv filePath passed), if yes proceed to create a new procedure item,
-    // if no institution data, move the file to a folder for later reviews,
+    // if no institution data, move the file to a folder for later reviews, OR pass those value(s) for processing
     // if no priceValue and it's corresponding procedure name, wait for
     // the last index to move the file else where.
     // NOTE: due to removed headers and some other rows in the cvs file being empty or not
-    // containing all the required data items, files that return 0 matched price and it's
-    // procedure name are considered to be unprocessed by the name of the passed
-    // algorithm file, else processed
     let processed = {}
 
     let dataToDb = {
         institution,
         institutionDt,
-        filePath,
+        fileName,
         name,
         procedureName,
         procedureKey,
         priceValue,
         priceKey,
         index,
-        totalItems
+        totalItems,
+        missed,
+        recorded,
     }
     // compare index and totalItems before repeating the file read data processes
     // make sure the last index (item) has passed through
-    processed = await ProcedureDbService.createNewProcedureEntry(dataToDb)
 
+    //returns processes processed from database/ or none
+    processed = await ProcedureDbService.createNewProcedureEntry(dataToDb)
 
     // processed object returns if procedures records were created or not
     // choose what to do with this info
 
-    await LogDbBridge.sendNewLogsData(processed)
-
-    return processed*/
+    // return logged now
+    return await LogDbBridge.sendNewLogsData(processed)
 
 }
 
 // incoming raw Report item
 async function handleRefinedItem(args){
-    const { type, refinedD, currentFile, name, data, index, totalItems } = args
+
+    const { type, refinedD, currentFile, name, data, index, totalItems, recorded, missed } = args
 
     let fileExt = /.csv/i
     let fileName = currentFile.replace(fileExt, '') // remove .ext from name
@@ -138,9 +130,8 @@ async function handleRefinedItem(args){
         institution // this file name info in the institutions table
     }
 
-    const prepared = await prepareDataForDatabase(dt)
-
-    return prepared
+    // return log for current file
+    return await prepareDataForDatabase(dt)
 }
 
 module.exports = {

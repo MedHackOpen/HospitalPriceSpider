@@ -1,11 +1,13 @@
 import React, {Component} from 'react'
 import _ from 'lodash'
 import 'bootstrap/dist/css/bootstrap.min.css'
-
+import 'font-awesome/css/font-awesome.css'
 
 import ProgressMessage from "./Components/ProgressMessage";
 import JsonItem from "./Components/JsonItem";
 import RefinedItem from "./Components/RefinedItem";
+import Spinner from "./Components/Spinner";
+import Log from "./Components/Log";
 
 const { ipcRenderer } = window.require('electron')
 
@@ -15,6 +17,7 @@ class App extends Component {
         currentProcess: 'None at the moment......',
         message: {},
         currentFile: {},
+        totalItems: 0,
         csvData: {},
         procedureData: {},
         jsonItem: {},
@@ -71,16 +74,18 @@ class App extends Component {
 
         // request data
         let dt = {
-            type: 'first-file-in-folder',
+            type: 'just-listen',
             data: {}
         }
-        ipcRenderer.send('get-csv', dt)
+        //ipcRenderer.send('get-csv', dt)
         ipcRenderer.on('got-csv', (event, args) => {
-            const { type, data } = args
+
+            const { type, data, items } = args
 
             if (type === 'new-csv-file'){
                 this.setState({
-                    currentFile: data
+                    currentFile: data,
+                    currentProcess: 'Got new file (in csv folder)......',
                 })
 
                 this.sendArgsToMain(args)
@@ -91,6 +96,7 @@ class App extends Component {
 
                 this.setState({
                     message: data,
+                    currentProcess: 'File ready to process......',
                 })
                 this.sendArgsToMain(args)
             }
@@ -99,6 +105,8 @@ class App extends Component {
 
                 this.setState({
                     message: data,
+                    totalItems: items.length,
+                    currentProcess: 'Working on Json data......',
                 })
 
                 this.sendArgsToMain(args)
@@ -107,6 +115,12 @@ class App extends Component {
 
         ipcRenderer.on('processed-json-items', (event, args) => {
             const { type, data, index, totalItems } = args
+
+            if( args === 'NO_FILE'){
+                this.setState({
+                    currentProcess: '       NO MORE FILES IN FOLDER !!!!!!!!!!!',
+                })
+            }
 
             if ( type === 'raw-json-data'){
                 this.setState({
@@ -121,12 +135,50 @@ class App extends Component {
                 //this.sendArgsToMain(args)
 
             }
+
+            if ( type === 'log-data-object'){
+                 const { created } = args
+
+                console.log('|||||||||| LOG DATA  ||||||||||||||||')
+                console.log(created)
+                console.log('|||||||||| LOG DATA  ||||||||||||||||')
+
+
+                this.setState({
+                    log: created,
+                    currentProcess: 'Ready to load a new file......',
+                })
+
+                setTimeout(() => {
+                    this.setState({
+                        csvFiles: {},
+                        currentProcess: 'None at the moment......',
+                        message: {},
+                        currentFile: {},
+                        totalItems: 0,
+                        csvData: {},
+                        procedureData: {},
+                        jsonItem: {},
+                        refinedItem: {},
+                        log: {}
+                    })
+
+                    let dt = {
+                        type: 'first-file-in-folder',
+                        data: {}
+                    }
+
+                    ipcRenderer.send('get-csv', dt)
+                },1400)
+
+            }
         })
 
     }
 
     componentDidMount() {
         this.setData()
+        const { csvFiles, currentFile, csvData, procedureData, log }  = this.state
     }
 
     // Reset data
@@ -134,6 +186,7 @@ class App extends Component {
         this.setState({
             csvFiles: {},
             currentFile: {},
+            totalItems: 0,
             csvData: {},
             procedureData: {},
             log: {},
@@ -204,7 +257,7 @@ class App extends Component {
         if(!_.isEmpty(procedureData)){
             return (
                 <div className="m-2">
-                    <div className="m-2 p-2">procedureData : {procedureData}</div>
+                    <div className="m-2 p-2">procedureData : {/*procedureData*/}</div>
                 </div>
             )
         } else return null
@@ -218,11 +271,35 @@ class App extends Component {
         if(!_.isEmpty(log)){
             return (
                 <div className="m-2">
-                    <div className="m-2 p-2">log : {log}</div>
+                    <div className="m-2 p-2">log : {/*log*/}</div>
                 </div>
             )
         } else return null
 
+
+    }
+
+    handleInit = () => {
+
+        this.setState({
+            csvFiles: {},
+            currentProcess: 'None at the moment......',
+            message: {},
+            currentFile: {},
+            totalItems: 0,
+            csvData: {},
+            procedureData: {},
+            jsonItem: {},
+            refinedItem: {},
+            log: {}
+        })
+
+        let dt = {
+            type: 'first-file-in-folder',
+            data: {}
+        }
+
+        ipcRenderer.send('get-csv', dt)
 
     }
 
@@ -231,6 +308,7 @@ class App extends Component {
         const {
             csvFiles,
             currentFile,
+            totalItems,
             csvData,
             procedureData,
             log,
@@ -243,9 +321,22 @@ class App extends Component {
             <div className="container-fluid text-center m-4 p-3">
                 <h4>Hello MedHack Tm</h4>
                 <hr/>
+                <div className="row text-center">
+                    <small>Make sure your database is set before clicking below please...</small>
+                    <button
+                        onClick={this.handleInit}
+                        className="btn btn-primary m-3 p-2"
+                    >
+                        Process csv files
+
+                    </button>
+                </div>
                 <div className="shadow-lg">
-                    <ProgressMessage
+                    {/*<ProgressMessage
                         message={message}
+                    />*/}
+                    <Log
+                        log={log}
                     />
                     {this.renderCurrentProcess()}
                     {this.renderCurrentFile()}
@@ -253,6 +344,10 @@ class App extends Component {
                     {this.renderCsvData()}
                     {this.renderProcedureData()}
                     {this.renderLog()}
+                    <Spinner
+                        currentFile={currentFile}
+                        totalItems={totalItems}
+                    />
                     <div className="row">
                         <JsonItem
                             jsonItem={jsonItem}
@@ -260,6 +355,7 @@ class App extends Component {
                         <RefinedItem
                             refinedItem={refinedItem}
                         />
+
                     </div>
                 </div>
             </div>

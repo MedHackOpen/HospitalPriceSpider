@@ -17,17 +17,20 @@ async function createNewProcedureEntry(args){
 
     try {
 
-        const { institution, institutionDt, filePath, name, procedureName, procedureKey, priceValue, priceKey, index, totalItems } = args
+        const { institution, institutionDt, fileName, name, procedureName, procedureKey, priceValue, priceKey, index, totalItems, missed, recorded } = args
+
 
         let item = {
             created: 'no-data',
             institutionDt,
-            filePath,
+            fileName,
             name,
             procedureKey,
             priceKey,
             index,
             totalItems,
+            missed,
+            recorded
         }
 
         if(procedureName && priceValue && institutionDt.rId && institutionDt.hospitalName){
@@ -64,16 +67,18 @@ async function createNewProcedureEntry(args){
             item = {
                 created,
                 institutionDt,
-                filePath,
+                fileName,
                 name,
                 procedureKey,
                 priceKey,
                 index,
-                totalItems
+                totalItems,
+                missed,
+                recorded
             }
 
             return item
-        } else return item // just without the newly added procedure
+        } else return item // just without the newly added procedure*/
 
 
     } catch (e) {

@@ -4,6 +4,7 @@
 const path = require('path')
 const fs = require('fs')
 const fsExtra = require('fs-extra')
+const _ = require('lodash')
 const glob = require('glob')
 const moveFile = require('move-file')
 
@@ -157,9 +158,6 @@ async function csvFilesAndFolders(){
 
             const csvJson = await csvToJson.getJsonFromCsv(to)
 
-
-
-
             const dt = {
                 type: 'json-data-from-csv',
                 data: {
@@ -184,50 +182,93 @@ async function processJsonItems(){
     ipcMain.on('process-json-items', async (event, args) => {
         const { type, data, currentFile, items } = args
 
-
-
         //const item = Start.breakJsonItem(items)
+        let missed = 0 // count missed
+        let recorded = 0 // count recorded items matched by this name file name eg const name = 'ByKeyName' in Algorithms folder
 
-        let itemz = items.filter(dt => dt)
+        if (_.isEmpty(items)) event.sender.send('processed-json-items', 'NO_FILE')
 
-        let dt = {}
+        if (!_.isEmpty(items)){
 
-        itemz.map((item, index) => {
+            const itemz = items.filter(dt => dt)
 
-            // send raw item to be refined
-            // check for matching procedure key/value and price key/value
+            let dt = {}
 
-            // TODO create a bridge here instead
-            // if refined is empty (no price/procedure)
-            // item, pass the next algorithm maybe
-            // and so on until we exhaust ways to
-            // process the item, then move file to
-            // NonProcessed csv(s) folder
-            let refined = ByKeyName.matchValues(item)
 
-            // we can move files here
-            // that had no matching price and procedure values
+            itemz.map((item, index) => {
 
-            dt = {
-                type: 'raw-json-data',
-                refined,
-                currentFile,
-                data: item, // all item
-                index, // item index
-                totalItems: items.length
-            }
+                // send raw item to be refined
+                // check for matching procedure key/value and price key/value
 
-            // post refined to dataBase now TODO
+                // TODO create a bridge here instead
+                // if refined is empty (no price/procedure)
+                // item, pass the next algorithm maybe
+                // and so on until we exhaust ways to
+                // process the item, then move file to
+                // NonProcessed csv(s) folder
+                let justRefined = ByKeyName.matchValues(item)
 
-            RefinedDataBridge.handleRefinedItem(dt).then((refined) => {
+                const { name, refined } = justRefined
 
-                console.log(refined)
-                console.log('=================refined=====================')
+                const { procedure, price } = JSON.parse(refined)
+
+                missed = procedure.length === 0 && price.length === 0  ? ++missed : missed
+
+                recorded = procedure.length >= 1 && price.length >= 1 ? ++recorded : recorded
+
+                // we can move files here
+                // that had no matching price and procedure values
+
+                console.log(`missed : ${missed}`)
+                console.log(`recorded : ${recorded}`)
+                console.log(`index : ${index}`)
+
+                let bdLog = index >= 30000 ? '...Loading data to db, might take sometime................' : null
+
+                //console.log(institutionDt)
+                console.log('|||||||||||||| count !! |||||||||||||||')
+                console.log(bdLog)
+
+                dt = {
+                    type: 'raw-json-data',
+                    refined,
+                    currentFile,
+                    data: item, // all item
+                    missed,
+                    recorded,
+                    index, // item index
+                    totalItems: items.length,
+                    name,
+                }
+
+
+                // post refined to dataBase now TODO
+
+                // this returns the log item of the file
+                // after passing through where it's data lets
+                // it.....
+                RefinedDataBridge.handleRefinedItem(dt).then((logItem) => {
+
+                    if (logItem) {
+
+                        const { log } = logItem
+                        const { created } = log
+
+                        dt = {
+                            type: 'log-data-object',
+                            created
+                        }
+
+                        event.sender.send('processed-json-items', dt)
+                    }
+
+
+                })
+
+
             })
+        }
 
-            //event.sender.send('processed-json-items', dt)
-
-        })
     })
 }
 

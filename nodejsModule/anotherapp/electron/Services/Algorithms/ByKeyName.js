@@ -14,6 +14,7 @@ const name = 'ByKeyName'
 
 function ifPrice(key, value) {
     let price = null
+    let starts = 0
     price = key.toLowerCase()
     price = price.includes('charge') ||
         price.includes('amount') ||
@@ -36,7 +37,7 @@ function ifPrice(key, value) {
     //if (value.match(/a-z/i)) price = null
 
     // if value starts with $ price === value
-    if (value.startsWith('$')) price = value
+    //if ( /^$/.test(value) ) price = value
 
     return price
 }
@@ -44,8 +45,7 @@ function ifPrice(key, value) {
 //ifProcedure
 function ifProcedure(key, value) {
     let procedure = ''
-    let numbers = /^[0-9]+$/
-
+    let numbers = /^\d+$/
     procedure = key.toLowerCase()
     procedure = procedure.includes('description') ||
         procedure.includes('drg') ||
@@ -57,14 +57,16 @@ function ifProcedure(key, value) {
 
     // refine further
     let anotherKey = key.toLowerCase()
-    if(anotherKey.includes('code') || anotherKey.includes('number')) procedure = null // if key contains the word code, return null too
+    //if(anotherKey.includes('code') || anotherKey.includes('number')) procedure = null // if key contains the word code, return null too
+    if(anotherKey.includes('code')) procedure = null // if key contains the word code, return null too
 
-    if (value.match(numbers)) procedure = null // if value is all numbers
+    if (numbers.test(value)) procedure = null // if value is all numbers
 
     return procedure
 }
 
 function ifItem(data) {
+
     let item = {}
     let price = []
     let procedure = []
@@ -94,8 +96,6 @@ function ifItem(data) {
         price,
     }
 
-
-
     return JSON.stringify(item)
 
 }
@@ -103,9 +103,8 @@ function ifItem(data) {
 //result item
 function matchValues(args) {
 
-    const data  = args
 
-    let refined = ifItem(data)
+    let refined = ifItem(args)
     // return five objects for now
     let dt = {
         refined, // data processed by this algo
