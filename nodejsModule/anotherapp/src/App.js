@@ -146,7 +146,7 @@ class App extends Component {
 
                 this.setState({
                     log: created,
-                    currentProcess: 'Ready to load a new file......',
+                    currentProcess: null,
                 })
 
                 setTimeout(() => {
@@ -169,7 +169,7 @@ class App extends Component {
                     }
 
                     ipcRenderer.send('get-csv', dt)
-                },1400)
+                },3400)
 
             }
         })
@@ -197,13 +197,15 @@ class App extends Component {
     }
 
     renderCurrentProcess = () => {
-        const { currentProcess }  = this.state
+        const { currentProcess, totalItems }  = this.state
 
-        return (
-            <div className="m-2 p-3 bg-info">
-                <div className="m-2 p-2">currentProcess : {currentProcess}</div>
-            </div>
-        )
+        if(!_.isEmpty(currentProcess) && totalItems === 0){
+            return (
+                <div className="m-5 p-5 bg-info shadow-lg rounded">
+                    <div className="m-3 p-3"><strong>currentProcess : {currentProcess}</strong></div>
+                </div>
+            )
+        } else return null
 
 
     }
@@ -251,16 +253,25 @@ class App extends Component {
 
     }
 
-    renderProcedureData = () => {
-        const { procedureData }  = this.state
+    renderInit = () => {
+        const { currentFile }  = this.state
 
-        if(!_.isEmpty(procedureData)){
+        if(_.isEmpty(currentFile)){
             return (
-                <div className="m-2">
-                    <div className="m-2 p-2">procedureData : {/*procedureData*/}</div>
+                <div className="container text-center">
+                    <small><strong>Make sure your database is set before clicking this button please...</strong></small>
+                    <button
+                        onClick={this.handleInit}
+                        className="btn btn-primary m-3 p-2"
+                    >
+                        Process csv files
+
+                    </button>
                 </div>
             )
-        } else return null
+        } else return (
+            <small> Processing file : {currentFile}, check console terminal for process logs</small>
+        )
 
 
     }
@@ -321,16 +332,7 @@ class App extends Component {
             <div className="container-fluid text-center m-4 p-3">
                 <h4>Hello MedHack Tm</h4>
                 <hr/>
-                <div className="row text-center">
-                    <small>Make sure your database is set before clicking below please...</small>
-                    <button
-                        onClick={this.handleInit}
-                        className="btn btn-primary m-3 p-2"
-                    >
-                        Process csv files
-
-                    </button>
-                </div>
+                {this.renderInit()}
                 <div className="shadow-lg">
                     {/*<ProgressMessage
                         message={message}
@@ -342,7 +344,6 @@ class App extends Component {
                     {this.renderCurrentFile()}
                     {this.renderCsvFiles()}
                     {this.renderCsvData()}
-                    {this.renderProcedureData()}
                     {this.renderLog()}
                     <Spinner
                         currentFile={currentFile}
@@ -358,6 +359,12 @@ class App extends Component {
 
                     </div>
                 </div>
+                <footer className="fixed-bottom bg-dark text-white">
+                    <div className="m-5">
+                        Hey..!!! don't forget to check the logs table in your default database ; <br/>
+                        That is, if you have already run the process through ..
+                    </div>
+                </footer>
             </div>
         );
     }
