@@ -37,22 +37,55 @@ class App extends Component {
 
         if (!_.isEmpty(priceKey) && !_.isEmpty(procedureKey)) return 'ByHuman' // set name here
 
-        if (_.isEmpty(priceKey) && _.isEmpty(procedureKey)) {
+        if (_.isEmpty(priceKey) || _.isEmpty(procedureKey)) {
 
             let name = ''
 
-            name = _.filter(names, (n, index) => index === 0)
+            //name = _.filter(names, (n, index) => index === 0)
+            name = _.filter(names, (n, index) => n.name !== 'ByHuman') // remove by human
+
+            name = _.filter(name, (n, index) => index === 0) // get the first item
 
             name = name.map(item => item.name)
 
 
-            /*console.log('||||||||||||||| institutionKeys |||||||||||||||||')
+            console.log('||||||||||||||| institutionKeys |||||||||||||||||')
             console.log(institutionKeys)
             console.log(names)
             console.log(name[0])
-            console.log('||||||||||||||| institutionKeys |||||||||||||||||')*/
+            console.log('||||||||||||||| institutionKeys |||||||||||||||||')
 
             return name[0]
+        }
+
+    }
+
+    moveCurrentFile = (args) => {
+        const { currentFile  } = this.state
+        const { instructions } = args
+
+        let dt = {}
+
+        if ( instructions === 'human-error-values' ) {
+
+            dt = {
+                type: 'move-non-processed-file',
+                instructions,
+                currentFile
+            }
+
+            ipcRenderer.send('move-current-file', dt)
+        }
+
+        if ( instructions === 'last-processor' ) {
+
+            dt = {
+                type: 'move-non-processed-by-algos',
+                instructions,
+                currentFile
+            }
+
+            ipcRenderer.send('move-current-file', dt)
         }
 
     }
@@ -121,6 +154,28 @@ class App extends Component {
             // send data to processors below
             ipcRenderer.send('process-json-items', dt)
         }
+
+        //no-matched-by-given-name
+        // means refined item given that processor
+        // call next processor
+        if ( type === 'no-matched-by-given-name' ) {
+
+            let dt = {
+                type: 'process-json-data-from-csv', // send data to algorithm now
+                currentFile,
+                data: csvData,
+                institutionKeys: stateKeys,
+                names: stateNames,
+                name: stateName,//this.setProcessorName(institutionKeys, names)
+                items
+            }
+
+
+            // send data to processors below
+            ipcRenderer.send('process-json-items', dt)
+        }
+
+
 
     }
 
@@ -191,7 +246,7 @@ class App extends Component {
         })
 
         ipcRenderer.on('processed-json-items', (event, args) => {
-            const { type, data, index, totalItems } = args
+            const { type, data, index, totalItems, names, institutionKeys } = args
 
             if( args === 'NO_FILE'){
                 this.setState({
@@ -213,6 +268,104 @@ class App extends Component {
 
             }
 
+            // when human given keys, but no data matched
+            // meaning human data is outdated and needs
+            // updating
+            if ( type === 'no-matched-data-given-keys') {
+                // move file and call another file
+
+
+                // TODO :: not logging check please
+                this.setState({
+                    currentProcess: '...Wrong values for file : ByHuman',
+                })
+
+                let dt = {
+                    instructions: 'human-error-values',
+                    currentFile
+                }
+
+                this.moveCurrentFile(dt)
+
+                setTimeout(() => {
+                    this.setState({
+                        csvFiles: {},
+                        names: {},
+                        institutionKeys: {},
+                        name: '',
+                        currentProcess: 'None at the moment......',
+                        message: {},
+                        currentFile: {},
+                        totalItems: 0,
+                        csvData: {},
+                        procedureData: {},
+                        jsonItem: {},
+                        refinedItem: {},
+                        log: {}
+                    })
+
+                    let dt = {
+                        type: 'first-file-in-folder',
+                        data: {}
+                    }
+
+                    ipcRenderer.send('get-csv', dt)
+                },3400)
+
+            }
+
+            // call another processor by name
+            if ( type === 'no-matched-by-given-name'){
+                this.setState({
+                    names,
+                    institutionKeys,
+                    currentProcess: 'Got new file (in csv folder)......',
+                    name: this.setProcessorName(names, institutionKeys)
+                })
+
+
+                this.sendArgsToMain(args)
+            }
+
+            // if last named processor
+            // call next file and move currentFile to
+            // non processed folder
+            if ( type === 'last-named-processor'){
+
+                let dt = {
+                    instructions: 'last-processor',
+                    currentFile
+                }
+
+                this.moveCurrentFile(dt)
+
+                setTimeout(() => {
+                    this.setState({
+                        csvFiles: {},
+                        names: {},
+                        institutionKeys: {},
+                        name: '',
+                        currentProcess: 'None at the moment......',
+                        message: {},
+                        currentFile: {},
+                        totalItems: 0,
+                        csvData: {},
+                        procedureData: {},
+                        jsonItem: {},
+                        refinedItem: {},
+                        log: {}
+                    })
+
+                    let dt = {
+                        type: 'first-file-in-folder',
+                        data: {}
+                    }
+
+                    ipcRenderer.send('get-csv', dt)
+                },3400)
+            }
+
+            // procedure items and log created
             if ( type === 'log-data-object'){
                  const { created } = args
 
@@ -229,6 +382,9 @@ class App extends Component {
                 setTimeout(() => {
                     this.setState({
                         csvFiles: {},
+                        names: {},
+                        institutionKeys: {},
+                        name: '',
                         currentProcess: 'None at the moment......',
                         message: {},
                         currentFile: {},

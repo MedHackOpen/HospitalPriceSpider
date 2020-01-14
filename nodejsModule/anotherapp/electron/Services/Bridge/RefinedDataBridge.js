@@ -8,13 +8,14 @@ const InstitutionDbService = require('../Database/InstitutionDbService')
 
 const LogDbBridge = require('./LogDbBridge')
 
-// institutions from database below
-let institutions = InstitutionDbService.getInstitutions()
 
 // get institution data from database with reference to
 // file name, we need rId, locations and such with
 // every procedure item we create
 async function getInstitutionByFileName(fileName){
+
+    // institutions from database below
+    let institutions = await InstitutionDbService.getInstitutions()
 
     return await institutions.filter(institution => institution.savedRepoTableName === fileName)
 
@@ -26,86 +27,102 @@ async function getInstitutionByFileName(fileName){
 async function prepareDataForDatabase(args){
 
     const { data, institution } = args
-    const { type, refined, currentFile: fileName, index, totalItems, missed, recorded, name, countItems, items } = data
+    //const { type, refined, currentFile: fileName, index, totalItems, missed, recorded, name, countItems, items } = data
 
 
-    let refinedData = {}
-    refinedData = JSON.parse(refined)
+    const { refined: rfRaw, name, totalMissed, totalRecorded, totalCounted, totalItems,  currentFile, items } = data
 
-    const { procedure, price } = refinedData
-    // TODO do better below
-    let procedureName = null
-    let procedureKey = null
-    let priceValue = null
-    let priceKey = null
-    if(procedure.length !== 0) {
-        procedureName= procedure.map(p => p.value)// procedure value
-        procedureKey = procedure.map(p => p.key) // procedure key
-        procedureName = procedureName[0] // 1st item if many
-        procedureKey = procedureKey[0]
-    }
+    // get procedure and price
+    // both key and value for
+    // each in the rfRaw string
 
-    if(price.length !== 0) {
-        priceValue = price.map(p => p.value) // price value
-        priceKey = price.map(p => p.key) // prive key
-        priceValue = priceValue[0]
-        priceKey = priceKey[0]
-    }
+    // create procedure items below and return
+    // when all is done
+    let processed = await Promise.all(
+        rfRaw.map( async (item) => {
+            let refinedData = {}
+            refinedData = JSON.parse(item.refined)
 
-    // institution data as related to this procedure's data
-    let institutionDt = {}
-    institution.map((item) => {
-        institutionDt = {
-            uuid: item.uuid,
-            rId: item.rId,
-            hospitalName: item.hospitalName,
-            city: item.city,
-            country: item.country,
-            mainHospitalName: item.mainHospitalName,
-            numberBeds: item.numberBeds,
-            streetAddress: item.streetAddress,
-            numberLocation: item.numberLocation,
-            itemColumnName: item.itemColumnName,
-            avgPriceColumnName: item.avgPriceColumnName,
-            priceSampleSizeColumnName: item.priceSampleSizeColumnName,
-            outPatientPriceColumnName: item.outPatientPriceColumnName,
-            inpatientPriceColumnName: item.inpatientPriceColumnName,
-            extraColumnName: item.extraColumnName,
-            categoryColumnName: item.categoryColumnName,
-            removedHeaderRowsForCSV: item.removedHeaderRowsForCSV,
-            savedRepoTableName: item.savedRepoTableName,
-            notes: item.notes,
-            hasSpreadSheet: item.hasSpreadSheet
-        }
-    })
+            const { procedure, price } = refinedData
+            // TODO do better below
+            let procedureName = null
+            let procedureKey = null
+            let priceValue = null
+            let priceKey = null
+            if(procedure.length !== 0) {
+                procedureName= procedure.map(p => p.value)// procedure value
+                procedureKey = procedure.map(p => p.key) // procedure key
+                procedureName = procedureName[0] // 1st item if many
+                procedureKey = procedureKey[0]
+            }
 
-    // if no institution data, move the file to a folder for later reviews, OR pass those value(s) for processing
-    // if no priceValue and it's corresponding procedure name, wait for
-    // the last index to move the file else where.
-    // NOTE: due to removed headers and some other rows in the cvs file being empty or not
-    let processed = {}
+            if(price.length !== 0) {
+                priceValue = price.map(p => p.value) // price value
+                priceKey = price.map(p => p.key) // prive key
+                priceValue = priceValue[0]
+                priceKey = priceKey[0]
+            }
 
-    let dataToDb = {
-        institution,
-        institutionDt,
-        fileName,
-        name,
-        procedureName,
-        procedureKey,
-        priceValue,
-        priceKey,
-        index,
-        totalItems,
-        missed,
-        recorded,
-        countItems,
-        items
-    }
-    // compare index and totalItems before repeating the file read data processes
-    // make sure the last index (item) has passed through
+            // institution data as related to this procedure's data
+            let institutionDt = {}
+            institution.map((item) => {
+                institutionDt = {
+                    uuid: item.uuid,
+                    rId: item.rId,
+                    hospitalName: item.hospitalName,
+                    city: item.city,
+                    country: item.country,
+                    mainHospitalName: item.mainHospitalName,
+                    numberBeds: item.numberBeds,
+                    streetAddress: item.streetAddress,
+                    numberLocation: item.numberLocation,
+                    itemColumnName: item.itemColumnName,
+                    avgPriceColumnName: item.avgPriceColumnName,
+                    priceSampleSizeColumnName: item.priceSampleSizeColumnName,
+                    outPatientPriceColumnName: item.outPatientPriceColumnName,
+                    inpatientPriceColumnName: item.inpatientPriceColumnName,
+                    extraColumnName: item.extraColumnName,
+                    categoryColumnName: item.categoryColumnName,
+                    removedHeaderRowsForCSV: item.removedHeaderRowsForCSV,
+                    savedRepoTableName: item.savedRepoTableName,
+                    notes: item.notes,
+                    hasSpreadSheet: item.hasSpreadSheet
+                }
+            })
 
-    //returns processes processed from database/ or none
-    processed = await ProcedureDbService.createNewProcedureEntry(dataToDb)
+            // if no institution data, move the file to a folder for later reviews, OR pass those value(s) for processing
+            // if no priceValue and it's corresponding procedure name, wait for
+            // the last index to move the file else where.
+            // NOTE: due to removed headers and some other rows in the cvs file being empty or not
+
+
+            let dataToDb = {
+                institution,
+                institutionDt,
+                fileName: currentFile,
+                name,
+                procedureName,
+                procedureKey,
+                priceValue,
+                priceKey,
+                totalItems,
+                missed: totalMissed,
+                recorded: totalRecorded,
+                countItems: totalCounted,
+                items
+            }
+            // compare index and totalItems before repeating the file read data processes
+            // make sure the last index (item) has passed through
+
+            //returns processes processed from database/ or none
+            //processed = await ProcedureDbService.createNewProcedureEntry(dataToDb)
+            return  await ProcedureDbService.createNewProcedureEntry(dataToDb)
+
+        })
+    )
+
+    // create procedure items below and return
+    // when all is done
 
     // processed object returns if procedures records were created or not
     // choose what to do with this info
@@ -118,16 +135,11 @@ async function prepareDataForDatabase(args){
 // incoming raw Report item
 async function handleRefinedItem(args){
 
-    const { type, refinedD, currentFile, name, data, index, totalItems, recorded, missed } = args
-
-    console.log(args)
-    console.log('***********************ZA DATABASE**************************')
+    const { refined, name, totalMissed, totalRecorded, totalCounted, totalItems,  currentFile, items } = args
 
     let fileExt = /.csv/i
     let fileName = currentFile.replace(fileExt, '') // remove .ext from name
     let institution = await getInstitutionByFileName(fileName)
-
-    //console.log(institutions)
 
 
     let dt = {

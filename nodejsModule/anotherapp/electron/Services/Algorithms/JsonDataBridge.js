@@ -45,35 +45,32 @@ async function MatchedItems(args) {
     // and pass on
 
     if ( name === 'ByHuman') {
-
-        if( procedureKey && priceKey ) {
-            dt = {
-                type: 'by-institutions-data',
-                procedureKey,
-                priceKey,
-                item
-            }
-
-            matched = ByHuman.matchValues(dt)
-
-
+        dt = {
+            type: 'by-institutions-data',
+            procedureKey,
+            priceKey,
+            item
         }
+
+        matched = ByHuman.matchValues(dt)
     }
 
-    // and pass on
-    /*if( !procedureKey && !priceKey) {
-
-        if (_.isEmpty()){
-            matched = ByKeyName.matchValues(item)
+    if ( name === 'ByKeyName') {
+        dt = {
+            type: 'by-key-name',
+            procedureKey,
+            priceKey,
+            item
         }
 
-        // do if empty here
+        matched = ByKeyName.matchValues(dt)
+    }
 
-        //if (_.isEmpty()){
-         //   matched = ByKeyName.matchValues(item)
-        //}
 
-    }*/
+    // NOTE :: call your custom ones below
+    //if ( name === 'YOUR AWESOME MODULE'){
+    //   matched = YOUR AWESOME MODULE.matchValues(dt)
+    //}
 
 
     return matched

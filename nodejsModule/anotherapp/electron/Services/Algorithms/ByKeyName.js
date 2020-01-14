@@ -8,8 +8,6 @@
 // this file because files processed by this file(algorithm)
 // will be moved to a folder named after this file
 
-const name = 'ByKeyName'
-
 //ifPrice
 
 function ifPrice(key, value) {
@@ -104,15 +102,14 @@ function ifItem(data) {
 //result item
 function matchValues(args) {
 
-    console.log(args)
-    console.log('|||||||||||||||args||||||||||||')
+    //console.log(args)
+    //console.log('|||||||||||||||args||||||||||||')
 
 
     let refined = ifItem(args)
     // return five objects for now
     let dt = {
         refined, // data processed by this algo
-        name, // name of this file or module that's re
     }
 
     // pass your data to post to database and sort the file (cvs) that owns this data

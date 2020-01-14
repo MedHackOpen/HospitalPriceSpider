@@ -117,6 +117,7 @@ function loadListeners () {
     (async () => {
         await csvFilesAndFolders()
         await processJsonItems()
+        await moveFilesWithInstructions()
     })()
 }
 
@@ -253,15 +254,10 @@ async function processJsonItems(){
 
             if (!_.isEmpty(items)){
 
+
                 // institutions from database below
                 let itemz = items.filter(dt => dt)
 
-                console.log(itemz)
-                console.log('|||||||||||||||||process-json-items|||||||||||||')
-                console.log('|||||||||||||||||process-json-items|||||||||||||')
-                console.log('|||||||||||||||||process-json-items|||||||||||||')
-                console.log('|||||||||||||||||process-json-items|||||||||||||')
-                console.log('|||||||||||||||||process-json-items|||||||||||||')
 
                 let dt = {}
 
@@ -352,15 +348,6 @@ async function processJsonItems(){
                     totalItems = ttItems
                 })
 
-                let data = {
-                    data: matched,
-                    names,
-                    name,
-                    totalMissed,
-                    totalRecorded,
-                    totalCounted,
-                    totalItems,
-                }
 
                 // if recorded is greater than 30000 will take a while, log to console
                 // if non is recorded send to main to select another algorithm
@@ -368,124 +355,175 @@ async function processJsonItems(){
                 //console.log('|||||||||||||| TO THE DATA!! |||||||||||||||')
                 //console.log(bdLog)
 
-                // if non was recorded, return to renderer and get another algorithm by NAME
-                // to use until no more
-                if ( totalRecorded === 0 ) { // if no names // move file to non processed
 
-                    console.log('********** NON MATCHED ****** CALLING NEXT ALGORITHM*********')
+                // make sure all items passed through
+                if ( totalCounted === totalItems) {
+
+                    // if non was recorded, return to renderer and get another algorithm by NAME
+                    // to use until no more
+
+                    if ( totalRecorded === 0 ) { // if no names // move file to non processed
+
+                        //console.log('********** NON MATCHED ****** CALLING NEXT ALGORITHM*********')
+                        // TODO call another algo and trim stuff now
+                        //console.log(institutionKeys)
+
+                        if ( priceKey && procedureKey) {
+
+                            // TODO move to a folder of un-matching keys
+                            dt = {
+                                type: 'no-matched-data-given-keys',
+                                subType: 'un-matching-keys-set'
+                            }
+
+
+                            event.sender.send('processed-json-items', dt)
+                        }
+
+                        // Below call the next processor on this file until none
+                        // is left on the list
+                        if ( !priceKey || !procedureKey) {
+                            // remove name from names
+                            // send names to renderer and call another processor
+
+
+                            //console.log(`NAME: ${name}`)
+                            //console.log(names)
+
+                            let namez = {}
+
+                            //name = _.filter(names, (n, index) => index === 0)
+                            namez = _.filter(names, (n, index) => n.name !== 'ByHuman') // remove by human
+                            namez = _.filter(namez, (n, index) => n.name !== name) // remove by this name
+
+                            //console.log('************** NAMEZ *******************')
+                            //console.log(namez)
+                            //console.log(namez.length)
+                            //console.log('************** NAMEZ *******************')
+
+                            // still some processors left
+                            // call the next one
+                            if (namez.length >= 1) {
+
+                                dt = {
+                                    type: 'no-matched-by-given-name', // call next by name
+                                    names: namez,
+                                    items,
+                                    institutionKeys
+                                }
+
+                                //console.log(dt)
+                                //console.log(`totalRecorded : ${totalRecorded}`)
+                                //console.log(`totalMissed : ${totalMissed}`)
+                                //console.log(`totalCounted : ${totalCounted}`)
+                                //console.log(`totalItems : ${totalItems}`)
+                                //console.log(dt)
+
+                                event.sender.send('processed-json-items', dt)
+                            }
+
+                            // No more processor left, move file and call another file
+                            if (namez.length < 1) {
+
+                                    dt = {
+                                        type: 'last-named-processor', // no values
+                                    }
+
+                                    //console.log(dt)
+                                    //console.log('|||||||||||||||||LAST||||||||||||||||')
+
+                                    event.sender.send('processed-json-items', dt)
+                                }
+                            }
+
+                        // remove name from names and pass on to renderer to update states
+                    }
+
+
+                    if (totalRecorded >= 1) {
+
+                        let data = {
+                            refined: matched,
+                            names,
+                            name,
+                            totalMissed,
+                            totalRecorded,
+                            totalCounted,
+                            totalItems,
+                            currentFile,
+                            items
+                        }
+
+
+                        // post refined to dataBase now TODO
+
+                        // this returns the log item of the file
+                        // after passing through where it's data lets
+                        // it.....
+
+                        const logItem = await RefinedDataBridge.handleRefinedItem(data)
+
+                        console.log(matched)
+                        console.log('||||||||||| DONE +++ logItem |||||||')
+
+
+                        if (logItem) {
+
+                            const { log } = logItem
+                            const { created } = log
+
+                            await CsvFile.moveDoneFile(created)
+
+
+                            dt = {
+                                type: 'log-data-object',
+                                created
+                            }
+
+                            event.sender.send('processed-json-items', dt)
+                        }
+                    }
                 }
 
-                if (totalRecorded >= 1) {
-
-                    console.log(names)
-                    console.log(name)
-                    console.log(totalMissed)
-                    console.log(totalRecorded)
-                    console.log(totalCounted)
-                    console.log(totalItems)
-                    //console.log(matched)
-                    console.log('priceKey : ${priceKey} , procedureKey: ${procedureKey}')
-                }
 
 
             }
 
+        }
 
 
-            /*if (!_.isEmpty(items)){
+    })
+}
 
-                // institutions from database below
-                const itemz = items.filter(dt => dt)
+// move file that don't get to the logs table
+async function moveFilesWithInstructions() {
+    ipcMain.on('move-current-file', async (event, args) => {
+        const { type, instructions , currentFile } = args //
 
-                let dt = {}
+        if ( type === 'move-non-processed-file') {
 
+            let from = path.join(__dirname, '../../../rawCSVs/FilesBeingSorted', currentFile)
+            let to = path.join(__dirname, '../../../rawCSVs/NonProcessed/HumanError', currentFile)
 
-                itemz.map(async (item, index) => {
+            await CsvFile.moveCurrentFile(from, to)
 
-                    // send raw item to be refined
-                    // check for matching procedure key/value and price key/value
+            //to = instructions === ''
+            //console.log(currentFile)
 
-                    // TODO create a bridge here instead
-                    // if refined is empty (no price/procedure)
-                    // item, pass the next algorithm maybe
-                    // and so on until we exhaust ways to
-                    // process the item, then move file to
-                    // NonProcessed csv(s) folder
+            //event.sender.send('got-csv', dt)
+        }
 
-                    let dataToRefine = {
-                        currentFile,
-                        institutions,
-                        item
-                    }
+        if ( type === 'move-non-processed-by-algos') {
 
-                    let MatchedItem = await JsonDataBridge.MatchedItems(dataToRefine)
+            let from = path.join(__dirname, '../../../rawCSVs/FilesBeingSorted', currentFile)
+            let to = path.join(__dirname, '../../../rawCSVs/NonProcessed', currentFile)
 
-                    const { name, refined } = MatchedItem
+            await CsvFile.moveCurrentFile(from, to)
 
-                    const { procedure, price } = JSON.parse(refined)
+            //to = instructions === ''
+            //console.log(currentFile)
 
-                    countItems = ++countItems // count items
-
-                    missed = procedure.length === 0 && price.length === 0  ? ++missed : missed
-
-                    recorded = procedure.length >= 1 && price.length >= 1 ? ++recorded : recorded
-
-                    // we can move files here
-                    // that had no matching price and procedure values
-
-                    console.log(`missed : ${missed}`)
-                    console.log(`recorded : ${recorded}`)
-                    console.log(`countItems : ${countItems}`)
-                    console.log(`procedure : ${procedure}`)
-                    console.log(`price : ${price}`)
-                    console.log(JSON.parse(refined))
-                    console.log(`index : ${index}`)
-
-                    let bdLog = index >= 30000 ? '...Loading data to db, might take sometime................' : null
-
-                    //console.log(institutionDt)
-                    console.log('|||||||||||||| count !! |||||||||||||||')
-                    console.log(bdLog)
-
-                    dt = {
-                        type: 'raw-json-data',
-                        refined,
-                        currentFile,
-                        data: item, // all item
-                        missed,
-                        recorded,
-                        index, // item index
-                        totalItems: items.length,
-                        name,
-                        countItems,
-                        items
-                    }
-
-                    // post refined to dataBase now TODO
-
-                    // this returns the log item of the file
-                    // after passing through where it's data lets
-                    // it.....
-                    const logItem = await RefinedDataBridge.handleRefinedItem(dt)
-
-                    if (logItem) {
-
-                        const { log } = logItem
-                        const { created } = log
-
-                        await CsvFile.moveDoneFile(created)
-
-
-                        dt = {
-                            type: 'log-data-object',
-                            created
-                        }
-
-                        event.sender.send('processed-json-items', dt)
-                    }
-
-                })
-            }*/
+            //event.sender.send('got-csv', dt)
         }
 
 

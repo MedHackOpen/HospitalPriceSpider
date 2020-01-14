@@ -4,17 +4,15 @@
 // to determine what item is procedure and its corresponding
 // price in a give json item from a given csv file
 
-const name = 'ByHuman'
-
 //ifPrice
 
-function ifPrice(key, value, priceKey) {
+function ifPrice(key, value, procedureKey, priceKey) {
     let price = priceKey.trim() ===  key.trim() ? value : null // else no price to match
     return price
 }
 
 //ifProcedure
-function ifProcedure(key, value, procedureKey) {
+function ifProcedure(key, value, procedureKey, priceKey) {
 
     let procedure = key.trim() === procedureKey.trim() // key === procedureKey
         ? value
@@ -47,8 +45,8 @@ function ifItem(args) {
             value
         }
 
-        if (ifProcedure(key, value, procedureKey)) procedure.push(itemData)
-        if (ifPrice(key, value, priceKey)) price.push(itemData)
+        if (ifProcedure(key, value, procedureKey, priceKey)) procedure.push(itemData)
+        if (ifPrice(key, value, procedureKey, priceKey)) price.push(itemData)
 
     }
 
@@ -82,7 +80,7 @@ function matchValues(args) {
         // return five objects for now
         let dt = {
             refined, // data processed by this algo
-            name, // name of this file or module that's re
+            // name of this file or module that's re
         }
 
         // pass your data to post to database and sort the file (cvs) that owns this data

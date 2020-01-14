@@ -17,6 +17,9 @@ async function createNewProcedureEntry(args){
 
     try {
 
+        // count items here
+        // set values and return when done
+
         const { institution, institutionDt, fileName, name, procedureName, procedureKey, priceValue, priceKey, index, totalItems, missed, recorded, countItems, items } = args
 
 

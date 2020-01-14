@@ -97,8 +97,27 @@ async function moveDoneFile(args){
         return e
     }
 }
+
+//Initialize file processing by file name
+async function moveCurrentFile(from, to) {
+
+    try {
+
+        const moved = await fsExtra.move(from, to)
+
+
+        return dt
+
+    } catch (e) {
+
+        return e
+    }
+
+
+}
 module.exports = {
     getCsvFile,
     prepareFileForProcessing,
-    moveDoneFile
+    moveDoneFile,
+    moveCurrentFile
 }

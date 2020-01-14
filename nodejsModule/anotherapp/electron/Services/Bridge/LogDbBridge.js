@@ -11,50 +11,44 @@ const path = require('path')
 const LogDbService = require('../Database/LogDbService')
 
 //const SortFile = require('../SortFile')
+//const item = Start.breakJsonItem(items)
+let count = 0
 async function sendNewLogsData(args) {
 
-    // reset count if set
+    let items = {}
+    let logItem = {}
 
-    const {
-        created,
-        institutionDt,
-        fileName,
-        name: processedBy,
-        procedureKey,
-        priceKey,
-        index,
-        totalItems,
-        missed,
-        recorded,
-        countItems,
-        items // all items object in json object
-    } = args
+    args.map((item, index) => {
 
-    const { price, rId: hrID, hospitalName: hstName, itemName } = created // count created items (recorded)
+        const {
+            created,
+            institutionDt,
+            fileName,
+            name,
+            procedureKey,
+            priceKey,
+            totalItems,
+            missed,
+            recorded,
+            countItems,
+            items: itmz
+        } = item
 
-    let rId = created.rId ? hrID : null
-    let hospitalName = created.hospitalName ? hstName : null
+        const { price, rId: hrID, hospitalName: hstName, itemName } = created
 
-
-    //let finished = Math.floor(recorded + missed) === totalItems ? 'FINISHED' : 'NOT-FINISHED'
-    //let finished = Math.floor(index + 1 ) === totalItems ? 'FINISHED' : 'NOT-FINISHED'
-    let finished = countItems === totalItems ? 'FINISHED' : 'NOT-FINISHED'
-
-    //let from = path.join(__dirname, '../../../../rawCSVs/FilesBeingSorted', fileName)
-
-    if (finished === 'FINISHED') {
-
-        //let fileExt = /.csv/i
-        //let filename = path.parse(filePath).base
-        //filename = filename.replace(fileExt, '') // remove .ext from name
+        count = ++count
+        items = itmz
 
 
-        let logItem = {
+        let rId = created.rId ? hrID : null
+        let hospitalName = created.hospitalName ? hstName : null
+
+        logItem =  {
             recorded,
             missed,
             //finished,
             filename: fileName,
-            processedBy,
+            processedBy: name,
             procedureKey,
             priceKey,
             hospitalName, // NOTE: if not defined no institution data found but algorithm matched the data
@@ -64,42 +58,36 @@ async function sendNewLogsData(args) {
             comment: 'No comment for now!!'
         }
 
+
+    })
+
+    //let finished = count === items.length ? 'FINISHED' : 'NOT-FINISHED'
+
+    console.log(logItem)
+    console.log(count)
+    //console.log(finished)
+    console.log('++++++countItems++++++')
+
+    const log = await LogDbService.createNewLogEntry(logItem)
+
+    return { log, message: '---------LOG RETURNED-----------------'}
+
+    /*if ( finished === 'FINISHED' ) {
+
+        console.log(logItem)
+        console.log(count)
+        console.log(finished)
+        console.log('++++++countItems++++++')
+
         const log = await LogDbService.createNewLogEntry(logItem)
 
         return { log, message: '---------LOG RETURNED-----------------'}
 
-        //let to = ''
-
-        /*if (recorded > 0 && institutionDt ) to = path.join(__dirname, '../../../../rawCSVs/ProcessedFiles',processedBy, fileName)
-        if (!institutionDt && created === 'no-data') to = path.join(__dirname, '../../../../rawCSVs/ProcessedFiles/',processedBy, 'MissingInstitutionData', fileName)
-        if (recorded === 0) to = path.join(__dirname, '../../../../rawCSVs/NonProcessedFiles', fileName)
-        // TODO refine files without institution data
-
-        console.log('********************* DONE FOR FILE !!!*********************')
-        console.log(filename)
-        console.log('********************* CALLING AGAIN FOR ANOTHER FILE !!!*********************')
-        console.log('********************* DONE FOR FILE !!!*********************')
-        console.log(filename)
-        console.log(from)
-        console.log(to)
-        console.log(log)
-        console.log('********************* CALLING AGAIN FOR ANOTHER FILE !!!*********************')
-        console.log('||||||||||||DONE ALL TOTAL ITEMS ||||||||||||||')
-        // move file here instead
-
-
-        //return await SortFile.moveFileTo(from, to)
-
-
-        //return log*/
-    }
-
-    /*if (institutionDt && created === 'no-data'){
-
-        let to = path.join(__dirname, '../../../../rawCSVs/NonProcessedFiles', fileName)
-
-        //return await SortFile.moveFileTo(from, to)
+        // reset count if set
     }*/
+
+
+
 
 
 }
