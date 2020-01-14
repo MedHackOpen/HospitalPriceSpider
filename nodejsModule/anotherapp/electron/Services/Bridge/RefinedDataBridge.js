@@ -26,7 +26,7 @@ async function getInstitutionByFileName(fileName){
 async function prepareDataForDatabase(args){
 
     const { data, institution } = args
-    const { type, refined, currentFile: fileName, index, totalItems, missed, recorded, name } = data
+    const { type, refined, currentFile: fileName, index, totalItems, missed, recorded, name, countItems, items } = data
 
 
     let refinedData = {}
@@ -98,6 +98,8 @@ async function prepareDataForDatabase(args){
         totalItems,
         missed,
         recorded,
+        countItems,
+        items
     }
     // compare index and totalItems before repeating the file read data processes
     // make sure the last index (item) has passed through
@@ -117,6 +119,9 @@ async function prepareDataForDatabase(args){
 async function handleRefinedItem(args){
 
     const { type, refinedD, currentFile, name, data, index, totalItems, recorded, missed } = args
+
+    console.log(args)
+    console.log('***********************ZA DATABASE**************************')
 
     let fileExt = /.csv/i
     let fileName = currentFile.replace(fileExt, '') // remove .ext from name

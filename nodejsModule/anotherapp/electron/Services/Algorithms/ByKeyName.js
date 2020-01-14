@@ -31,13 +31,14 @@ function ifPrice(key, value) {
 
     // refine further
     let anotherKey = key.toLowerCase()
-    if(anotherKey.includes('code') || anotherKey.includes('charge description') || anotherKey.includes('number')) price = null // like charge code not being price
+    if(anotherKey.includes('code') || anotherKey.includes('charge description')
+        || anotherKey.includes('number' || anotherKey.includes('schedule')  )) price = null // like charge code not being price
 
     // check if value is a string
     //if (value.match(/a-z/i)) price = null
 
     // if value starts with $ price === value
-    //if ( /^$/.test(value) ) price = value
+    if ( /^$/.test(value) ) price = value
 
     return price
 }
@@ -103,6 +104,9 @@ function ifItem(data) {
 //result item
 function matchValues(args) {
 
+    console.log(args)
+    console.log('|||||||||||||||args||||||||||||')
+
 
     let refined = ifItem(args)
     // return five objects for now
@@ -113,6 +117,8 @@ function matchValues(args) {
 
     // pass your data to post to database and sort the file (cvs) that owns this data
     //return Report.rawReportData(dt)
+
+
 
     return dt
 

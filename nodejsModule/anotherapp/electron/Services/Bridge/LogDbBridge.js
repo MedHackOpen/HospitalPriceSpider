@@ -9,10 +9,11 @@ const path = require('path')
 // and repeat the process again with another file
 
 const LogDbService = require('../Database/LogDbService')
-//const SortFile = require('../SortFile')
 
+//const SortFile = require('../SortFile')
 async function sendNewLogsData(args) {
 
+    // reset count if set
 
     const {
         created,
@@ -24,7 +25,9 @@ async function sendNewLogsData(args) {
         index,
         totalItems,
         missed,
-        recorded
+        recorded,
+        countItems,
+        items // all items object in json object
     } = args
 
     const { price, rId: hrID, hospitalName: hstName, itemName } = created // count created items (recorded)
@@ -33,8 +36,9 @@ async function sendNewLogsData(args) {
     let hospitalName = created.hospitalName ? hstName : null
 
 
-    let finished = Math.floor(recorded + missed) === totalItems ? 'FINISHED' : 'NOT-FINISHED'
+    //let finished = Math.floor(recorded + missed) === totalItems ? 'FINISHED' : 'NOT-FINISHED'
     //let finished = Math.floor(index + 1 ) === totalItems ? 'FINISHED' : 'NOT-FINISHED'
+    let finished = countItems === totalItems ? 'FINISHED' : 'NOT-FINISHED'
 
     //let from = path.join(__dirname, '../../../../rawCSVs/FilesBeingSorted', fileName)
 
@@ -56,12 +60,11 @@ async function sendNewLogsData(args) {
             hospitalName, // NOTE: if not defined no institution data found but algorithm matched the data
             rId, // if not defined no institution data found but algorithm matched the data
             totalItems,
+            countItems,
             comment: 'No comment for now!!'
         }
 
-
         const log = await LogDbService.createNewLogEntry(logItem)
-
 
         return { log, message: '---------LOG RETURNED-----------------'}
 

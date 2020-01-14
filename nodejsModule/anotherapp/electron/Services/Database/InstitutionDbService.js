@@ -8,10 +8,10 @@ sequelize.sync()
         //console.log(database)
     })
 
-function getInstitutions(){
+async function getInstitutions(){
     try {
 
-        return Institutions.findAll({
+        return await Institutions.findAll({
             attributes: [
                 'uuid', 'rId', 'hospitalName', 'city', 'country', 'mainHospitalName','numberBeds',
                 'streetAddress','numberLocation','itemColumnName', 'avgPriceColumnName',
@@ -22,6 +22,8 @@ function getInstitutions(){
         })
 
     } catch (e) {
+
+        console.log(e)
 
         return e
     }

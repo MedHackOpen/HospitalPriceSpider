@@ -17,9 +17,14 @@ const CsvFile = require('./Services/FilesAndFolders/CsvFiles')
 const csvToJson = require('./Services/DataConversionServices/csvToJson')
 const Start = require('./Services/Start/Start')
 const RefinedDataBridge = require('./Services/Bridge/RefinedDataBridge')
+const InstitutionDbService = require('./Services/Database/InstitutionDbService')
 
-//Algorithm service
-const ByKeyName = require('./Services/Algorithms/ByKeyName')
+// ALgo names
+const Names = require('./Services/Algorithms/Names')
+
+
+// return matched items if, or the item unmatched
+const JsonDataBridge = require('./Services/Algorithms/JsonDataBridge')
 
 
 let mainWindow = null
@@ -46,10 +51,11 @@ function initialize () {
 
         mainWindow = new BrowserWindow(windowOptions)
 
-        mainWindow.loadURL(isDev ?
+        /*mainWindow.loadURL(isDev ?
             'http://localhost:3000/' : // yarn start at localhost
             `file://${path.join(__dirname, '../build/index.html')}` // run yarn build
-        )
+        )*/
+        mainWindow.loadURL('http://localhost:3000/')
 
         // Custom dev
         if ( isDev ) {
@@ -114,20 +120,68 @@ function loadListeners () {
     })()
 }
 
+async function getInstitutionByFileName( fileName){
+
+    /*institutions.map(institution => {
+        console.log(institution.savedRepoTableName)
+    })*/
+
+    let institutions = await InstitutionDbService.getInstitutions() // set institutions
+
+    let institution = await institutions.filter(institution => institution.savedRepoTableName === fileName)
+
+
+    let dt = {}
+    institution.map(item => {
+        dt = {
+            procedureKey: item.itemColumnName,
+            priceKey: item.avgPriceColumnName
+        }
+    })
+
+    return dt
+
+}
+
 // DATA events
 // Initial file stages
 async function csvFilesAndFolders(){
     ipcMain.on('get-csv', async (event, args) => {
-        const { type, data, currentFile } = args
+        const { type, data, currentFile } = args //
+
+        if ( type === 'just-the-names') {
+
+            const names = Names.getNames()// Algorithm names
+            const dt = {
+                type: 'just-the-names',
+                names
+            }
+
+            event.sender.send('got-csv', dt)
+        }
 
         if( type === 'first-file-in-folder'){
 
+
             let csvFile = await CsvFile.getCsvFile()
-            const dt = {
-                type: 'new-csv-file',
-                data: csvFile
+
+            if(csvFile) {
+
+                let fileExt = /.csv/i
+                let fileName = csvFile.replace(fileExt, '')
+                let institutionKeys = {}
+                institutionKeys = await getInstitutionByFileName(fileName)
+
+                const names = Names.getNames()// Algorithm names
+                const dt = {
+                    type: 'new-csv-file',
+                    data: csvFile,
+                    institutionKeys,
+                    names
+                }
+
+                event.sender.send('got-csv', dt)
             }
-            event.sender.send('got-csv', dt)
         }
 
         if( type === 'move-file-for-processing'){ // data === fileName
@@ -180,79 +234,247 @@ async function csvFilesAndFolders(){
 // call json data on these listeners
 async function processJsonItems(){
     ipcMain.on('process-json-items', async (event, args) => {
-        const { type, data, currentFile, items } = args
+        const { type, data, currentFile, items, institutionKeys, names, name } = args
+        let institutions = await InstitutionDbService.getInstitutions() // set institutions
 
         //const item = Start.breakJsonItem(items)
         let missed = 0 // count missed
         let recorded = 0 // count recorded items matched by this name file name eg const name = 'ByKeyName' in Algorithms folder
-
-        if (_.isEmpty(items)) event.sender.send('processed-json-items', 'NO_FILE')
-
-        if (!_.isEmpty(items)){
-
-            const itemz = items.filter(dt => dt)
-
-            let dt = {}
+        let countItems = 0
 
 
-            itemz.map((item, index) => {
+        const { priceKey, procedureKey } = institutionKeys
 
-                // send raw item to be refined
-                // check for matching procedure key/value and price key/value
+        if ( type === 'process-json-data-from-csv' ) {
 
-                // TODO create a bridge here instead
-                // if refined is empty (no price/procedure)
-                // item, pass the next algorithm maybe
-                // and so on until we exhaust ways to
-                // process the item, then move file to
-                // NonProcessed csv(s) folder
-                let justRefined = ByKeyName.matchValues(item)
+            // @ TODO bugged not working anymore when no file :: check!!
+            if (_.isEmpty(items)) event.sender.send('processed-json-items', 'NO_FILE')
 
-                const { name, refined } = justRefined
 
-                const { procedure, price } = JSON.parse(refined)
+            if (!_.isEmpty(items)){
 
-                missed = procedure.length === 0 && price.length === 0  ? ++missed : missed
+                // institutions from database below
+                let itemz = items.filter(dt => dt)
 
-                recorded = procedure.length >= 1 && price.length >= 1 ? ++recorded : recorded
+                console.log(itemz)
+                console.log('|||||||||||||||||process-json-items|||||||||||||')
+                console.log('|||||||||||||||||process-json-items|||||||||||||')
+                console.log('|||||||||||||||||process-json-items|||||||||||||')
+                console.log('|||||||||||||||||process-json-items|||||||||||||')
+                console.log('|||||||||||||||||process-json-items|||||||||||||')
 
-                // we can move files here
-                // that had no matching price and procedure values
+                let dt = {}
 
-                console.log(`missed : ${missed}`)
-                console.log(`recorded : ${recorded}`)
-                console.log(`index : ${index}`)
+                let matched = await Promise.all(
+                    itemz.map( async (item, index) => {
+                        // send raw item to be refined
+                        // check for matching procedure key/value and price key/value
 
-                let bdLog = index >= 30000 ? '...Loading data to db, might take sometime................' : null
+                        // TODO create a bridge here instead
+                        // if refined is empty (no price/procedure)
+                        // item, pass the next algorithm maybe
+                        // and so on until we exhaust ways to
+                        // process the item, then move file to
+                        // NonProcessed csv(s) folder
 
-                //console.log(institutionDt)
-                console.log('|||||||||||||| count !! |||||||||||||||')
-                console.log(bdLog)
+                        let dataToRefine = {
+                            currentFile,
+                            institutions,
+                            item,
+                            name, // Name
+                        }
 
-                dt = {
-                    type: 'raw-json-data',
-                    refined,
-                    currentFile,
-                    data: item, // all item
-                    missed,
-                    recorded,
-                    index, // item index
-                    totalItems: items.length,
+                        let MatchedItem = await JsonDataBridge.MatchedItems(dataToRefine)
+
+                        const { name: processorName , refined } = MatchedItem
+
+                        const { procedure, price } = JSON.parse(refined)
+
+                        countItems = ++countItems // count items
+
+                        missed = procedure.length === 0 && price.length === 0  ? ++missed : missed
+
+                        recorded = procedure.length >= 1 && price.length >= 1 ? ++recorded : recorded
+
+                        // we can move files here
+                        // that had no matching price and procedure values
+
+                        /*console.log(`missed : ${missed}`)
+                        console.log(`recorded : ${recorded}`)
+                        console.log(`countItems : ${countItems}`)
+                        console.log(`procedure : ${procedure}`)
+                        console.log(`price : ${price}`)
+                        console.log(JSON.parse(refined))
+                        console.log(`index : ${index}`)*/
+
+                        // if totalItems === count the finished is FINISHED
+
+                        dt = {
+                            type: 'refined-json-data',
+                            refined,
+                            currentFile,
+                            //data: item, // all item
+                            missed, // get the highest later
+                            recorded, // get the highest later
+                            //index, // item index
+                            totalItems: items.length,
+                            //name,
+                            countItems, // get the highest later
+                            //items
+                        }
+
+                        // post refined to dataBase now TODO
+
+                        // this returns the log item of the file
+                        // after passing through where it's data lets
+                        // it.....
+                        //const logItem = await RefinedDataBridge.handleRefinedItem(dt)
+                        //console.log(JSON.stringify(dt))
+                        //console.log('|||||||||||||||dt|||||||||||||||||')
+
+                        //console.log(institutionDt)
+
+                        return dt
+                    })
+                )
+
+                //matched = matched.filter(m => m)
+                let totalMissed = 0
+                let totalRecorded = 0
+                let totalCounted = 0
+                let totalItems = 0
+                matched.map(item => {
+                    // get some items from matched for some logic checks before proceeding to database
+                    const { refined, missed: ttMissed, recorded: ttRecorded, totalItems: ttItems, countItems: ttCounted } = item
+                    totalMissed = ttMissed
+                    totalRecorded = ttRecorded
+                    totalCounted = ttCounted
+                    totalItems = ttItems
+                })
+
+                let data = {
+                    data: matched,
+                    names,
                     name,
+                    totalMissed,
+                    totalRecorded,
+                    totalCounted,
+                    totalItems,
+                }
+
+                // if recorded is greater than 30000 will take a while, log to console
+                // if non is recorded send to main to select another algorithm
+                //let bdLog = index >= 30000 ? '...Loading data to db, might take sometime................' : null
+                //console.log('|||||||||||||| TO THE DATA!! |||||||||||||||')
+                //console.log(bdLog)
+
+                // if non was recorded, return to renderer and get another algorithm by NAME
+                // to use until no more
+                if ( totalRecorded === 0 ) { // if no names // move file to non processed
+
+                    console.log('********** NON MATCHED ****** CALLING NEXT ALGORITHM*********')
+                }
+
+                if (totalRecorded >= 1) {
+
+                    console.log(names)
+                    console.log(name)
+                    console.log(totalMissed)
+                    console.log(totalRecorded)
+                    console.log(totalCounted)
+                    console.log(totalItems)
+                    //console.log(matched)
+                    console.log('priceKey : ${priceKey} , procedureKey: ${procedureKey}')
                 }
 
 
-                // post refined to dataBase now TODO
+            }
 
-                // this returns the log item of the file
-                // after passing through where it's data lets
-                // it.....
-                RefinedDataBridge.handleRefinedItem(dt).then((logItem) => {
+
+
+            /*if (!_.isEmpty(items)){
+
+                // institutions from database below
+                const itemz = items.filter(dt => dt)
+
+                let dt = {}
+
+
+                itemz.map(async (item, index) => {
+
+                    // send raw item to be refined
+                    // check for matching procedure key/value and price key/value
+
+                    // TODO create a bridge here instead
+                    // if refined is empty (no price/procedure)
+                    // item, pass the next algorithm maybe
+                    // and so on until we exhaust ways to
+                    // process the item, then move file to
+                    // NonProcessed csv(s) folder
+
+                    let dataToRefine = {
+                        currentFile,
+                        institutions,
+                        item
+                    }
+
+                    let MatchedItem = await JsonDataBridge.MatchedItems(dataToRefine)
+
+                    const { name, refined } = MatchedItem
+
+                    const { procedure, price } = JSON.parse(refined)
+
+                    countItems = ++countItems // count items
+
+                    missed = procedure.length === 0 && price.length === 0  ? ++missed : missed
+
+                    recorded = procedure.length >= 1 && price.length >= 1 ? ++recorded : recorded
+
+                    // we can move files here
+                    // that had no matching price and procedure values
+
+                    console.log(`missed : ${missed}`)
+                    console.log(`recorded : ${recorded}`)
+                    console.log(`countItems : ${countItems}`)
+                    console.log(`procedure : ${procedure}`)
+                    console.log(`price : ${price}`)
+                    console.log(JSON.parse(refined))
+                    console.log(`index : ${index}`)
+
+                    let bdLog = index >= 30000 ? '...Loading data to db, might take sometime................' : null
+
+                    //console.log(institutionDt)
+                    console.log('|||||||||||||| count !! |||||||||||||||')
+                    console.log(bdLog)
+
+                    dt = {
+                        type: 'raw-json-data',
+                        refined,
+                        currentFile,
+                        data: item, // all item
+                        missed,
+                        recorded,
+                        index, // item index
+                        totalItems: items.length,
+                        name,
+                        countItems,
+                        items
+                    }
+
+                    // post refined to dataBase now TODO
+
+                    // this returns the log item of the file
+                    // after passing through where it's data lets
+                    // it.....
+                    const logItem = await RefinedDataBridge.handleRefinedItem(dt)
 
                     if (logItem) {
 
                         const { log } = logItem
                         const { created } = log
+
+                        await CsvFile.moveDoneFile(created)
+
 
                         dt = {
                             type: 'log-data-object',
@@ -262,12 +484,10 @@ async function processJsonItems(){
                         event.sender.send('processed-json-items', dt)
                     }
 
-
                 })
-
-
-            })
+            }*/
         }
+
 
     })
 }

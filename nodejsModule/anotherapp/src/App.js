@@ -8,12 +8,16 @@ import JsonItem from "./Components/JsonItem";
 import RefinedItem from "./Components/RefinedItem";
 import Spinner from "./Components/Spinner";
 import Log from "./Components/Log";
+import Algorithms from "./Components/Algorithms";
 
 const { ipcRenderer } = window.require('electron')
 
 class App extends Component {
     state = {
         csvFiles: {},
+        names: {},
+        institutionKeys: {},
+        name: '',
         currentProcess: 'None at the moment......',
         message: {},
         currentFile: {},
@@ -25,17 +29,62 @@ class App extends Component {
         log: {}
     }
 
+    // names as received with the json item
+    // from csv and the institution data (keys)
+    // if any
+    setProcessorName = (names, institutionKeys) => {
+        const { priceKey, procedureKey } = institutionKeys
+
+        if (!_.isEmpty(priceKey) && !_.isEmpty(procedureKey)) return 'ByHuman' // set name here
+
+        if (_.isEmpty(priceKey) && _.isEmpty(procedureKey)) {
+
+            let name = ''
+
+            name = _.filter(names, (n, index) => index === 0)
+
+            name = name.map(item => item.name)
+
+
+            /*console.log('||||||||||||||| institutionKeys |||||||||||||||||')
+            console.log(institutionKeys)
+            console.log(names)
+            console.log(name[0])
+            console.log('||||||||||||||| institutionKeys |||||||||||||||||')*/
+
+            return name[0]
+        }
+
+    }
+
     sendArgsToMain = (args) => {
-        const { csvFiles, currentFile, csvData, procedureData, log, message }  = this.state
-        const { type, data, items } = args
+        const {
+            csvFiles,
+            currentFile,
+            csvData,
+            procedureData,
+            log,
+            message,
+            institutionKeys: stateKeys,
+            names: stateNames,
+            name: stateName,
+        }  = this.state
+
+        const { type, data, items,  institutionKeys, names } = args
 
         if (type === 'new-csv-file'){
 
 
             let dt = {
                 type: 'move-file-for-processing',
-                data
+                data,
+                items,
+                //institutionKeys,
+                //names,
+                //name: this.setProcessorName(institutionKeys, names)
             }
+
+            // set names here and forward that for processing
 
             ipcRenderer.send('get-csv', dt)
         }
@@ -51,15 +100,25 @@ class App extends Component {
             ipcRenderer.send('get-csv', dt)
         }
 
+        // No send data to be processed by defined
+        // processor name, with all the needed data
+        // this should send the matched data to the
+        // database and if no matched data (recorded === 0)
+        // try and call another algorithm by name
         if (type === 'json-data-from-csv') {
 
             let dt = {
-                type: 'json-data-from-csv', // send data to algorithm now
+                type: 'process-json-data-from-csv', // send data to algorithm now
                 currentFile,
-                data,
+                data: csvData,
+                institutionKeys: stateKeys,
+                names: stateNames,
+                name: stateName,//this.setProcessorName(institutionKeys, names)
                 items
             }
 
+
+            // send data to processors below
             ipcRenderer.send('process-json-items', dt)
         }
 
@@ -71,21 +130,39 @@ class App extends Component {
         const { csvFiles, currentFile, csvData, procedureData, log }  = this.state
         // using the above states
         // and events to our rescue, we can now call each process in order
+        let dt = {
+            type: 'just-the-names',
+            data: {}
+        }
+
+        ipcRenderer.send('get-csv', dt)
 
         // request data
-        let dt = {
+        dt = {
             type: 'just-listen',
             data: {}
         }
         //ipcRenderer.send('get-csv', dt)
         ipcRenderer.on('got-csv', (event, args) => {
 
-            const { type, data, items } = args
+            const { type, data, items, institutionKeys, names } = args
+
+            // set algo names
+            if ( type === 'just-the-names') {
+                this.setState({
+                    names
+                })
+            }
 
             if (type === 'new-csv-file'){
+
+
                 this.setState({
                     currentFile: data,
+                    institutionKeys, // if institution key is set call ByHuman
+                    names,
                     currentProcess: 'Got new file (in csv folder)......',
+                    name: this.setProcessorName(names, institutionKeys)
                 })
 
                 this.sendArgsToMain(args)
@@ -326,6 +403,8 @@ class App extends Component {
             message,
             jsonItem,
             refinedItem,
+            names,
+            name
         }  = this.state
 
         return (
@@ -333,6 +412,10 @@ class App extends Component {
                 <h4>Hello MedHack Tm</h4>
                 <hr/>
                 {this.renderInit()}
+                <Algorithms
+                    names={names}
+                    name={name}
+                />
                 <div className="shadow-lg">
                     {/*<ProgressMessage
                         message={message}

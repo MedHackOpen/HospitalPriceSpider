@@ -61,7 +61,44 @@ async function prepareFileForProcessing(fileName) {
 
 
 }
+
+async function moveDoneFile(args){
+    try {
+
+        const {id, recorded, missed, filename: fileName, processedBy, procedureKey, priceKey, hospitalName, rId, totalItems} = args
+
+        console.log('++++++++++++MOVE DONE FILE TO A FOLDER NOW ++++++++')
+        console.log(args)
+        console.log('++++++++++++MOVE DONE FILE TO A FOLDER NOW ++++++++')
+        console.log(fileName)
+        console.log('++++++++++++MOVE DONE FILE TO A FOLDER NOW ++++++++')
+        let to = path.join(__dirname, '../../../../../rawCSVs/Unknown', fileName) // default
+
+        let from = path.join(__dirname, '../../../../../rawCSVs/FilesBeingSorted', fileName)
+
+        if ( recorded === 0) to =  path.join(__dirname, '../../../../../rawCSVs/NonProcessedFiles', fileName)
+
+        if ( recorded > 0 && rId !==null && hospitalName !== null ) to =  path.join(__dirname, '../../../../../rawCSVs/ProcessedFiles', processedBy, fileName)
+
+        if ( recorded > 0 && rId === 'NoN') to = path.join(__dirname, '../../../../../rawCSVs/MissingRID',fileName) // no institution data
+
+        const moved = await fsExtra.move(from, to)
+
+        const dt = {
+            event: 'success',
+            from,
+            to
+        }
+
+        return dt
+
+    } catch (e) {
+
+        return e
+    }
+}
 module.exports = {
     getCsvFile,
     prepareFileForProcessing,
+    moveDoneFile
 }

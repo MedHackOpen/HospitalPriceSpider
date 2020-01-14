@@ -17,7 +17,7 @@ async function createNewProcedureEntry(args){
 
     try {
 
-        const { institution, institutionDt, fileName, name, procedureName, procedureKey, priceValue, priceKey, index, totalItems, missed, recorded } = args
+        const { institution, institutionDt, fileName, name, procedureName, procedureKey, priceValue, priceKey, index, totalItems, missed, recorded, countItems, items } = args
 
 
         let item = {
@@ -30,7 +30,9 @@ async function createNewProcedureEntry(args){
             index,
             totalItems,
             missed,
-            recorded
+            recorded,
+            countItems,
+            items
         }
 
         if(procedureName && priceValue && institutionDt.rId && institutionDt.hospitalName){
@@ -74,7 +76,9 @@ async function createNewProcedureEntry(args){
                 index,
                 totalItems,
                 missed,
-                recorded
+                recorded,
+                countItems,
+                items
             }
 
             return item
