@@ -1,4 +1,4 @@
-// Names for all algorithms created
+// Names for all algorithms/processors/modules created
 const names = [
     { id: "ByHuman", name: "ByHuman" },
     { id: "ByKeyName", name: "ByKeyName" },
