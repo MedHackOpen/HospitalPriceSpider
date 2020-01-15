@@ -80,7 +80,7 @@ async function moveDoneFile(args){
 
         if ( recorded > 0 && rId !==null && hospitalName !== null ) to =  path.join(__dirname, '../../../../../rawCSVs/ProcessedFiles', processedBy, fileName)
 
-        if ( recorded > 0 && rId === 'NoN') to = path.join(__dirname, '../../../../../rawCSVs/MissingRID',fileName) // no institution data
+        if ( recorded > 0 && rId === null ) to = path.join(__dirname, '../../../../../rawCSVs/MissingRID',fileName) // no institution data
 
         const moved = await fsExtra.move(from, to)
 

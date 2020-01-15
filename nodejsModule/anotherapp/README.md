@@ -28,3 +28,9 @@ as this app relies on that, check file name `institutions_latest.sql` in `SQLs` 
 
 *   Now our app is fired up, click Process csv files button to load csv data into database.
 *   If you get an error on the console, click Process csv files button again to load another file.
+
+    
+    ---------------
+    DEMO
+    ----------------
+    ![Processing files](assets/git/medhack_app_gif.gif)

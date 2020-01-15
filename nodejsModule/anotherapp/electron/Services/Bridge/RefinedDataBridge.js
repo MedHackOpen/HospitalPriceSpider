@@ -141,6 +141,10 @@ async function handleRefinedItem(args){
     let fileName = currentFile.replace(fileExt, '') // remove .ext from name
     let institution = await getInstitutionByFileName(fileName)
 
+    console.log(institution)
+    console.log(fileName)
+    console.log('|||||||||||||||||||||||item|||||||||||||||||||')
+
 
     let dt = {
         data: args,

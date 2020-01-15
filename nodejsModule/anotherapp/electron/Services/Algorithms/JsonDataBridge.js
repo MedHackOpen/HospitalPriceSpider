@@ -56,14 +56,10 @@ async function MatchedItems(args) {
     }
 
     if ( name === 'ByKeyName') {
-        dt = {
-            type: 'by-key-name',
-            procedureKey,
-            priceKey,
-            item
-        }
 
-        matched = ByKeyName.matchValues(dt)
+        // pass only item as that's what this processes
+
+        matched = ByKeyName.matchValues(item)
     }
 
 
