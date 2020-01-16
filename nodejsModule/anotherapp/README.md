@@ -33,4 +33,4 @@ as this app relies on that, check file name `institutions_latest.sql` in `SQLs` 
     ---------------
     DEMO
     ----------------
-    ![Processing files](assets/git/medhack_app_gif.gif)
+    ![Processing files](assets/gif/medhack_app_gif.gif)
