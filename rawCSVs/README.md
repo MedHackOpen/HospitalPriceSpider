@@ -40,7 +40,7 @@ To contribute to this;
   NOTE: make sure to copy the files you wish to test with from [NonProcessed] folder to [filesToSort] folder.
   Please check REPORT.MD in this folder
   
-  ---------------
-      DEMO
-      ----------------
-      ![Processing files](nodejsModule/anotherapp/assets/git/medhack_app_gif.gif)
+---------------
+    DEMO
+----------------
+![Processing files](nodejsModule/anotherapp/assets/git/medhack_app_gif.gif)
