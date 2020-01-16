@@ -22,9 +22,12 @@ async function createNewProcedureEntry(args){
 
         const { institution, institutionDt, fileName, name, procedureName, procedureKey, priceValue, priceKey, index, totalItems, missed, recorded, countItems, items } = args
 
-
         let item = {
-            created: 'no-data',
+            created: {
+                state: 'no-data',
+                priceKey,
+                procedureKey,
+            },
             institutionDt,
             fileName,
             name,
@@ -48,11 +51,11 @@ async function createNewProcedureEntry(args){
                 price: priceValue,
                 hospitalName: institutionDt.hospitalName,
                 avgPrice: priceValue, //@TODO maybe
-                //medianPrice: institutionDt.medianPrice,
+                medianPrice: institutionDt.medianPrice,
                 // sampleSize: ,
-                //outpatientAvgPrice: institutionDt.outpatientAvgPrice,
-                //inpatientAvgPrice:  institutionDt.inpatientAvgPrice,
-                //revenue_code: institutionDt.revenue_code,
+                outpatientAvgPrice: institutionDt.outpatientAvgPrice,
+                inpatientAvgPrice:  institutionDt.inpatientAvgPrice,
+                revenue_code: institutionDt.revenue_code,
                 //latestPriceDate: ,
                 //firstPriceDate: ,
                 //changeSinceLastUpdate: ,
@@ -62,7 +65,7 @@ async function createNewProcedureEntry(args){
                 //itemsRequiredForThis:  ,
                 //keywords: ,
                 country: institutionDt.country ,
-                //currency: institutionDt.currency TODO set by country
+                currency: 'USD'//institutionDt.currency TODO set by country
             })
 
             let created = await newProcedure.save()

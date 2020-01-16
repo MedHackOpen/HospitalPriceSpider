@@ -8,6 +8,7 @@ async function createNewLogEntry(args){
 
     try {
 
+
         let newLog = Logs.build(args)
 
         let created = await newLog.save()

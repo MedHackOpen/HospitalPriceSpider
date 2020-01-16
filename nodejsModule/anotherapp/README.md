@@ -32,6 +32,6 @@ also [rawCSVs/filesToSort] folder should contain the csv files you wish to proce
 
     
     ---------------
-    DEMO
+        DEMO
     ----------------
-    ![Processing files](assets/gif/medhack_app_gif.gif)
+![Processing files](assets/gif/medhack_app_gif.gif)

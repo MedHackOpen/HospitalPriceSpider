@@ -24,9 +24,9 @@ async function sendNewLogsData(args) {
             created,
             institutionDt,
             fileName,
-            name,
             procedureKey,
             priceKey,
+            name,
             totalItems,
             missed,
             recorded,
@@ -34,12 +34,12 @@ async function sendNewLogsData(args) {
             items: itmz
         } = item
 
-        const { price, rId: hrID, hospitalName: hstName, itemName } = created
+        // created state === 'no-data means the record never got to the
+        // procedures table because of missing rId and hospitalName
+        const { state, price, rId: hrID, hospitalName: hstName, itemName } = created
 
         count = ++count
         items = itmz
-
-
         let rId = created.rId ? hrID : null
         let hospitalName = created.hospitalName ? hstName : null
 
@@ -65,8 +65,10 @@ async function sendNewLogsData(args) {
 
     console.log(logItem)
     console.log(count)
-    //console.log(finished)
     console.log('++++++countItems++++++')
+
+    // TODO priceKey and procedureKey are empty if the last item was not matched
+    // rectify that
 
     const log = await LogDbService.createNewLogEntry(logItem)
 
