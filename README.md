@@ -152,9 +152,13 @@ see the **README.md** in this folder
 Refer to **README.md** in ./nodejsFolder or wiki documentation [here](https://github.com/MedHackOpen/HospitalPriceSpider/wiki)
 
 ## Contributions 
-To contribute to this project, please check REPORT.MD in [rawCSVs] folder and README.MD
-[nodejsModule/anotherapp/electron/Services/Algorithms].
-Thanks
+To contribute to this project; 
+* Check REPORT.MD and README.MD in [rawCSVs] folder  and also the README.MD in the [SQLs] folder:
+    to continue the remaining work on the files (csvs and institutions' data).
+    
+* If you wish to contribute on the way csv files are processed and loaded to the database, please check
+  README.MD in [nodejsModule/anotherapp/electron/Services/Algorithms].
+  
 ## Contact
 
 hello@medhack.info

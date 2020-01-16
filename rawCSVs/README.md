@@ -1,5 +1,6 @@
-###Files/Folders in this folder have been sorted by `http://localhost:3007/api/sort-files` endpoint.
-You may reload the page severally but it's meant to run and sort all in one full request
+
+Files in this folder have been sorted by app at [nodejsModule/anotherapp/]
+------------------------
 
 CONTENTS OF THIS FILE
 ---------------------
@@ -7,24 +8,39 @@ CONTENTS OF THIS FILE
  * Folder Structure/Details
  * Contributing
 
-FOLDER STRUCTURE
+FOLDER STRUCTURE [Folders in this directory]
 ----------------
 
-* `./` The root of this directory contains files staged for processing(thought to have no errors so far)
+* [FilesBeingSorted] Should contain a single file, loaded by the app. Don't put files here because the app will skip it(them).
 
-* `./unSortedFiles` Contains files unknown, ie the have no related hospital (savedTableRepoName is empty
-in institutions/spreadsheet)
+* [filesToSort] Should contain all the csv files you wish to process. Make sure this folder has files before clicking process
+  csv files on the app at [nodejsModule/anotherapp/]
 
-* `./missingDetails` This folder contains files with missing required fields ie `institution.itemColumnName`, `institution.avgPriceColumnName`, `institution.country`
+* [MissingRID] Should contain or contains csv files with incomplete or no institution's data related to each file.
 
-* `./notProcessed` This folder contains files that were not processed during the latest commit(@TODO check names vs ext)
+* [NonProcessed] Should contain or contains csv files that were not processed. There was no matching procedure and its price
+  from the available processors (see: [nodejsModule/anotherapp/electron/Services/Algorithms] folder to contribute to this).
+  Files in this folder need some work
 
-* `./processed` This folder contains files that were processed in the latest commit, sorted with total items count per
-successful request, check the last one ie folder (`./Done from 442,551 to`) with errors, mostly database related memory(@TODO improve on db requests)
+* [ProcessedFiles] Should contain or contains files that have been processed by our app, sorted by folders. Folders are named
+  after the processor/algorithm that matched its data. (see file [nodejsModule/anotherapp/electron/Services/Algorithms/Names.js])
+  
+* [WithErrors] Contains unknown files or badly formatted files according to our app. These files needs checking too.
                  
 
 CONTRIBUTING
 -------------
 
-To contribute and maybe test, move all folders to `./unSortedFiles` folder and go to `http://localhost:3007/api/sort-files`
-if you have started your node js and mysql server locally as configured in `<project dir>/nodejsModule/database/config/config.json`
+To contribute to this;
+* Check if the information in the institution table is accurate and complete for files in [MissingRID] folder
+* To help process the remaining non processed files in [NonProcessed] folder, write another module(algorithm)
+  to help determine what values should be the procedures and their corresponding price values. Check folder
+  [nodejsModule/anotherapp/electron/Services/Algorithms] for how to approach this and feed the data to the
+  api responsible for populating the procedures' and logs' table.
+  NOTE: make sure to copy the files you wish to test with from [NonProcessed] folder to [filesToSort] folder.
+  Please check REPORT.MD in this folder
+  
+  ---------------
+      DEMO
+      ----------------
+      ![Processing files](nodejsModule/anotherapp/assets/git/medhack_app_gif.gif)
