@@ -43,4 +43,4 @@ To contribute to this;
 ---------------
     DEMO
 ----------------
-![Processing files](nodejsModule/anotherapp/assets/git/medhack_app_gif.gif)
+![Processing files](../nodejsModule/anotherapp/assets/git/medhack_app_gif.gif)
