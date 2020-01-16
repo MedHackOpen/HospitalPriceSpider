@@ -24,7 +24,8 @@ the tab that pops up. Open another cli window in the root of this folder and run
 OR `npm electron`, to start our electron process that loads `localhost:3000` as the view page.
 
 *   Before firing up this app, make sure institution table is loaded with the latest data
-as this app relies on that, check file name `institutions_latest.sql` in `SQLs` folder
+as this app relies on that, check file name `institutions_latest.sql` in `SQLs` folder, and 
+also [rawCSVs/filesToSort] should contain the csv files you wish to process.
 
 *   Now our app is fired up, click Process csv files button to load csv data into database.
 *   If you get an error on the console, click Process csv files button again to load another file.
