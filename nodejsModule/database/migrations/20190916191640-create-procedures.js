@@ -20,14 +20,11 @@ module.exports = {
       hospitalId: {
         type: Sequelize.DOUBLE
       },
-      price: {
-        type: Sequelize.JSON
-      },
       hospitalName: {
         type: Sequelize.STRING
       },
       avgPrice: {
-        type: Sequelize.STRING
+        type: Sequelize.FLOAT
       },
       type: {
         type: Sequelize.STRING

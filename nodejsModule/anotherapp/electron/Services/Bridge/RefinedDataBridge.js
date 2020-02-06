@@ -21,6 +21,31 @@ async function getInstitutionByFileName(fileName){
 
 }
 
+
+// Refine price
+function refinePrice(value){
+    //console.log('calculate out of pocket price')
+    //console.log(value)
+
+    let price = typeof (value) === "string" ? value.trim() : value
+
+    if (price.toString().startsWith('$') ){
+
+        price = price.toString().replace('$', '')
+
+    }
+
+    if (price.includes(',')){
+        price = price.replace(',', '')
+    }
+
+    // All prices must be greater than 5
+    price = parseFloat(price) > 5 ? parseFloat(price) : null
+
+    return price
+}
+
+
 // here we process data gotten from this.reportItem(args) below
 // choose what to do with the files as well us log as much to
 // the relevant tables for easier debugging later
@@ -59,7 +84,7 @@ async function prepareDataForDatabase(args){
             if(price.length !== 0) {
                 priceValue = price.map(p => p.value) // price value
                 priceKey = price.map(p => p.key) // prive key
-                priceValue = priceValue[0]
+                priceValue = refinePrice(priceValue[0])
                 priceKey = priceKey[0]
             }
 

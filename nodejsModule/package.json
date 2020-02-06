@@ -1,6 +1,6 @@
 {
   "name": "HospitalPriceSpider",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "Data price comparison between hospitals",
   "main": "index.js",
   "author": "Medhack TM",

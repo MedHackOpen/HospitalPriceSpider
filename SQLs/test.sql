@@ -1,0 +1,1 @@
+SELECT `rId`, `itemName`, `avgPrice` FROM `procedures` WHERE levenshtein('MRI', `itemName`) BETWEEN 0 AND 20

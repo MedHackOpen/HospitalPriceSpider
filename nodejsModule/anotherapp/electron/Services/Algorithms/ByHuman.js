@@ -6,8 +6,10 @@
 
 //ifPrice
 
+// convert price to a double if not
 function ifPrice(key, value, procedureKey, priceKey) {
     let price = priceKey.trim() ===  key.trim() ? value : null // else no price to match
+
     return price
 }
 
@@ -59,6 +61,8 @@ function ifItem(args) {
         procedure,
         price,
     }
+
+
 
     return JSON.stringify(item)
 

@@ -10,6 +10,7 @@
 
 //ifPrice
 
+// convert price to a double if not
 function ifPrice(key, value) {
     let price = null
     let starts = 0
@@ -94,6 +95,8 @@ function ifItem(data) {
         procedure,
         price,
     }
+
+
 
     return JSON.stringify(item)
 
