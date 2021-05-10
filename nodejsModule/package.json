@@ -25,7 +25,7 @@
     "fs-extra": "^8.1.0",
     "google-spreadsheet-to-json": "^1.0.0",
     "helmet": "^3.21.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "mysql2": "^1.7.0",
     "sequelize": "^5.18.4",
     "simple-excel-to-json": "^2.2.1",
