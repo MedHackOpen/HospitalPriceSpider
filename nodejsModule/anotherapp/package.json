@@ -43,7 +43,7 @@
     ]
   },
   "devDependencies": {
-    "electron": "^6.1.7",
+    "electron": "^11.5.0",
     "electron-devtools-installer": "^2.2.4"
   }
 }
